@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: Posts API
+  description: Ein Grundgerüst für eine mögliche Posts API.
+  version: 1.0.0
+servers:
+  - url: http://api.example.com/v1/
+paths:
+  /posts{hashtagList}:
+    get:
+      summary: Zeigt die ersten 20-30 Beiträge für die gefilterten Kategorien an.
+      description: >
+        Für die UserStory "Als Nutzer möchte ich Beiträge kategorisiert filtern
+        können, um nach bestimmten Beiträgen zu suchen".
+      parameters:
+        - name: hashtagList
+          in: path
+          required: true
+          description: >
+            Die Hashtags ermöglichen das Filtern von Beiträgen, indem sie
+            Kategorien bilden.
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: >-
+            Eine Liste von 20-30 JSON Objekte mit Daten von den kategorisierten
+            Posts werden angezeigt.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    hashtags:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - Sport
+                        - Wichtig
+                    content:
+                      type: string
+                      example: Schalke steigt ab!
+                    username:
+                      type: string
+                      example: Aleks069
+                    timestamp:
+                      type: string
+                      example: '2023-11-30 12:10:00'
+        '204':
+          description: Es gibt keine Beiträge mit den gesuchten Hashtags.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Es wurde kein User mit den Hashtags <hashtags> gefunden
+        '500':
+          description: Interner Server Fehler auf Seite des Backends.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: >-
+                  Es ist ein interner Fehler aufgetreten, die Anfrage konnte
+                  nicht bearbeitet werden.
+  /posts:
+    post:
+      summary: Ist für das Erstellen von Textbeiträgen verantwortlich.
+      description: >
+        Für die UserStory "Als Nutzer möchte ich Texte posten können, um meine
+        Gedanken zu teilen".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: Aleks069
+                content:
+                  type: string
+                  example: Der Waldhof steigt auch ab!
+                hashtags:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - Sport
+                    - Schwach
+      responses:
+        '200':
+          description: >-
+            Der Erstellung des Posts war erfolgreich. Der neue Post wird dem
+            Nutzer angezeigt.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post_id:
+                    type: integer
+                    example: 2
+                  username:
+                    type: string
+                    example: Aleks069
+                  content:
+                    type: string
+                    example: Der Waldhof steigt auch ab!
+                  hashtags:
+                    type: array
+                    items:
+                      type: string
+                      example:
+                        - Sport
+                        - Schwach
+        '500':
+          description: Interner Server Fehler auf Seite des Backends.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: >-
+                  Es ist ein interner Fehler aufgetreten, die Anfrage konnte
+                  nicht bearbeitet werden.
+  /posts{post_id}:
+    delete:
+      summary: Ist für das Löschen von Textbeiträgen verantwortlich.
+      description: >-
+        Für die UserStory "Als Nutzer möchte ich Posts löschen können, um meine
+        Veröffentlichungen rückgängig zu machen".
+      parameters:
+        - name: post_id
+          in: path
+          required: true
+          description: Anhand der post_id kann der entsprechende Beitrag gelöscht werden.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: >-
+            Der Löschung des Beitrags war erfolgreich. Der Nutzer bekommt eine
+            aktualisierte Version seiner Profilseite mit seinen eigenen
+            Beiträgen angezeigt.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    post_id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: Aleks069
+                    content:
+                      type: string
+                      example: Schalke steigt ab!
+                    hashtags:
+                      type: array
+                      items:
+                        type: string
+                        example:
+                          - Sport
+                          - Wichtig
+        '500':
+          description: Interner Server Fehler auf Seite des Backends.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: >-
+                  Es ist ein interner Fehler aufgetreten, die Anfrage konnte
+                  nicht bearbeitet werden.
