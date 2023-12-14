@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Nutzer API
-  description: Ein Grundgerüst für eine mögliche Nutzer API. 
+  description: Ein Grundgerüst für eine mögliche Nutzer API.
   version: 1.0.0
 servers:
   - url: http://api.example.com/v1/
@@ -18,16 +18,16 @@ paths:
           schema:
             type: string
       responses:
-        '200':    # status code
+        "200": # status code
           description: Ein JSON Objekt mit daten über den Nutzer
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   username:
                     type: string
-                    example: username123  
+                    example: username123
                   name:
                     type: string
                     example: Aleks
@@ -37,14 +37,14 @@ paths:
                   biografie:
                     type: string
                     example: Ich mag Gewichte!
-        '404':
+        "404":
           description: Den User mit dem gesendeten Username gibt es nicht.
           content:
             application/json:
               schema:
                 type: string
                 example: "Es wurde kein User mit dem Username <username> gefunden"
-        '500':
+        "500":
           description: Interner Server Fehler auf Seite des Backends.
           content:
             application/json:
@@ -75,16 +75,16 @@ paths:
                   type: string
                   example: passwort123
       responses:
-        '200':    # status code
-          description: Eine bestätigung das der Nutzer registriert wurde und seine erfassten Daten. 
+        "200": # status code
+          description: Eine bestätigung das der Nutzer registriert wurde und seine erfassten Daten.
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   username:
                     type: string
-                    example: username123  
+                    example: username123
                   name:
                     type: string
                     example: Aleks
@@ -98,13 +98,13 @@ paths:
                         type: object
                       refreshToken:
                         type: object
-        '500':
-            description: Interner Server Fehler auf Seite des Backends.
-            content:
-              application/json:
-                schema:
-                  type: string
-                  example: "Es ist ein interner Fehler aufgetreten, die Anfrage konnte nicht bearbeitet werden."
+        "500":
+          description: Interner Server Fehler auf Seite des Backends.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Es ist ein interner Fehler aufgetreten, die Anfrage konnte nicht bearbeitet werden."
     get:
       summary: Meldet einen Nutzer an.
       description: Für die UserSotry "Als Nutzer möchte ich mich mit Email und Passwort registrieren können, um einen gesicherten Zugang zu meinem Account zu haben und konfigurieren zu können".
@@ -122,16 +122,16 @@ paths:
           schema:
             type: string
       responses:
-        '200':    # status code
+        "200": # status code
           description: Ein JSON Objekt mit einem JWT Token (oder ähnliches)
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   message:
                     type: string
-                    example: Der Login war erfolgreich  
+                    example: Der Login war erfolgreich
                   jwt:
                     type: object
                     properties:
@@ -139,21 +139,21 @@ paths:
                         type: object
                       refreshToken:
                         type: object
-        '404':
+        "404":
           description: Den User mit dem gesendeten Username gibt es nicht.
           content:
             application/json:
               schema:
                 type: string
                 example: "Es wurde kein User mit dem Username <username> gefunden"
-        '401':
+        "401":
           description: Das eingegebne Passwort war falsch.
           content:
             application/json:
               schema:
                 type: string
                 example: "Das eingegebne Passwort war falsch."
-        '500':
+        "500":
           description: Interner Server Fehler auf Seite des Backends.
           content:
             application/json:
