@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Text } from 'react-native';
+import { Text } from "react-native";
 
 interface Props {
   focused: any;
@@ -8,11 +7,7 @@ interface Props {
 }
 
 const TabBarText: React.FC<Props> = (props) => {
-  return (
-    <Text>
-      {props.title}
-    </Text>
-  );
+  return <Text>{props.title}</Text>;
 };
 
 export default TabBarText;

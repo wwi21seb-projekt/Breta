@@ -6,20 +6,13 @@ interface Props {
   focused: any;
   color: any;
   size?: number;
-  style?: React.CSSProperties; 
+  style?: React.CSSProperties;
 }
 
 const TabBarIcon: React.FC<Props> = (props) => {
-  const { icon, focused, size = 18, style } = props; 
+  const { icon, focused, size = 18, style } = props;
 
-  return (
-    <Ionicons 
-      name={icon}
-      size={size}
-      color={focused}
-      style={style} 
-    />
-  );
-}
+  return <Ionicons name={icon} size={size} color={focused} style={style} />;
+};
 
 export default TabBarIcon;
