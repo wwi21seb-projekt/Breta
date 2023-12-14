@@ -1,20 +1,40 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import FeedScreen from "./screens/FeedScreen";
+import AuthScreen from "./screens/AuthScreen";
+import { COLORS } from "./constants/theme";
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>"Einmal ein Lumber Jack bitte" ~Kemal, 08-10.2023</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Feed">
+        <Stack.Screen
+          name="Feed"
+          component={FeedScreen}
+          options={{
+            title: "",
+            cardStyle: {
+              backgroundColor: COLORS.white,
+            },
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="Auth"
+          component={AuthScreen}
+          options={{
+            title: "",
+            cardStyle: {
+              backgroundColor: COLORS.white,
+            },
+            headerTransparent: true,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;
