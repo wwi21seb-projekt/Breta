@@ -1,25 +1,26 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import FloatingTextInput from "../components/FloatingTextInput";
-import { SIZES, COLORS } from "../constants/theme";
-import axios from "axios";
-import { baseUrl } from "../constants/config";
-import styles from "../constants/styles";
-import { useNavigation } from "@react-navigation/native";
+import { useState } from "react"
+import { View, Text, TouchableOpacity } from "react-native"
+import FloatingTextInput from "../components/FloatingTextInput"
+import { SIZES, COLORS } from "../constants/theme"
+import axios from "axios"
+import { baseUrl } from '../constants/config'
+import styles from '../constants/styles'
+import { useNavigation } from '@react-navigation/native'
+import Register from '../components/Register'
 
 const AuthScreen = () => {
-  const navigation = useNavigation();
-  const [showRegistration, setShowRegistration] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [isEmailFilled, setIsEmailFilled] = useState(false);
+  const navigation = useNavigation()
+  const [showRegistration, setShowRegistration] = useState(true)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [errorEmail, setErrorEmail] = useState("")
+  const [isEmailFilled, setIsEmailFilled] = useState(false)
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
   const handleButtonPress = () => {
-    setShowRegistration(!showRegistration);
+    setShowRegistration(!showRegistration)
   };
 
   const handleLogin = () => {
@@ -30,28 +31,28 @@ const AuthScreen = () => {
       })
       .then(function (response) {
         if (response.status == 200) {
-          navigation.navigate("Feed" as never);
+          navigation.navigate("Feed" as never)
         }
       })
       .catch(function (error) {
         switch (error.response.status) {
           case 401: {
-            console.log("Bitte bestätige erst deinen Code");
+            console.log("Bitte bestätige erst deinen Code")
             //weiterleiten auf code eingeben page
             break;
           }
           case 403: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
+            setError("Die Email-Adresse oder das Passwort ist falsch")
             // hier eventuell Email und Passwort Input leeren
             break;
           }
           case 404: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
+            setError("Die Email-Adresse oder das Passwort ist falsch")
             // hier eventuell Email und Passwort Input leeren
             break;
           }
         }
-      });
+      })
   };
 
   return (
@@ -89,7 +90,7 @@ const AuthScreen = () => {
 
       {showRegistration ? (
         <View>
-          <Text>Registrierung by Eitelo</Text>
+          <Register></Register>
         </View>
       ) : (
         <View>
@@ -97,13 +98,13 @@ const AuthScreen = () => {
             label="Email Adresse"
             value={email}
             onChangeText={(text: any) => {
-              setEmail(text);
-              setIsEmailFilled(!!text);
-              setErrorEmail("");
+              setEmail(text)
+              setIsEmailFilled(!!text)
+              setErrorEmail("")
             }}
             onBlur={() => {
               if (!emailRegex.test(email)) {
-                setErrorEmail("Die Email-Adresse hat keine korrekte Form!");
+                setErrorEmail("Die Email-Adresse hat keine korrekte Form!")
               }
             }}
           />
@@ -113,7 +114,7 @@ const AuthScreen = () => {
             label="Passwort"
             value={password}
             onChangeText={(text: any) => {
-              setPassword(text);
+              setPassword(text)
             }}
           />
           {error && <Text style={styles.error}>{error}</Text>}
@@ -141,7 +142,7 @@ const AuthScreen = () => {
         </View>
       )}
     </View>
-  );
+  )
 };
 
-export default AuthScreen;
+export default AuthScreen

@@ -10,7 +10,7 @@ import {
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
+} from 'react-native-confirmation-code-field'
 
 const styles = StyleSheet.create({
   root: {flex: 1, padding: 20, alignContent: 'center', justifyContent: 'center'},
@@ -69,8 +69,8 @@ const ConfirmCode = () => {
           setServerError('')
           navigation.navigate('Register');
         }
-      }).catch(function (error){
-        switch(error.response.status){
+      }).catch(function (error) {
+        switch(error.response.status) {
           case 400:
             {
             setServerError('Der User wurde nicht gefunden')

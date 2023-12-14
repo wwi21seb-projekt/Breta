@@ -110,7 +110,7 @@ const AuthScreen = () => {
       </View>
 
       {showRegistration ? (
-        <Register></Register>
+        
       ) : (
         <View>
           <FloatingTextInput
