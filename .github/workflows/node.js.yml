@@ -24,8 +24,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Format Code with Prettier
-      run: npm run format
+    
     - name: Auto Commit formated code
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
@@ -39,5 +38,7 @@ jobs:
     - run: npm ci
     - name: Run ESLint
       run: npm run lint
+    - name: Format Code with Prettier
+      run: npm run format
     #- run: npm test
     # Comment to trigger a PR -> Pipelinerun
