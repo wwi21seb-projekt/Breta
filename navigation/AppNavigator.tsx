@@ -1,7 +1,7 @@
-import React from "react"
-import { NavigationContainer } from "@react-navigation/native"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import {
   VStack,
@@ -14,29 +14,29 @@ import {
   Center,
   Box,
   StatusBar,
-} from "native-base"
+} from "native-base";
 
-import { StyleSheet, View, Platform } from 'react-native'
+import { StyleSheet, View, Platform } from "react-native";
 
-import TabBarIcon from '../components/TabBarIcon'
-import TabBarText from '../components/TabBarText'
+import TabBarIcon from "../components/TabBarIcon";
+import TabBarText from "../components/TabBarText";
 
-import Feed from '../screens/Feed'
-import Chat from '../screens/Chat'
-import Post from '../screens/Post'
-import Profile from '../screens/Profile'
-import Search from '../screens/Search'
+import Feed from "../screens/Feed";
+import Chat from "../screens/Chat";
+import Post from "../screens/Post";
+import Profile from "../screens/Profile";
+import Search from "../screens/Search";
 
-import AppTopBar from './AppTopBar'
+import AppTopBar from "./AppTopBar";
 
-import Impressum from '../components/Impressum'
+import Impressum from "../components/Impressum";
 
-import FeedScreen from '../screens/FeedScreen'
-import AuthScreen from '../screens/AuthScreen'
-import ConfirmCode from '../screens/ConfirmCode'
-import { COLORS } from '../constants/theme'
+import FeedScreen from "../screens/FeedScreen";
+import AuthScreen from "../screens/AuthScreen";
+import ConfirmCode from "../screens/ConfirmCode";
+import { COLORS } from "../constants/theme";
 
-const MainStack = createNativeStackNavigator()
+const MainStack = createNativeStackNavigator();
 
 const Main: React.FC = () => {
   return (
@@ -46,33 +46,37 @@ const Main: React.FC = () => {
       <MainStack.Screen name="MainTabs" component={MainTabs} />
       <MainStack.Screen name="Impressum" component={Impressum} />
       <MainStack.Screen
-          name="Feed"
-          component={FeedScreen}
-          options={{
-            title: '',
-            cardStyle: {
-              backgroundColor: COLORS.white
-            },
-            headerTransparent: true
-          }}
-        />
-        <MainStack.Screen
-          name="Auth"
-          component={AuthScreen}
-          options={{
-            title: '',
-            cardStyle: {
-              backgroundColor: COLORS.white
-            },
-            headerTransparent: true
-          }}
-        />
-      <MainStack.Screen name="CodePage" component={ConfirmCode} options={{headerShown: false }} />
+        name="Feed"
+        component={FeedScreen}
+        options={{
+          title: "",
+          cardStyle: {
+            backgroundColor: COLORS.white,
+          },
+          headerTransparent: true,
+        }}
+      />
+      <MainStack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{
+          title: "",
+          cardStyle: {
+            backgroundColor: COLORS.white,
+          },
+          headerTransparent: true,
+        }}
+      />
+      <MainStack.Screen
+        name="CodePage"
+        component={ConfirmCode}
+        options={{ headerShown: false }}
+      />
     </MainStack.Navigator>
-  )
+  );
 };
 
-const Tabs = createBottomTabNavigator()
+const Tabs = createBottomTabNavigator();
 
 const MainTabs: React.FC = () => {
   return (
@@ -105,7 +109,7 @@ const MainTabs: React.FC = () => {
             tabBarIcon: ({ focused }) => (
               <TabBarIcon
                 focused={focused}
-                icon={'chatbubble'}
+                icon={"chatbubble"}
                 color={"black"}
                 style={{ marginRight: 10 }}
               />
@@ -171,7 +175,7 @@ const MainTabs: React.FC = () => {
         />
       </Tabs.Navigator>
     </>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -203,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "700",
   },
-})
+});
 
 export default () => {
   return (
@@ -212,5 +216,5 @@ export default () => {
         <Main />
       </NativeBaseProvider>
     </NavigationContainer>
-  )
+  );
 };
