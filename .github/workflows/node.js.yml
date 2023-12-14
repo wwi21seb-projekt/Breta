@@ -18,12 +18,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: ls -al && pwd
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         cache: 'npm'
-        node-version-file: './Breta/package.json'
+        node-version-file: 'package.json'
     - run: npm ci
     - name: Run ESLint
       run: npm run lint
