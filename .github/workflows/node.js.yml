@@ -26,7 +26,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         cache: 'npm'
-        node-version-file: './Breta/package-lock.json'
+        node-version-file: './Breta/package.json'
     - run: npm ci
     - name: Run ESLint
       run: npm run lint
