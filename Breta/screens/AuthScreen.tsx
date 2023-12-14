@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import FloatingTextInput from '../components/FloatingTextInput';
-import { SIZES, SHADOWS, COLORS } from '../constants/theme';
+import { SIZES, COLORS } from '../constants/theme';
 import axios from 'axios';
 import { baseUrl } from '../constants/config';
 import styles from '../constants/styles';
@@ -45,15 +45,13 @@ const AuthScreen = () => {
           case 403:
             {
               setError("Die Email-Adresse oder das Passwort ist falsch");
-              // setEmail('');
-              // setPassword('');
+              // hier eventuell Email und Passwort Input leeren
               break;
             }
           case 404:
             {
               setError("Die Email-Adresse oder das Passwort ist falsch");
-              // setEmail('');
-              // setPassword('');
+              // hier eventuell Email und Passwort Input leeren
               break;
             }
         }
