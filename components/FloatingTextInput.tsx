@@ -1,7 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { Text, TextInput, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import styles from '../constants/styles';
-import { COLORS } from '../constants/theme';
+import { useEffect, useRef, useState } from "react";
+import {
+  Text,
+  TextInput,
+  View,
+  Animated,
+  Easing,
+  TouchableWithoutFeedback,
+} from "react-native";
+import styles from "../constants/styles";
+import { COLORS } from "../constants/theme";
 
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
@@ -11,7 +18,15 @@ type Props = React.ComponentProps<typeof TextInput> & {
 };
 
 const FloatingTextInput: React.FC<Props> = (props) => {
-  const { label, errorText, onChangeText, value, onBlur, onFocus, ...restOfProps } = props;
+  const {
+    label,
+    errorText,
+    onChangeText,
+    value,
+    onBlur,
+    onFocus,
+    ...restOfProps
+  } = props;
   const [isFocused, setIsFocused] = useState(false);
 
   const inputRef = useRef<TextInput>(null);
@@ -35,12 +50,10 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     <View style={{ marginVertical: 10 }}>
       <TextInput
         style={[
-          styles.input, 
+          styles.input,
           {
             borderColor: color,
-            
           },
-        
         ]}
         ref={inputRef}
         {...restOfProps}
@@ -88,16 +101,15 @@ const FloatingTextInput: React.FC<Props> = (props) => {
               styles.label,
               {
                 color,
-                
               },
             ]}
           >
             {label}
-            {errorText ? '*' : ''}
+            {errorText ? "*" : ""}
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
-     {!!errorText && <Text style={styles.error}>{errorText}</Text>}
+      {!!errorText && <Text style={styles.error}>{errorText}</Text>}
     </View>
   );
 };
