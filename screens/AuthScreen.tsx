@@ -6,6 +6,7 @@ import axios from "axios";
 import { baseUrl } from "../constants/config";
 import styles from "../constants/styles";
 import { useNavigation } from "@react-navigation/native";
+import Register from "../components/Register";
 
 const AuthScreen = () => {
   const navigation = useNavigation();
@@ -89,7 +90,7 @@ const AuthScreen = () => {
 
       {showRegistration ? (
         <View>
-          <Text>Registrierung by Eitelo</Text>
+          <Register></Register>
         </View>
       ) : (
         <View>

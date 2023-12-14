@@ -16,12 +16,11 @@ import {
   StatusBar,
 } from "native-base";
 
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 
 import TabBarIcon from "../components/TabBarIcon";
 import TabBarText from "../components/TabBarText";
 
-import Feed from "../screens/Feed";
 import Chat from "../screens/Chat";
 import Post from "../screens/Post";
 import Profile from "../screens/Profile";
@@ -29,8 +28,10 @@ import Search from "../screens/Search";
 
 import AppTopBar from "./AppTopBar";
 
-import Impressum from "../components/Impressum";
-import { Platform } from "react-native";
+import FeedScreen from "../screens/FeedScreen";
+import AuthScreen from "../screens/AuthScreen";
+import ConfirmCode from "../screens/ConfirmCode";
+import { COLORS } from "../constants/theme";
 
 const MainStack = createNativeStackNavigator();
 
@@ -39,8 +40,33 @@ const Main: React.FC = () => {
     <MainStack.Navigator
       screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
     >
-      <MainStack.Screen name="MainTabs" component={MainTabs} />
-      <MainStack.Screen name="Impressum" component={Impressum} />
+      <MainStack.Screen
+        name="Feed"
+        component={FeedScreen}
+        options={{
+          title: "",
+          cardStyle: {
+            backgroundColor: COLORS.white,
+          },
+          headerTransparent: true,
+        }}
+      />
+      <MainStack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{
+          title: "",
+          cardStyle: {
+            backgroundColor: COLORS.white,
+          },
+          headerTransparent: true,
+        }}
+      />
+      <MainStack.Screen
+        name="CodePage"
+        component={ConfirmCode}
+        options={{ headerShown: false }}
+      />
     </MainStack.Navigator>
   );
 };
@@ -53,7 +79,7 @@ const MainTabs: React.FC = () => {
       <Tabs.Navigator screenOptions={{ headerShown: false }}>
         <Tabs.Screen
           name="Feed"
-          component={Feed}
+          component={FeedScreen}
           options={{
             tabBarLabel: ({ focused }) => (
               <TabBarText focused={focused} title="" />
