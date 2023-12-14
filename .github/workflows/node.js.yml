@@ -15,6 +15,9 @@ jobs:
   install-format-lint:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Breta
 
     strategy:
       matrix:
@@ -22,7 +25,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: cd Breta
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
