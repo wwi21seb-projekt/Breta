@@ -90,7 +90,7 @@ const AuthScreen = () => {
       ) : (
         <View>
           <FloatingTextInput label="Email Adresse" value={email} 
-          onChangeText={(text) => {
+          onChangeText={(text: any) => {
     setEmail(text);
     setIsEmailFilled(!!text);
     setErrorEmail(''); 
@@ -104,7 +104,7 @@ const AuthScreen = () => {
             secureTextEntry={true}
             label="Passwort"
             value={password}
-            onChangeText={(text) => {
+            onChangeText={(text: any) => {
               setPassword(text);
             }}
           />
