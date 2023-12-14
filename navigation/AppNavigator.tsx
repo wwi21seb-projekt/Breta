@@ -21,12 +21,12 @@ import { StyleSheet, View, Platform } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
 import TabBarText from "../components/TabBarText";
 
-import Chat from '../screens/Chat'
-import Post from '../screens/Post'
-import Profile from '../screens/Profile'
-import Search from '../screens/Search'
+import Chat from "../screens/Chat";
+import Post from "../screens/Post";
+import Profile from "../screens/Profile";
+import Search from "../screens/Search";
 
-import AppTopBar from './AppTopBar'
+import AppTopBar from "./AppTopBar";
 
 import FeedScreen from "../screens/FeedScreen";
 import AuthScreen from "../screens/AuthScreen";
@@ -40,7 +40,6 @@ const Main: React.FC = () => {
     <MainStack.Navigator
       screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
     >
-      
       <MainStack.Screen
         name="Feed"
         component={FeedScreen}
