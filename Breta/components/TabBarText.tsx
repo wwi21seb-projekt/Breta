@@ -9,10 +9,7 @@ interface Props {
 
 const TabBarText: React.FC<Props> = (props) => {
   return (
-    <Text
-     
-    
-    >
+    <Text>
       {props.title}
     </Text>
   );

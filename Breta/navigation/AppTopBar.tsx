@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StatusBar, TouchableOpacity } from 'react-native';
-import { NativeBaseProvider, IconButton, Icon, Box, HStack, Text,View, Center } from "native-base";
+import { IconButton, Icon,  HStack, Text } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import {  NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -27,7 +26,7 @@ const AppBar: React.FC<AppBarProps> = () => {
 
   return (
     <>
-      <HStack px="1" py="3" alignItems="center" width="100%" shadow="9" marginTop="50">
+      <HStack px="1" py="3" alignItems="center" width="100%" shadow="9">
         <HStack flex={1} justifyContent="flex-start">
             {canGoBack && (
             <IconButton 

@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 
 import { VStack, HStack, Button, IconButton, Icon, Text, NativeBaseProvider, Center, Box, StatusBar } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
+
 
 import {StyleSheet, View} from 'react-native';
 
