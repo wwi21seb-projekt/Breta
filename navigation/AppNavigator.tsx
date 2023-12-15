@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import {
@@ -33,7 +33,7 @@ import AuthScreen from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import { COLORS } from "../constants/theme";
 
-const MainStack = createNativeStackNavigator();
+const MainStack = createStackNavigator();
 
 const Main: React.FC = () => {
   return (
