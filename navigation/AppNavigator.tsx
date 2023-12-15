@@ -42,7 +42,7 @@ const Main: React.FC = () => {
     <MainStack.Navigator
       screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
     >
-      <MainStack.Screen name="TopBar" component={MainTabs}/>
+      <MainStack.Screen name="TopBar" component={MainTabs} />
       <MainStack.Screen
         name="Feed"
         component={FeedScreen}
@@ -54,7 +54,7 @@ const Main: React.FC = () => {
           headerTransparent: true,
         }}
       />
-      <MainStack.Screen name="Impressum" component={Impressum}/>
+      <MainStack.Screen name="Impressum" component={Impressum} />
       <MainStack.Screen
         name="Auth"
         component={AuthScreen}
