@@ -275,7 +275,7 @@ const Register = () => {
       <TouchableOpacity
         style={{
           flex: 1,
-          backgroundColor: !checkForInput() ? COLORS.primary : COLORS.white,
+          backgroundColor: !checkForInput() ? COLORS.primary : COLORS.lightgray,
           margin: 160,
           padding: 12,
           alignItems: "center",
