@@ -32,6 +32,7 @@ import FeedScreen from "../screens/FeedScreen";
 import AuthScreen from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import { COLORS } from "../constants/theme";
+import Impressum from "../components/Impressum";
 
 const MainStack = createStackNavigator();
 
@@ -40,6 +41,8 @@ const Main: React.FC = () => {
     <MainStack.Navigator
       screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
     >
+    <MainStack.Screen name="TopBar" component={MainTabs}/>
+    <MainStack.Screen name="Impressum" component={Impressum}/>
       <MainStack.Screen
         name="Feed"
         component={FeedScreen}
