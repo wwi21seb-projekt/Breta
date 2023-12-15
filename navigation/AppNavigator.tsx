@@ -41,8 +41,8 @@ const Main: React.FC = () => {
     <MainStack.Navigator
       screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
     >
-    <MainStack.Screen name="TopBar" component={MainTabs}/>
-    <MainStack.Screen name="Impressum" component={Impressum}/>
+      <MainStack.Screen name="TopBar" component={MainTabs} />
+      <MainStack.Screen name="Impressum" component={Impressum} />
       <MainStack.Screen
         name="Feed"
         component={FeedScreen}
