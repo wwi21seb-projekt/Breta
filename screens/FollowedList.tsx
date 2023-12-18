@@ -1,4 +1,3 @@
-// Follower.tsx
 import { useState } from "react";
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { SHADOWS, SIZES } from '../constants/theme';
@@ -7,24 +6,17 @@ type User = {
   id: string;
   name: string;
   avatar: string;
-  isFollowing: boolean;
+  followed: boolean;
 };
 
-type Props = {
-    isFollower: boolean;
-  };
 
-
-const Follower: React.FC<Props> = (props) => {
-    const {
-      isFollower
-    } = props;
+const FollowerList = () => {
 
 
     const initialUsers: User[] = [
         // Beispiel-Daten - ersetze diese durch echte Daten
-        { id: '1', name: 'Aleks069', avatar: require('../assets/images/Max.jpeg'), isFollowing: isFollower },
-        { id: '2', name: 'Kelly', avatar: require('../assets/images/Kevin.jpeg'), isFollowing: isFollower },
+        { id: '1', name: 'Aleks069', avatar: require('../assets/images/Max.jpeg'), followed: true },
+        { id: '2', name: 'Kelly', avatar: require('../assets/images/Kevin.jpeg'), followed: true },
         // Füge hier weitere Benutzer hinzu
       ];
 
@@ -33,7 +25,7 @@ const Follower: React.FC<Props> = (props) => {
   const handleFollowPress = (id: string) => {
     setUsers((currentUsers) =>
       currentUsers.map((user) =>
-        user.id === id ? { ...user, isFollowing: !user.isFollowing } : user
+        user.id === id ? { ...user, followed: !user.followed } : user
       )
     );
   };
@@ -51,7 +43,7 @@ const Follower: React.FC<Props> = (props) => {
             style={styles.button}
             onPress={() => handleFollowPress(item.id)}
           >
-            <Text style={{fontSize: SIZES.small}}>{item.isFollowing ? 'Entfolgen' : 'Folgen'}</Text>
+            <Text style={{fontSize: SIZES.small}}>{item.followed ? 'Entfolgen' : 'Folgen'}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -88,4 +80,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Follower;
+export default FollowerList;

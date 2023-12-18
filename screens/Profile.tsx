@@ -1,13 +1,12 @@
-import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { COLORS, SIZES, SHADOWS } from "../constants/theme";
+import { useNavigation } from "@react-navigation/native";
 
-const images = {
-  kevin: require('../assets/images/Kevin.jpeg'),
-  luca: require('../assets/images/Luca.jpeg'),
-  max: require('../assets/images/Max.jpeg'),
-  // weitere Bilder...
-};
+const posts = [
+  { name: 'kevin', source: require('../assets/images/Kevin.jpeg') },
+  { name: 'luca', source: require('../assets/images/Luca.jpeg') },
+  { name: 'max', source: require('../assets/images/Max.jpeg') },
+];
 
 type PostProps = {
   image: string;
@@ -17,35 +16,18 @@ const Post: React.FC<PostProps> = ({ image }) => (
   <Image source={{uri: image}} style={styles.post}/>
 );
 
-type ProfileState = {
-  posts: string[];
-};
 
-export default class ProfileScreen extends React.Component<{}, ProfileState> {
-  
-  state: ProfileState = {
-    posts: [
-      images.kevin,
-      images.luca,
-      images.max,
-      
-    ],
-  };
-
-  // Dummy navigation functions
-  navigateToFollowers = () => console.log('Navigate to Followers');
-  navigateToFollowing = () => console.log('Navigate to Following');
-  navigateToRequests = () => console.log('Navigate to Requests');
-  navigateToEditProfile = () => console.log('Navigate to Edit Profile');
+const Profile = () => {
 
 
+  const navigation = useNavigation();
 
-  render() {
+
     return (
       <ScrollView style={styles.container}>
   
   <Image
-    source={{ uri: images.max }}
+    source={posts[2].source}
     style={styles.avatar}
   />
 
@@ -55,25 +37,25 @@ export default class ProfileScreen extends React.Component<{}, ProfileState> {
             <Text style={{fontSize: SIZES.medium, color: COLORS.darkgray, marginBottom: '3%'}}>@nico01</Text>
             <TouchableOpacity
               style={styles.editButton}
-              onPress={this.navigateToEditProfile}
+              onPress={()=> console.log("Test")}
             >
               <Text style={{fontSize: SIZES.medium}}>Profil bearbeiten</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.stats}>
           <View style={styles.statItem}>
-              <Text style={styles.statValue}>{this.state.posts.length}</Text>
+              <Text style={styles.statValue}>{posts.length}</Text>
               <Text>Beiträge</Text>
             </View>
-            <TouchableOpacity style={styles.statItem} onPress={this.navigateToFollowers}>
+            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FollowerList" as never)}>
               <Text style={styles.statValue}>8</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statItem} onPress={this.navigateToFollowing}>
+            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FollowedList" as never)}>
               <Text style={styles.statValue}>7</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statItem} onPress={this.navigateToRequests}>
+            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FriendRequest" as never)}>
               <Text style={styles.statValue}>1</Text>
               <Text>Anfragen</Text>
             </TouchableOpacity>
@@ -83,14 +65,14 @@ export default class ProfileScreen extends React.Component<{}, ProfileState> {
             Beiträge
           </Text>
         <View style={styles.posts}>
-          {this.state.posts.map((image, index) => (
-            <Post key={index} image={image} />
+          {posts.map((image, index) => (
+            <Post key={index} image={image.source} />
           ))}
         </View>
       </ScrollView>
     );
-  }
 }
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {
@@ -104,7 +86,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     width: '100%',
-    height: '33%' // Ändern Sie dies auf 'auto'
+    height: '33%' 
   },
   
   

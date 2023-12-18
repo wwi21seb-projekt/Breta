@@ -34,6 +34,24 @@ if (route.name === "Impressum") {
       Authentification
     </Text>
   );
+} else if (route.name === "FollowerList") {
+  headerTitle = (
+    <Text fontSize={SIZES.large} fontWeight="bold">
+      Follower
+    </Text>
+  );
+} else if (route.name === "FollowedList") {
+  headerTitle = (
+    <Text fontSize={SIZES.large} fontWeight="bold">
+      Gefolgt
+    </Text>
+  );
+} else if (route.name === "FriendRequest") {
+  headerTitle = (
+    <Text fontSize={SIZES.large} fontWeight="bold">
+      Freundschaftsanfragen
+    </Text>
+  );
 } else if (route.name === "ConfirmCode") {
   headerTitle = (
     <Text fontSize={SIZES.large} fontWeight="bold">
