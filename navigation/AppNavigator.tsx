@@ -33,6 +33,7 @@ import AuthScreen from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import { COLORS } from "../constants/theme";
 import Impressum from "../components/Impressum";
+import Follower from "../components/Follower";
 
 const MainStack = createStackNavigator();
 
@@ -43,6 +44,7 @@ const Main: React.FC = () => {
     >
       <MainStack.Screen name="TopBar" component={MainTabs} />
       <MainStack.Screen name="Impressum" component={Impressum} />
+      <MainStack.Screen name="Follower" component={Follower} />
       <MainStack.Screen
         name="Feed"
         component={FeedScreen}
