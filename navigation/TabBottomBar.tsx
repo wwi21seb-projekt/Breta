@@ -9,7 +9,6 @@ import Post from "../screens/Post";
 import Search from "../screens/Search";
 import Profile from "../screens/Profile";
 
-
 const Tabs = createBottomTabNavigator();
 
 const TabBottomBar: React.FC = () => {

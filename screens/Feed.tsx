@@ -12,7 +12,14 @@ type FeedScreenProps = {
 
 const FeedScreen: React.FC<FeedScreenProps> = ({ navigation }) => {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.white}}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.white,
+      }}
+    >
       <Text style={{ marginBottom: 30 }}>Das ist die Feed Seite</Text>
       <TouchableOpacity
         style={{
