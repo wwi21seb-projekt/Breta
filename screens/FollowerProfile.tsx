@@ -36,6 +36,7 @@ const FollowerProfile = () => {
           <View style={styles.userInfo}>
             <Text style={styles.name}>{user.nickname}</Text>
             <Text style={{fontSize: SIZES.medium, color: COLORS.darkgray, marginBottom: '3%'}}>{user.username}</Text>
+            <Text style={{marginBottom: 12, marginTop: 6}}>Hip Hip Hurra, mein Lumberjack ist da!</Text>
           </View>
         <View style={styles.buttonArea}>
         <TouchableOpacity
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontWeight: 'bold',
-    fontSize: 32,
+    fontSize: 28,
     marginBottom: '1%'
   },
   posts: {
