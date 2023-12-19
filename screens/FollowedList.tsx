@@ -1,24 +1,25 @@
 import { useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SHADOWS, SIZES } from '../constants/theme';
+import { useNavigation } from "@react-navigation/native";
 
 type User = {
   id: string;
-  name: string;
+  username: string;
+  nickname: string;
   avatar: string;
+  posts: string[];
   followed: boolean;
 };
 
 
 const FollowerList = () => {
 
-
-    const initialUsers: User[] = [
-        // Beispiel-Daten - ersetze diese durch echte Daten
-        { id: '1', name: 'Aleks069', avatar: require('../assets/images/Max.jpeg'), followed: true },
-        { id: '2', name: 'Kelly', avatar: require('../assets/images/Kevin.jpeg'), followed: true },
-        // Füge hier weitere Benutzer hinzu
-      ];
+  const navigation = useNavigation();
+  const initialUsers: User[] = [
+    { id: '1', username:"top_G_3", nickname: 'Aleks069', avatar: require('../assets/images/Max.jpeg'), posts: [require('../assets/images/Ei.jpeg'), require('../assets/images/Luca.jpeg')], followed: true },
+    { id: '2', username: "koenig_kemal", nickname: 'Kevin', avatar: require('../assets/images/Kevin.jpeg'), posts: [require('../assets/images/Adrian.jpeg'), require('../assets/images/Luca.jpeg'), require('../assets/images/Aleks.jpeg')], followed: true },
+  ];
 
   const [users, setUsers] = useState<User[]>(initialUsers);
 
@@ -31,14 +32,17 @@ const FollowerList = () => {
   };
 
   return (
+    <ScrollView>
     <FlatList
     style={{marginVertical:10}}
       data={users}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <View style={styles.item}>
+          <TouchableOpacity onPress={() => {navigation.navigate("FollowerProfile", { user: item });}} style={styles.touchable}>
           <Image source={{ uri: item.avatar }} style={styles.avatar} />
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.username}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => handleFollowPress(item.id)}
@@ -48,6 +52,7 @@ const FollowerList = () => {
         </View>
       )}
     />
+    </ScrollView>
   );
 };
 
@@ -78,6 +83,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     borderRadius: 18
   },
+  touchable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  
 });
 
 export default FollowerList;

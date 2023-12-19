@@ -11,6 +11,7 @@ import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerList";
 import FollowedList from "../screens/FollowedList";
 import FriendRequest from "../screens/FriendRequest";
+import FollowerProfile from "../screens/FollowerProfile";
 import { COLORS } from "../constants/theme";
 
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const AppNavigator: React.FC = () => {
       <Stack.Screen name="FollowerList" component={FollowerList} />
       <Stack.Screen name="FollowedList" component={FollowedList} />
       <Stack.Screen name="FriendRequest" component={FriendRequest} />
+      <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
       <Stack.Screen
         name="Authentification"
         component={Authentification}

@@ -1,25 +1,25 @@
 // Follower.tsx
 import { useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../constants/theme';
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 type User = {
   id: string;
-  name: string;
+  username: string;
+  nickname: string;
   avatar: string;
+  posts: string[];
   isFollowing: boolean;
 };
 
-
 const FriendRequest = () => {
 
+  const navigation = useNavigation();
 
     const initialUsers: User[] = [
-        // Beispiel-Daten - ersetze diese durch echte Daten
-        { id: '1', name: 'Aleks069', avatar: require('../assets/images/Max.jpeg'), isFollowing: true },
-        { id: '2', name: 'Kelly', avatar: require('../assets/images/Kevin.jpeg'), isFollowing: true},
-        // Füge hier weitere Benutzer hinzu
+      { id: '1', username: "koenig_kemal", nickname: 'Kevin', avatar: require('../assets/images/Kevin.jpeg'), posts: [require('../assets/images/Adrian.jpeg'), require('../assets/images/Luca.jpeg'), require('../assets/images/Aleks.jpeg')], isFollowing: true },
       ];
 
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -44,14 +44,17 @@ const FriendRequest = () => {
 
 
   return (
+    <ScrollView>
     <FlatList
     style={{marginVertical:10}}
       data={users}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <View style={styles.item}>
+          <TouchableOpacity onPress={() => {navigation.navigate("FollowerProfile", { user: item });}} style={styles.touchable}>
           <Image source={{ uri: item.avatar }} style={styles.avatar} />
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.username}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
           style={{marginRight: '1%'}}
             onPress={() => handleAccept(item.id)}
@@ -66,6 +69,7 @@ const FriendRequest = () => {
         </View>
       )}
     />
+    </ScrollView>
   );
 };
 
@@ -89,7 +93,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     fontSize: SIZES.medium
-  }
+  },
+  touchable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1, 
+  },
+  
 });
 
 export default FriendRequest;
