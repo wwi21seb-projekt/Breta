@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import axios from "axios";
+import { COLORS } from "../constants/theme";
 
 export default function Impressum() {
   const [impressumText, setImpressumText] = useState("");
@@ -34,7 +35,7 @@ export default function Impressum() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     alignItems: "center",
     justifyContent: "center",
   },
