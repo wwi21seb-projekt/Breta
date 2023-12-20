@@ -17,7 +17,7 @@ type User = {
   id: string;
   username: string;
   nickname: string;
-  avatar: string;
+  avatarUrl: string;
   posts: string[];
   isFollowing: boolean;
 };
@@ -54,7 +54,7 @@ const FollowerList: React.FC<Props> = ({ navigation }) => {
       id: "1",
       username: "top_G_3",
       nickname: "Aleks069",
-      avatar: require("../assets/images/Max.jpeg"),
+      avatarUrl: require("../assets/images/Max.jpeg"),
       posts: [
         require("../assets/images/Ei.jpeg"),
         require("../assets/images/Luca.jpeg"),
@@ -65,7 +65,7 @@ const FollowerList: React.FC<Props> = ({ navigation }) => {
       id: "2",
       username: "koenig_kemal",
       nickname: "Kevin",
-      avatar: require("../assets/images/Kevin.jpeg"),
+      avatarUrl: require("../assets/images/Kevin.jpeg"),
       posts: [
         require("../assets/images/Adrian.jpeg"),
         require("../assets/images/Luca.jpeg"),
@@ -99,7 +99,7 @@ const FollowerList: React.FC<Props> = ({ navigation }) => {
               }}
               style={styles.touchable}
             >
-              <Image source={{ uri: item.avatar }} style={styles.avatar} />
+              <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
               <Text style={styles.name}>{item.username}</Text>
             </TouchableOpacity>
             {type === 2 ? (

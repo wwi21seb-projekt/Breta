@@ -10,11 +10,11 @@ type RootStackParamList = {
   Impressum: undefined;
 };
 
-type AppBarProps = {
+type AppTopBarProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
 };
 
-const AppBar: React.FC<AppBarProps> = () => {
+const AppTopBar: React.FC<AppTopBarProps> = () => {
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -101,4 +101,4 @@ const AppBar: React.FC<AppBarProps> = () => {
     </>
   );
 };
-export default AppBar;
+export default AppTopBar;
