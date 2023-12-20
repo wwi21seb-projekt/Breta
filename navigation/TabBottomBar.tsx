@@ -13,7 +13,6 @@ const Tabs = createBottomTabNavigator();
 
 const TabBottomBar: React.FC = () => {
   return (
-    <>
       <Tabs.Navigator screenOptions={{ headerShown: false }}>
         <Tabs.Screen
           name="Feed"
@@ -107,7 +106,6 @@ const TabBottomBar: React.FC = () => {
           }}
         />
       </Tabs.Navigator>
-    </>
   );
 };
 
