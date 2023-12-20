@@ -33,95 +33,85 @@ type User = {
   isFollowing: boolean;
 };
 
-
 interface RouteParams {
-  user?: User; 
+  user?: User;
 }
 
 function isUser(obj: any): obj is User {
   return (
     obj &&
-    typeof obj.id === 'string' &&
-    typeof obj.username === 'string' &&
-    typeof obj.nickname === 'string' &&
-    typeof obj.avatar === 'string' &&
+    typeof obj.id === "string" &&
+    typeof obj.username === "string" &&
+    typeof obj.nickname === "string" &&
+    typeof obj.avatar === "string" &&
     Array.isArray(obj.posts) &&
-    typeof obj.isFollowing === 'boolean'
+    typeof obj.isFollowing === "boolean"
   );
 }
 
-
-
-
 const FollowerProfile = () => {
+  const route = useRoute();
 
-    const route = useRoute();
+  const params = route.params as RouteParams;
+  const user = params.user && isUser(params.user) ? params.user : null;
 
-    const params = route.params as RouteParams;
-    const user = params.user && isUser(params.user) ? params.user : null;
-
-    if (!user) {
-      return <Text>User nicht gefunden</Text>;
-  }
-
-    else return (
+  if (!user) {
+    return <Text>User nicht gefunden</Text>;
+  } else
+    return (
       <ScrollView style={styles.container}>
-  
-  <Image
-    source={{ uri: user.avatar }}
-    style={styles.avatar}
-  />
+        <Image source={{ uri: user.avatar }} style={styles.avatar} />
 
-      <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <Text style={styles.name}>{user.nickname}</Text>
-          <Text
-            style={{
-              fontSize: SIZES.medium,
-              color: COLORS.darkgray,
-              marginBottom: "3%",
-            }}
-          >
-            {user.username}
-          </Text>
-          <Text style={{ marginBottom: 12, marginTop: 6 }}>
-            Hip Hip Hurra, mein Lumberjack ist da!
-          </Text>
+        <View style={styles.header}>
+          <View style={styles.userInfo}>
+            <Text style={styles.name}>{user.nickname}</Text>
+            <Text
+              style={{
+                fontSize: SIZES.medium,
+                color: COLORS.darkgray,
+                marginBottom: "3%",
+              }}
+            >
+              {user.username}
+            </Text>
+            <Text style={{ marginBottom: 12, marginTop: 6 }}>
+              Hip Hip Hurra, mein Lumberjack ist da!
+            </Text>
+          </View>
+          <View style={styles.buttonArea}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => console.log("entfolgen")}
+            >
+              <Text style={{ fontSize: SIZES.medium }}>entfolgen</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => console.log("chatten")}
+            >
+              <Text style={{ fontSize: SIZES.medium }}>chatten</Text>
+              <Ionicons name="chatbubbles" style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonArea}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => console.log("entfolgen")}
-          >
-            <Text style={{ fontSize: SIZES.medium }}>entfolgen</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => console.log("chatten")}
-          >
-            <Text style={{ fontSize: SIZES.medium }}>chatten</Text>
-            <Ionicons name="chatbubbles" style={{ marginLeft: 10 }} />
-          </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: SIZES.large,
+            fontWeight: "bold",
+            marginTop: "5%",
+            marginLeft: "4%",
+            marginBottom: "1%",
+          }}
+        >
+          Beiträge
+        </Text>
+        <View style={styles.posts}>
+          {user.posts.map((url: any, index: any) => (
+            <Image key={index} source={url} style={styles.post} />
+          ))}
         </View>
-      </View>
-      <Text
-        style={{
-          fontSize: SIZES.large,
-          fontWeight: "bold",
-          marginTop: "5%",
-          marginLeft: "4%",
-          marginBottom: "1%",
-        }}
-      >
-        Beiträge
-      </Text>
-      <View style={styles.posts}>
-        {user.posts.map((url: any, index: any) => (
-          <Image key={index} source={url} style={styles.post} />
-        ))}
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
 };
 export default FollowerProfile;
 

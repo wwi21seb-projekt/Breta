@@ -8,8 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { COLORS, SIZES, SHADOWS } from "../constants/theme";
-import { StackNavigationProp } from '@react-navigation/stack';
-
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import axios, { AxiosError } from "axios";
 
@@ -29,17 +28,14 @@ const Post: React.FC<PostProps> = ({ image }) => (
 
 export type RootStackParamList = {
   FollowerList: { type: number };
-  Authentification: undefined
+  Authentification: undefined;
 };
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, "FollowerList">;
 };
 
-
-
-const Profile: React.FC<Props> = ({ navigation })  => {
-
+const Profile: React.FC<Props> = ({ navigation }) => {
   const [userNotFound, setUserNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [username, setUsername] = useState("");
@@ -137,15 +133,24 @@ const Profile: React.FC<Props> = ({ navigation })  => {
               <Text style={styles.statValue}>{postsCount}</Text>
               <Text>Beiträge</Text>
             </View>
-            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FollowerList", { type: 0 })}>
+            <TouchableOpacity
+              style={styles.statItem}
+              onPress={() => navigation.navigate("FollowerList", { type: 0 })}
+            >
               <Text style={styles.statValue}>{followerCount}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FollowerList", { type: 1 })}>
+            <TouchableOpacity
+              style={styles.statItem}
+              onPress={() => navigation.navigate("FollowerList", { type: 1 })}
+            >
               <Text style={styles.statValue}>{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate("FollowerList", { type: 2 })}>
+            <TouchableOpacity
+              style={styles.statItem}
+              onPress={() => navigation.navigate("FollowerList", { type: 2 })}
+            >
               <Text style={styles.statValue}>2</Text>
               <Text>Anfragen</Text>
             </TouchableOpacity>
