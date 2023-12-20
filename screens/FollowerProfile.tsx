@@ -24,13 +24,53 @@ const Post: React.FC<PostProps> = ({ image }) => (
   <Image source={{ uri: image }} style={styles.post} />
 );
 
-const FollowerProfile = () => {
-  const route = useRoute();
-  const user = route.params.user;
+type User = {
+  id: string;
+  username: string;
+  nickname: string;
+  avatar: string;
+  posts: string[];
+  isFollowing: boolean;
+};
 
+
+interface RouteParams {
+  user?: User; 
+}
+
+function isUser(obj: any): obj is User {
   return (
-    <ScrollView style={styles.container}>
-      <Image source={user.avatar} style={styles.avatar} />
+    obj &&
+    typeof obj.id === 'string' &&
+    typeof obj.username === 'string' &&
+    typeof obj.nickname === 'string' &&
+    typeof obj.avatar === 'string' &&
+    Array.isArray(obj.posts) &&
+    typeof obj.isFollowing === 'boolean'
+  );
+}
+
+
+
+
+const FollowerProfile = () => {
+
+    const route = useRoute();
+
+    const params = route.params as RouteParams;
+    const user = params.user && isUser(params.user) ? params.user : null;
+
+    if (!user) {
+      return <Text>User nicht gefunden</Text>;
+  }
+
+    else return (
+      <ScrollView style={styles.container}>
+  
+  <Image
+    source={{ uri: user.avatar }}
+    style={styles.avatar}
+  />
 
       <View style={styles.header}>
         <View style={styles.userInfo}>

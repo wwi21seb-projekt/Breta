@@ -1,15 +1,9 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { SHADOWS, SIZES } from "../constants/theme";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { SHADOWS, SIZES, COLORS } from '../constants/theme';
+import { useRoute } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type User = {
   id: string;
@@ -20,8 +14,36 @@ type User = {
   isFollowing: boolean;
 };
 
-const FollowerList = () => {
-  const navigation = useNavigation();
+interface RouteParams {
+  type?: Number; 
+}
+
+export type RootStackParamList = {
+  FollowerProfile: { user: User };
+};
+
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList, "FollowerProfile">;
+};
+
+
+
+
+const FollowerList:  React.FC<Props> = ({ navigation })  => {
+
+  const route = useRoute();
+
+  const params = route.params as RouteParams;
+
+  const type = params.type ? params.type : 0;
+
+  const handleAccept = () => {
+    console.log('Nutzer akzeptiert.')
+  };
+
+  const handleReject = () => {
+    console.log('Nutzer abgelehnt.')
+  };
 
   const initialUsers: User[] = [
     {
@@ -61,33 +83,36 @@ const FollowerList = () => {
 
   return (
     <ScrollView>
-      <FlatList
-        style={{ marginVertical: 10 }}
-        data={users}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("FollowerProfile", { user: item });
-              }}
-              style={styles.touchable}
-            >
-              <Image source={{ uri: item.avatar }} style={styles.avatar} />
-              <Text style={styles.name}>{item.username}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleFollowPress(item.id)}
-            >
-              {/* hier muss Prüfung rein, ob schon gefolgt oder nicht */}
-              <Text style={{ fontSize: SIZES.small }}>
-                {item.isFollowing ? "Entfolgen" : "Folgen"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+    <FlatList
+    style={{marginVertical:10}}
+      data={users}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <View style={styles.item}>
+          <TouchableOpacity onPress={() => {navigation.navigate("FollowerProfile", { user: item });}} style={styles.touchable}>
+      <Image source={{ uri: item.avatar }} style={styles.avatar} />
+      <Text style={styles.name}>{item.username}</Text>
+    </TouchableOpacity>
+    { type === 2 ?  <> <TouchableOpacity
+          style={{marginRight: '1%'}}
+            onPress={() => handleAccept()}
+          >
+            <Ionicons style={{color: COLORS.green}} size={SIZES.large} name="checkmark-outline"></Ionicons>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleReject()}
+          >
+            <Ionicons style={{color: COLORS.red}} size={SIZES.large} name="close-outline"></Ionicons>
+          </TouchableOpacity></> : <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleFollowPress(item.id)}
+          >
+            {/* hier muss Prüfung rein, ob schon gefolgt oder nicht */}
+            <Text style={{fontSize: SIZES.small}}>{type === 0 && 'Folgen'}{type === 1 && 'Entfolgen'}</Text>
+          </TouchableOpacity>}
+        </View>
+      )}
+    />
     </ScrollView>
   );
 };
