@@ -13,99 +13,99 @@ const Tabs = createBottomTabNavigator();
 
 const TabBottomBar: React.FC = () => {
   return (
-      <Tabs.Navigator screenOptions={{ headerShown: false }}>
-        <Tabs.Screen
-          name="Feed"
-          component={Feed}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
+    <Tabs.Navigator screenOptions={{ headerShown: false }}>
+      <Tabs.Screen
+        name="Feed"
+        component={Feed}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="" />
+          ),
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              icon={"home"}
+              color={"black"}
+              style={{ marginRight: 10 }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Chat"
+        component={Chat}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="" />
+          ),
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              icon={"chatbubble"}
+              color={"black"}
+              style={{ marginRight: 10 }}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="Post"
+        component={Post}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="" />
+          ),
+
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.addIcon}>
               <TabBarIcon
                 focused={focused}
-                icon={"home"}
+                icon={"add"}
                 color={"black"}
-                style={{ marginRight: 10 }}
+                style={styles.addIconPlus}
               />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="Chat"
-          component={Chat}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"chatbubble"}
-                color={"black"}
-                style={{ marginRight: 10 }}
-              />
-            ),
-          }}
-        />
+            </View>
+          ),
+        }}
+      />
 
-        <Tabs.Screen
-          name="Post"
-          component={Post}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
+      <Tabs.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="" />
+          ),
 
-            tabBarIcon: ({ focused }) => (
-              <View style={styles.addIcon}>
-                <TabBarIcon
-                  focused={focused}
-                  icon={"add"}
-                  color={"black"}
-                  style={styles.addIconPlus}
-                />
-              </View>
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="Search"
-          component={Search}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"search"}
-                color={"black"}
-                style={{ marginRight: 10, fontWeight: 600 }}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"person"}
-                color={"black"}
-                style={{ marginRight: 10 }}
-              />
-            ),
-          }}
-        />
-      </Tabs.Navigator>
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              icon={"search"}
+              color={"black"}
+              style={{ marginRight: 10, fontWeight: 600 }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="" />
+          ),
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              focused={focused}
+              icon={"person"}
+              color={"black"}
+              style={{ marginRight: 10 }}
+            />
+          ),
+        }}
+      />
+    </Tabs.Navigator>
   );
 };
 

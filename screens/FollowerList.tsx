@@ -23,7 +23,7 @@ type User = {
 };
 
 interface RouteParams {
-  type?: number; 
+  type?: number;
 }
 
 export type RootStackParamList = {
