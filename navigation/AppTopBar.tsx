@@ -3,7 +3,7 @@ import { IconButton, Icon, HStack, Text } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from "react-native";
 
 type RootStackParamList = {
   Home: undefined;
