@@ -13,7 +13,7 @@
 - [ ] Die Anwendung sieht auf unterschiedlichen Bildschirmgrößen und -formaten von mobilen Endgeräten gut aus (responsive Design)
 - [ ] Die Anwendung funktioniert sowohl auf IOS, als auch auf Android
 - [ ] Die Farbgebung deckt sich mit dem festgelegten Theme
-- [ ] Es wurden Stylesheets verwendet, anstatt manuell CSS-Code zu schreiben
+- [ ] Falls zusätzlich zu TailwindCSS weitere Styles verwendet werden mussten, wurde dies in einem seperaten Stylesheet (in Stylesheets Directory) gemacht
 - [ ] Der Benutzer hat eine klare Navigationsstruktur (z.B. farbliche Markierung auf welchem Tab er ich gerade befindet oder wie er zurücknavigieren kann)
 - [ ] Interaktionspunkte (Buttons, Inputs, etc.) sind für den Benutzer klar ersichtlich und leicht zu bedienen
 
