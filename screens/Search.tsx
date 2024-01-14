@@ -3,18 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 
 export default function Search() {
   return (
-    <View style={styles.container}>
-      <Text>Suche </Text>
+    <View className="flex h-screen justify-center items-center">
+      <Text className="text-xl">Suche</Text>
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

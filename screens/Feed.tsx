@@ -1,25 +1,41 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { COLORS, SIZES, SHADOWS } from "../constants/theme";
 
-export default function Feed() {
+type RootStackParamList = {
+  Auth: undefined;
+};
+
+type FeedScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, "Auth">;
+};
+
+const FeedScreen: React.FC<FeedScreenProps> = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Text>"Einmal ein Lumbegfgdr Jack bitte" ~Kemal, 08-10.2023</Text>
-      <StatusBar style="auto" />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.white,
+      }}
+    >
+      <Text style={{ marginBottom: 30 }}>Das ist die Feed Seite</Text>
+      <TouchableOpacity
+        style={{
+          backgroundColor: COLORS.primary,
+          padding: 12,
+          borderRadius: 18,
+          ...SHADOWS.medium,
+        }}
+        onPress={() => navigation.navigate("Authentification" as never)}
+      >
+        <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
+          Registrierung / Login
+        </Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addIcon: {
-    backgroundColor: "black",
-    width: 100, // Durchmesser des Kreises
-    height: 100, // Durchmesser des Kreises
-    borderRadius: 50, // Radius des Kreises (Hälfte des Durchmessers)
-  },
-});
+export default FeedScreen;
