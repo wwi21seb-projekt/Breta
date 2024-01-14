@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { COLORS, SIZES, SHADOWS } from "../constants/theme";
+import { COLORS, SIZES, SHADOWS } from "../theme";
 
 type RootStackParamList = {
   Auth: undefined;
@@ -21,7 +21,7 @@ const FeedScreen: React.FC<FeedScreenProps> = ({ navigation }) => {
       }}
     >
       <Text style={{ marginBottom: 30 }}>Das ist die Feed Seite</Text>
-      <TouchableOpacity
+      <TouchableOpacity 
         style={{
           backgroundColor: COLORS.primary,
           padding: 12,

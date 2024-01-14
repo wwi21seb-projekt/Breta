@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, SIZES, SHADOWS } from "./theme";
+import { COLORS, SIZES, SHADOWS } from "../theme";
 
 const styles = StyleSheet.create({
   inputContainer: {

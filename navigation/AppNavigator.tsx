@@ -10,7 +10,6 @@ import Authentification from "../screens/Authentification";
 import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerList";
 import FollowerProfile from "../screens/FollowerProfile";
-import { COLORS } from "../constants/theme";
 
 const Stack = createStackNavigator();
 
@@ -28,16 +27,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Impressum" component={Impressum} />
           <Stack.Screen name="FollowerList" component={FollowerList} />
           <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
-          <Stack.Screen
-            name="Authentification"
-            component={Authentification}
-            options={{
-              headerTitle: "Authentification",
-              cardStyle: {
-                backgroundColor: COLORS.white,
-              },
-            }}
-          />
+          <Stack.Screen name="Authentification" component={Authentification}/>
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
         </Stack.Navigator>
       </NativeBaseProvider>

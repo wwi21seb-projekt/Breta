@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import FloatingTextInput from "../components/FloatingTextInput";
-import { SIZES, SHADOWS, COLORS } from "../constants/theme";
+import { SIZES, SHADOWS, COLORS } from "../theme";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
@@ -205,7 +205,7 @@ const Register = () => {
       />
       {!!emailError && (
         <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
+          style={{ color: "#FF2D55", paddingBottom: 20, textAlign: "center" }}
         >
           {emailError}
         </Text>

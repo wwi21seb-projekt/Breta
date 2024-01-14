@@ -7,8 +7,7 @@ import {
   Easing,
   TouchableWithoutFeedback,
 } from "react-native";
-import styles from "../constants/styles";
-import { COLORS } from "../constants/theme";
+import styles from "../stylesheets/styleFloatingInput";
 
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
@@ -41,9 +40,9 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? COLORS.blue : COLORS.darkgray;
+  let color = isFocused ? "#080F9C" : "#A9A9A9";
   if (errorText) {
-    color = COLORS.red;
+    color = "#FF2D55";
   }
 
   return (

@@ -8,7 +8,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { SHADOWS, SIZES, COLORS } from "../constants/theme";
+import { SHADOWS, SIZES, COLORS } from "../theme";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
