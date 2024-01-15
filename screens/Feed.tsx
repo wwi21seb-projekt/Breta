@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { COLORS, SIZES, SHADOWS } from "../constants/theme";
+import { COLORS, SIZES, SHADOWS } from "../theme";
 
 type RootStackParamList = {
   Auth: undefined;

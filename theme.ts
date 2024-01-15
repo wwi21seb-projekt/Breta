@@ -1,16 +1,12 @@
 const COLORS = {
   primary: "#00CED1",
   secondary: "#E7F7E9",
-
   lightgray: "#d3d3d3",
   darkgray: "#A9A9A9",
-
   white: "#FFFFFF",
   black: "#000000",
-
   green: "#4CD964",
   red: "#FF2D55",
-  blue: "#080F9C",
 };
 
 const SIZES = {

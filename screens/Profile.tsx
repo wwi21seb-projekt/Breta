@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { COLORS, SIZES, SHADOWS } from "../constants/theme";
+import { COLORS, SIZES, SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import axios, { AxiosError } from "axios";

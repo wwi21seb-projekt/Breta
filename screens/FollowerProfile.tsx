@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { COLORS, SIZES, SHADOWS } from "../constants/theme";
+import { COLORS, SIZES, SHADOWS } from "../theme";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 

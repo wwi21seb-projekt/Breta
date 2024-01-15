@@ -1,9 +1,8 @@
-import { IconButton, Icon, HStack, Text } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Icon, HStack, Text, Center } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native";
-import { SIZES } from "../constants/theme";
+import { useRoute } from "@react-navigation/native";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
 
 type RootStackParamList = {
   Home: undefined;
@@ -14,8 +13,7 @@ type AppTopBarProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
 };
 
-const AppTopBar: React.FC<AppTopBarProps> = () => {
-  const navigation = useNavigation();
+const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
   const route = useRoute();
 
   const canGoBack = navigation.canGoBack();
@@ -23,41 +21,19 @@ const AppTopBar: React.FC<AppTopBarProps> = () => {
   let headerTitle;
 
   if (route.name === "Impressum") {
-    headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Impressum
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Impressum</Text>;
   } else if (route.name === "Authentification") {
-    headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Authentification
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Authentifikation</Text>;
   } else if (route.name === "FollowerList") {
-    headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Follower
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Follower</Text>;
   } else if (route.name === "FollowedList") {
-    headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Gefolgt
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Gefolgt</Text>;
   } else if (route.name === "FriendRequest") {
     headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Freundschaftsanfragen
-      </Text>
+      <Text className="text-lg font-bold">Freundschaftsanfragen</Text>
     );
   } else if (route.name === "ConfirmCode") {
-    headerTitle = (
-      <Text fontSize={SIZES.large} fontWeight="bold">
-        Login
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Login</Text>;
   } else {
     headerTitle = (
       <Text fontSize="20" fontWeight="bold">
@@ -67,42 +43,35 @@ const AppTopBar: React.FC<AppTopBarProps> = () => {
   }
 
   return (
-    <SafeAreaView>
-      <>
-        <HStack px="1" py="3" alignItems="center" width="100%" shadow="9">
-          <HStack flex={1} justifyContent="flex-start">
-            {canGoBack && (
-              <IconButton
-                icon={
-                  <Icon
-                    as={MaterialIcons}
-                    name="arrow-back"
-                    size="xl"
-                    color="black"
-                  />
-                }
-                onPress={() => navigation.goBack()}
-              />
-            )}
-          </HStack>
+    <SafeAreaView className="bg-white">
+      <HStack className="px-3 py-1">
+        <View className="flex-1 justify-center">
+          {canGoBack && (
+            <TouchableOpacity
+              className="self-start"
+              onPress={() => navigation.goBack()}
+            >
+              <Icon as={Ionicons} name="arrow-back" size="xl" color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
 
-          <HStack flex={2} justifyContent="center">
-            {/* <Text fontSize="20" fontWeight="bold">
-              BRE<Text style={{ color: "aqua" }}>T</Text>A
-              </Text> */}
-            {headerTitle}
-          </HStack>
+        <View className="flex-2 justify-center">{headerTitle}</View>
 
-          <HStack flex={1} justifyContent="flex-end">
-            <IconButton
-              icon={
-                <Icon as={MaterialIcons} name="info" size="sm" color="black" />
-              }
-              onPress={() => navigation.navigate("Impressum")}
+        <View className="flex-1 justify-center">
+          <TouchableOpacity
+            className="self-end"
+            onPress={() => navigation.navigate("Impressum")}
+          >
+            <Icon
+              as={Ionicons}
+              name="information-circle-outline"
+              size="lg"
+              color="black"
             />
-          </HStack>
-        </HStack>
-      </>
+          </TouchableOpacity>
+        </View>
+      </HStack>
     </SafeAreaView>
   );
 };

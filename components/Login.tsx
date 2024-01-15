@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import FloatingTextInput from "../components/FloatingTextInput";
 import axios from "axios";
-import { baseUrl } from "../constants/config";
-import styles from "../constants/styles";
+import { baseUrl } from "../env";
+import styles from "../stylesheets/styleFloatingInput";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { SIZES, COLORS } from "../constants/theme";
+// import { SIZES, COLORS } from "../constants/theme";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -81,8 +81,8 @@ const Login = () => {
           {
             backgroundColor:
               isEmailFilled && emailRegex.test(email) && password.length >= 8
-                ? COLORS.primary
-                : COLORS.lightgray,
+                ? "#00CED1"
+                : "#d3d3d3",
           },
         ]}
         onPress={handleLogin}
@@ -90,9 +90,7 @@ const Login = () => {
           !isEmailFilled || !emailRegex.test(email) || password.length < 8
         }
       >
-        <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
-          Einloggen
-        </Text>
+        <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
       </TouchableOpacity>
     </View>
   );

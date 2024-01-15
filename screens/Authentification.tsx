@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { SIZES, COLORS } from "../constants/theme";
-import styles from "../constants/styles";
+import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import { SIZES, COLORS } from "../theme";
+import styles from "../stylesheets/styleFloatingInput";
 import Register from "../components/Register";
 import Login from "../components/Login";
 
@@ -13,7 +13,7 @@ const AuthScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, marginTop: 60 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <View style={{ flexDirection: "row", marginVertical: 40 }}>
         <TouchableOpacity
           style={[
@@ -54,7 +54,7 @@ const AuthScreen = () => {
           <Login />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
