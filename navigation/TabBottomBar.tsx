@@ -22,7 +22,12 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon as={Ionicons} name="home" size="md" color={focused ? COLORS.primary : COLORS.black}/>
+            <Icon
+              as={Ionicons}
+              name="home"
+              size="md"
+              color={focused ? COLORS.primary : COLORS.black}
+            />
           ),
         }}
       />
@@ -32,7 +37,12 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon as={Ionicons} name="chatbubble" size="md" color={focused ? COLORS.primary : COLORS.black}/>
+            <Icon
+              as={Ionicons}
+              name="chatbubble"
+              size="md"
+              color={focused ? COLORS.primary : COLORS.black}
+            />
           ),
         }}
       />
@@ -44,7 +54,12 @@ const TabBottomBar: React.FC = () => {
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
             <View style={stylePlusIcon.addIcon}>
-               <Icon as={Ionicons} name="add" size="md" color={focused ? COLORS.primary : COLORS.black}/>
+              <Icon
+                as={Ionicons}
+                name="add"
+                size="md"
+                color={focused ? COLORS.primary : COLORS.black}
+              />
             </View>
           ),
         }}
@@ -56,7 +71,12 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon as={Ionicons} name="search" size="md" color={focused ? COLORS.primary : COLORS.black}/>
+            <Icon
+              as={Ionicons}
+              name="search"
+              size="md"
+              color={focused ? COLORS.primary : COLORS.black}
+            />
           ),
         }}
       />
@@ -66,13 +86,17 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon as={Ionicons} name="person" size="md" color={focused ? COLORS.primary : COLORS.black}/>
+            <Icon
+              as={Ionicons}
+              name="person"
+              size="md"
+              color={focused ? COLORS.primary : COLORS.black}
+            />
           ),
         }}
       />
     </Tabs.Navigator>
   );
 };
-
 
 export default TabBottomBar;

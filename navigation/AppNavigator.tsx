@@ -27,7 +27,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Impressum" component={Impressum} />
           <Stack.Screen name="FollowerList" component={FollowerList} />
           <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
-          <Stack.Screen name="Authentification" component={Authentification}/>
+          <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
         </Stack.Navigator>
       </NativeBaseProvider>

@@ -90,9 +90,7 @@ const Login = () => {
           !isEmailFilled || !emailRegex.test(email) || password.length < 8
         }
       >
-        <Text style={{ color: "#000000", fontSize: 20 }}>
-          Einloggen
-        </Text>
+        <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
       </TouchableOpacity>
     </View>
   );

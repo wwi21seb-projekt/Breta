@@ -21,41 +21,19 @@ const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
   let headerTitle;
 
   if (route.name === "Impressum") {
-    headerTitle = (
-      <Text className="text-lg font-bold">
-        Impressum
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Impressum</Text>;
   } else if (route.name === "Authentification") {
-    headerTitle = (
-      <Text className="text-lg font-bold">
-        Authentifikation
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Authentifikation</Text>;
   } else if (route.name === "FollowerList") {
-    headerTitle = (
-      <Text className="text-lg font-bold">
-        Follower
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Follower</Text>;
   } else if (route.name === "FollowedList") {
-    headerTitle = (
-      <Text className="text-lg font-bold">
-        Gefolgt
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Gefolgt</Text>;
   } else if (route.name === "FriendRequest") {
     headerTitle = (
-      <Text className="text-lg font-bold">
-        Freundschaftsanfragen
-      </Text>
+      <Text className="text-lg font-bold">Freundschaftsanfragen</Text>
     );
   } else if (route.name === "ConfirmCode") {
-    headerTitle = (
-      <Text className="text-lg font-bold">
-        Login
-      </Text>
-    );
+    headerTitle = <Text className="text-lg font-bold">Login</Text>;
   } else {
     headerTitle = (
       <Text fontSize="20" fontWeight="bold">
@@ -66,25 +44,34 @@ const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView className="bg-white">
-        <HStack className="px-3 py-1">
-          <View className="flex-1 justify-center">
-            {canGoBack && (
-            <TouchableOpacity className="self-start" onPress={() => navigation.goBack()}>
+      <HStack className="px-3 py-1">
+        <View className="flex-1 justify-center">
+          {canGoBack && (
+            <TouchableOpacity
+              className="self-start"
+              onPress={() => navigation.goBack()}
+            >
               <Icon as={Ionicons} name="arrow-back" size="xl" color="black" />
             </TouchableOpacity>
-            )}
-          </View>
+          )}
+        </View>
 
-          <View className="flex-2 justify-center">
-            {headerTitle}
-          </View>
+        <View className="flex-2 justify-center">{headerTitle}</View>
 
-          <View className="flex-1 justify-center">
-            <TouchableOpacity className="self-end" onPress={() => navigation.navigate("Impressum")}>
-              <Icon as={Ionicons} name="information-circle-outline" size="lg" color="black" />
-            </TouchableOpacity>
-          </View>
-        </HStack>
+        <View className="flex-1 justify-center">
+          <TouchableOpacity
+            className="self-end"
+            onPress={() => navigation.navigate("Impressum")}
+          >
+            <Icon
+              as={Ionicons}
+              name="information-circle-outline"
+              size="lg"
+              color="black"
+            />
+          </TouchableOpacity>
+        </View>
+      </HStack>
     </SafeAreaView>
   );
 };

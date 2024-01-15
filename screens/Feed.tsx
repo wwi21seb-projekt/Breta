@@ -21,7 +21,7 @@ const FeedScreen: React.FC<FeedScreenProps> = ({ navigation }) => {
       }}
     >
       <Text style={{ marginBottom: 30 }}>Das ist die Feed Seite</Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={{
           backgroundColor: COLORS.primary,
           padding: 12,
