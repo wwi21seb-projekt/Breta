@@ -6,9 +6,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { COLORS, SIZES, SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { baseUrl } from "../env";
 
 import axios, { AxiosError } from "axios";
 
@@ -18,13 +20,13 @@ const posts = [
   { name: "max", source: require("../assets/images/Max.jpeg") },
 ];
 
-type PostProps = {
-  image: string;
-};
+// type PostProps = {
+//   image: string;
+// };
 
-const Post: React.FC<PostProps> = ({ image }) => (
-  <Image source={{ uri: image }} style={styles.post} />
-);
+// const Post: React.FC<PostProps> = ({ image }) => (
+//   <Image source={{ uri: image }} style={styles.post} />
+// );
 
 export type RootStackParamList = {
   FollowerList: { type: number };
@@ -50,7 +52,7 @@ const Profile: React.FC<Props> = ({ navigation }) => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/users/:username",
+          `${baseUrl}users/:username`,
         );
         setUsername(response.data.username);
         setNickname(response.data.nickname);
@@ -87,168 +89,85 @@ const Profile: React.FC<Props> = ({ navigation }) => {
 
   if (notAuthorized) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Du musst dich erst anmelden</Text>
+      <SafeAreaView className="flex bg-white justify-center items-center">
+        <Text className="text-lg">Du musst dich erst anmelden</Text>
         <TouchableOpacity
-          style={styles.errorButton}
+        className="bg-primary my-10 px-16 py-8 rounded-xl shadow-md"
           onPress={() => navigation.navigate("Authentification" as never)}
         >
           Anmelden
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   } else if (userNotFound) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>User not found</Text>
-      </View>
+      <SafeAreaView className="flex bg-white justify-center items-center">
+        <Text className="text-lg">User not found</Text>
+      </SafeAreaView>
     );
   } else
     return (
-      <ScrollView style={styles.container}>
-        <Image source={posts[2].source} style={styles.avatar} />
+      <SafeAreaView>
+      <ScrollView className="flex bg-white">
+        <Image source={posts[2].source} className="w-full h-48" />
 
-        <View style={styles.header}>
-          <View style={styles.userInfo}>
-            <Text style={styles.name}>{nickname}</Text>
-            <Text
-              style={{
-                fontSize: SIZES.medium,
-                color: COLORS.darkgray,
-                marginBottom: "3%",
-              }}
+        <View className="items-center p-10">
+            <Text className="text-xl font-bold">{nickname}</Text>
+            <Text className="font-base text-darkgray"
             >
               @{username}
             </Text>
-            <Text style={{ marginBottom: 12, marginTop: 6 }}>{status}</Text>
+            <Text className="my-4">{status}</Text>
             <TouchableOpacity
-              style={styles.editButton}
+              style={{...SHADOWS.medium}}
+              className="bg-white my-10 px-12 py-4 rounded-full" 
               onPress={() => console.log("Test")}
-            >
-              <Text style={{ fontSize: SIZES.medium }}>Profil bearbeiten</Text>
+            > 
+              <Text>Profil bearbeiten</Text>
             </TouchableOpacity>
-          </View>
-          <View style={styles.stats}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{postsCount}</Text>
+  
+          <View className="w-full justify-center flex-row space-around">
+            <View className="items-center justify-center p-3">
+              <Text className="font-bold text-base">{postsCount}</Text>
               <Text>Beiträge</Text>
             </View>
             <TouchableOpacity
-              style={styles.statItem}
+              className="items-center justify-center p-3"
               onPress={() => navigation.navigate("FollowerList", { type: 0 })}
             >
-              <Text style={styles.statValue}>{followerCount}</Text>
+              <Text className="font-bold text-base">{followerCount}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.statItem}
+              className="items-center justify-center p-3"
               onPress={() => navigation.navigate("FollowerList", { type: 1 })}
             >
-              <Text style={styles.statValue}>{followingCount}</Text>
+              <Text className="font-bold text-base">{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.statItem}
+              className="items-center justify-center p-3"
               onPress={() => navigation.navigate("FollowerList", { type: 2 })}
             >
-              <Text style={styles.statValue}>2</Text>
+              <Text className="font-bold text-base">2</Text>
               <Text>Anfragen</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <Text
-          style={{
-            fontSize: SIZES.large,
-            fontWeight: "bold",
-            marginTop: "5%",
-            marginLeft: "4%",
-            marginBottom: "1%",
-          }}
+        <Text className="font-bold text-xl ml-6"
         >
           Beiträge
         </Text>
-        <View style={styles.posts}>
-          {posts.map((image, index) => (
-            <Post key={index} image={image.source} />
+        <View className="flex-row justify-between flex-wrap mx-6 my-2">
+  
+          {posts.map((post, index) => (
+            <Image key={index} source={post.source} className="rounded-3xl aspect-square my-2" style={{width: "47%"}}/>
           ))}
+    
         </View>
       </ScrollView>
+      </SafeAreaView>
     );
 };
 export default Profile;
 
-const styles = StyleSheet.create({
-  errorContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  header: {
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 10,
-  },
-  avatar: {
-    width: "100%",
-    height: "30%",
-  },
-
-  userInfo: {
-    alignItems: "center",
-  },
-  name: {
-    fontWeight: "bold",
-    fontSize: 28,
-    marginBottom: "1%",
-  },
-  editButton: {
-    marginVertical: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 18,
-    ...SHADOWS.medium,
-  },
-  errorText: {
-    fontSize: SIZES.large,
-  },
-  errorButton: {
-    marginVertical: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 18,
-    backgroundColor: COLORS.primary,
-    ...SHADOWS.medium,
-  },
-  stats: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 10,
-  },
-  statItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
-  },
-  statValue: {
-    fontWeight: "bold",
-    fontSize: SIZES.medium,
-  },
-  posts: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: "7%",
-  },
-  post: {
-    width: "46%",
-    aspectRatio: 1,
-    borderRadius: 18,
-    marginVertical: "3%",
-  },
-});
