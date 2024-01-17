@@ -5,13 +5,13 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
 } from "react-native";
-import { SHADOWS, SIZES, COLORS } from "../theme";
+import { SHADOWS, COLORS } from "../theme";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Icon } from "native-base";
 
 type User = {
   id: string;
@@ -34,7 +34,7 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList, "FollowerProfile">;
 };
 
-const FollowerList: React.FC<Props> = ({ navigation }) => {
+const UserList: React.FC<Props> = ({ navigation }) => {
   const route = useRoute();
 
   const params = route.params as RouteParams;
@@ -86,50 +86,45 @@ const FollowerList: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView className="bg-white">
       <FlatList
-        style={{ marginVertical: 10 }}
+        className="my-6"
         data={users}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.item}>
+          <View 
+          className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
+          style={{...SHADOWS.medium}}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("FollowerProfile", { user: item });
               }}
-              style={styles.touchable}
+              className="flex-1 flex-row items-center"
             >
-              <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
-              <Text style={styles.name}>{item.username}</Text>
+              <Image source={item.avatarUrl} 
+              className="aspect-square rounded-full w-10" />
+              <Text className="text-base ml-3">{item.username}</Text>
             </TouchableOpacity>
             {type === 2 ? (
               <>
-                {" "}
                 <TouchableOpacity
-                  style={{ marginRight: "1%" }}
+                  className="mr-2"
                   onPress={() => handleAccept()}
                 >
-                  <Ionicons
-                    style={{ color: COLORS.green }}
-                    size={SIZES.large}
-                    name="checkmark-outline"
-                  ></Ionicons>
+                  <Icon as={Ionicons} name="checkmark-outline" size="md" color={COLORS.green} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleReject()}>
-                  <Ionicons
-                    style={{ color: COLORS.red }}
-                    size={SIZES.large}
-                    name="close-outline"
-                  ></Ionicons>
+                <Icon as={Ionicons} name="close-outline" size="md" color={COLORS.red} />
                 </TouchableOpacity>
               </>
             ) : (
               <TouchableOpacity
-                style={styles.button}
+              className="py-1 px-2 rounded-3xl"
+                style={{borderWidth: 1}}
                 onPress={() => handleFollowPress(item.id)}
               >
                 {/* hier muss Prüfung rein, ob schon gefolgt oder nicht */}
-                <Text style={{ fontSize: SIZES.small }}>
+                <Text className="text-xs">
                   {type === 0 && "Folgen"}
                   {type === 1 && "Entfolgen"}
                 </Text>
@@ -142,38 +137,4 @@ const FollowerList: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginVertical: 7,
-    marginHorizontal: 12,
-    borderRadius: 18,
-    ...SHADOWS.medium,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 25,
-  },
-  name: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: SIZES.medium,
-  },
-  button: {
-    borderWidth: 1,
-    paddingVertical: 3,
-    paddingHorizontal: 6,
-    borderRadius: 18,
-  },
-  touchable: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-});
-
-export default FollowerList;
+export default UserList;

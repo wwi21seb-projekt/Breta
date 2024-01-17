@@ -20,8 +20,9 @@ const posts = [
 ];
 
 type RootStackParamList = {
-  FollowerList: { type: number };
+  UserList: { type: number };
   Authentification: undefined;
+  EditProfile: undefined
 };
 
 type Props = {
@@ -84,7 +85,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         <Text className="text-lg">Du musst dich erst anmelden</Text>
         <TouchableOpacity
         className="bg-primary my-10 px-16 py-8 rounded-xl shadow-md"
-          onPress={() => navigation.navigate("Authentification" as never)}
+          onPress={() => navigation.navigate("Authentification")}
         >
           Anmelden
         </TouchableOpacity>
@@ -98,8 +99,8 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     );
   } else
     return (
-      <SafeAreaView>
-      <ScrollView className="flex bg-white">
+      <SafeAreaView className="flex bg-white">
+      <ScrollView>
         <Image source={posts[2].source} className="w-full h-48" />
 
         <View className="items-center p-10">
@@ -112,7 +113,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity
               style={{...SHADOWS.medium}}
               className="bg-white my-10 px-12 py-4 rounded-full" 
-              onPress={() => console.log("Test")}
+              onPress={() => navigation.navigate("EditProfile")}
             > 
               <Text>Profil bearbeiten</Text>
             </TouchableOpacity>
@@ -124,21 +125,21 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 0 })}
+              onPress={() => navigation.navigate("UserList", { type: 0 })}
             >
               <Text className="font-bold text-base">{followerCount}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 1 })}
+              onPress={() => navigation.navigate("UserList", { type: 1 })}
             >
               <Text className="font-bold text-base">{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 2 })}
+              onPress={() => navigation.navigate("UserList", { type: 2 })}
             >
               <Text className="font-bold text-base">2</Text>
               <Text>Anfragen</Text>
