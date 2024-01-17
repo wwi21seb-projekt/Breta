@@ -6,7 +6,7 @@ import AppTopBar from "./AppTopBar";
 import TabBottomBar from "./TabBottomBar";
 
 import Impressum from "../screens/Impressum";
-import Authentification from "../screens/Authentification";
+import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerList";
 import FollowerProfile from "../screens/FollowerProfile";

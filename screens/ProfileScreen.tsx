@@ -3,12 +3,11 @@ import {
   View,
   Text,
   Image,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { COLORS, SIZES, SHADOWS } from "../theme";
+import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { baseUrl } from "../env";
 
@@ -20,24 +19,16 @@ const posts = [
   { name: "max", source: require("../assets/images/Max.jpeg") },
 ];
 
-// type PostProps = {
-//   image: string;
-// };
-
-// const Post: React.FC<PostProps> = ({ image }) => (
-//   <Image source={{ uri: image }} style={styles.post} />
-// );
-
-export type RootStackParamList = {
+type RootStackParamList = {
   FollowerList: { type: number };
   Authentification: undefined;
 };
 
 type Props = {
-  navigation: StackNavigationProp<RootStackParamList, "FollowerList">;
+  navigation: StackNavigationProp<RootStackParamList>;
 };
 
-const Profile: React.FC<Props> = ({ navigation }) => {
+const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const [userNotFound, setUserNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [username, setUsername] = useState("");
@@ -169,5 +160,5 @@ const Profile: React.FC<Props> = ({ navigation }) => {
       </SafeAreaView>
     );
 };
-export default Profile;
+export default ProfileScreen;
 
