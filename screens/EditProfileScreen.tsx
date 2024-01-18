@@ -7,20 +7,21 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from "axios";
 import { baseUrl } from "../env";
 import { Icon } from "native-base";
+import { useRoute } from "@react-navigation/native";
 
 
-const dummyUser = {
-  image: require("../assets/images/Kevin.jpeg"),
-  nickname: "DübelDoc",
-  username: "top_G_3",
-  status: "Wer den Dübel nicht ehrt, ist die Sneak nicht wert!"
+interface RouteParams {
+  user: any
 }
 
 const EditProfileScreen = () => {
+  const route = useRoute();
+  const params = route.params as RouteParams;
+  const user = params.user ? params.user : 0;
   const [casualError, setCasualError] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
-  const [nickname, setNickname] = useState(dummyUser.nickname);
-  const [status, setStatus] = useState(dummyUser.status);
+  const [nickname, setNickname] = useState(user.nickname);
+  const [status, setStatus] = useState(user.status);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -99,11 +100,11 @@ const handleTrivialInfoChange = () => {
   };
 
   const onNicknameContentSizeChange = (event: any) => {
-    setNicknameHeight(event.nativeEvent.contentSize.height);
+    setNicknameHeight(event.nativeEvent.contentSize.height + 10);
   };
 
   const onStatusContentSizeChange = (event: any) => {
-    setStatusHeight(event.nativeEvent.contentSize.height);
+    setStatusHeight(event.nativeEvent.contentSize.height + 10);
   };
 
   const handleNicknameChange = (text: string) => {
@@ -177,14 +178,14 @@ const handleTrivialInfoChange = () => {
     <ScrollView className="bg-white">
       <View className="items-center">
       <Image
-          source={dummyUser.image}
+          source={user.avatarUrl}
           className="w-3/5 h-36 rounded-full mt-8 mb-3"
         
         />
          </View>
          <Text  className="text-base text-darkgray self-center mb-4" 
-              >@{dummyUser.username}</Text> 
-        <View className="text-center bg-white p-2 mx-16 mb-3 rounded-2xl" style={{...SHADOWS.medium}}>
+              >@{user.username}</Text> 
+        <View className="text-center bg-white p-2 mx-16 mb-3 rounded-2xl" style={{...SHADOWS.small}}>
         <TextInput
             className="text-center text-2xl"
           style={{height: nicknameHeight}}
@@ -201,7 +202,7 @@ const handleTrivialInfoChange = () => {
         >{nickname.length} / {maxCharactersNickname}</Text>
         </View>
 
-<View className="text-center bg-white p-2 mx-16 mb-3 rounded-2xl" style={{...SHADOWS.medium}}>
+<View className="text-center bg-white p-2 mx-16 mb-3 rounded-2xl" style={{...SHADOWS.small}}>
         <TextInput
          className="text-center text-base"
           style={{height: statusHeight}}

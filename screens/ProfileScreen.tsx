@@ -18,7 +18,7 @@ import axios, { AxiosError } from "axios";
 type RootStackParamList = {
   FollowerList: { type: number, users: any };
   Authentification: undefined;
-  EditProfile: undefined
+  EditProfile: { user: any };
 };
 
 type Props = {
@@ -109,7 +109,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity
               style={{...SHADOWS.medium}}
               className="bg-white my-10 px-12 py-4 rounded-full" 
-              onPress={() => navigation.navigate("EditProfile")}
+              onPress={() => navigation.navigate("EditProfile", {user: dummyData[0]})}
             > 
               <Text>Profil bearbeiten</Text>
             </TouchableOpacity>
