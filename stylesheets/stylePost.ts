@@ -2,11 +2,10 @@ import { StyleSheet } from "react-native";
 import { COLORS, SHADOWS } from "../theme";
 
 const styles = StyleSheet.create({
-
   textInput: {
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
-    padding: 8
+    padding: 8,
   },
   postButton: {
     backgroundColor: COLORS.primary,
@@ -14,10 +13,10 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginHorizontal: 120,
     padding: 12,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 18,
-    ...SHADOWS.medium
-  }
-})
+    ...SHADOWS.medium,
+  },
+});
 
-export default styles
+export default styles;
