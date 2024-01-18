@@ -11,6 +11,7 @@ import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { baseUrl } from "../env";
 import {dummyData} from "../DummyData";
+import { useNavigation } from '@react-navigation/native';
 
 import axios, { AxiosError } from "axios";
 
@@ -21,11 +22,10 @@ type RootStackParamList = {
   EditProfile: { user: any };
 };
 
-type Props = {
-  navigation: StackNavigationProp<RootStackParamList>;
-};
+type NavigationType = StackNavigationProp<RootStackParamList, 'FollowerList'>;
 
-const ProfileScreen: React.FC<Props> = ({ navigation }) => {
+const ProfileScreen = () => {
+  const navigation = useNavigation<NavigationType>();
   const [userNotFound, setUserNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [username, setUsername] = useState("");
