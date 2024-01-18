@@ -10,6 +10,7 @@ import Authentification from "../screens/Authentification";
 import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerList";
 import FollowerProfile from "../screens/FollowerProfile";
+import Post from "../screens/Post";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+          <Stack.Screen name="PostPage" component={Post}/>
         </Stack.Navigator>
       </NativeBaseProvider>
     </NavigationContainer>
