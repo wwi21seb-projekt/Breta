@@ -120,13 +120,32 @@ const UserProfile: React.FC<Props> = ({user, personal}) => {
               @{username}
             </Text>
             <Text className="my-4">{status}</Text>
-            <TouchableOpacity
-              style={{...SHADOWS.medium}}
+            {personal === true ? (
+              <TouchableOpacity
+              style={{...SHADOWS.small}}
               className="bg-white my-10 px-12 py-4 rounded-full" 
               onPress={() => navigation.navigate("EditProfile", {user: user})}
             > 
               <Text>Profil bearbeiten</Text>
             </TouchableOpacity>
+            ) : (
+              <View className="w-full justify-center flex-row space-x-4">
+             <TouchableOpacity
+              style={{...SHADOWS.small}}
+              className="bg-white my-10 px-12 py-3 rounded-2xl" 
+              onPress={() => console.log("Chat starten")}
+            > 
+              <Text>Chatten</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+              style={{...SHADOWS.small}}
+              className="bg-white my-10 px-12 py-3 rounded-2xl" 
+              onPress={() => console.log("User folgen")}
+            > 
+              <Text>Folgen</Text>
+              </TouchableOpacity>
+             </View>
+            )}
   
           <View className="w-full justify-center flex-row space-around">
             <View className="items-center justify-center p-3">
@@ -147,13 +166,15 @@ const UserProfile: React.FC<Props> = ({user, personal}) => {
               <Text className="font-bold text-base">{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 2, users: dummyData })}
-            >
-              <Text className="font-bold text-base">2</Text>
-              <Text>Anfragen</Text>
-            </TouchableOpacity>
+            {personal === true &&
+        <TouchableOpacity
+        className="items-center justify-center p-3"
+        onPress={() => navigation.navigate("FollowerList", { type: 2, users: dummyData })}
+      >
+        <Text className="font-bold text-base">2</Text>
+        <Text>Anfragen</Text>
+      </TouchableOpacity>
+      }
           </View>
         </View>
         <Text className="font-bold text-xl ml-6"
