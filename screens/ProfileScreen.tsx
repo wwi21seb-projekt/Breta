@@ -10,6 +10,7 @@ import {
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { baseUrl } from "../env";
+import {dummyData} from "../DummyData";
 
 import axios, { AxiosError } from "axios";
 
@@ -20,7 +21,7 @@ const posts = [
 ];
 
 type RootStackParamList = {
-  FollowerList: { type: number };
+  FollowerList: { type: number, users: any };
   Authentification: undefined;
   EditProfile: undefined
 };
@@ -101,7 +102,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <SafeAreaView className="flex bg-white">
       <ScrollView>
-        <Image source={posts[2].source} className="w-full h-48" />
+        <Image source={dummyData[0].avatarUrl} className="w-full h-48" />
 
         <View className="items-center p-10">
             <Text className="text-xl font-bold">{nickname}</Text>
@@ -125,21 +126,21 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 0 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 0, users:  dummyData})}
             >
               <Text className="font-bold text-base">{followerCount}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 1 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 1, users: dummyData })}
             >
               <Text className="font-bold text-base">{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("FollowerList", { type: 2 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 2, users: dummyData })}
             >
               <Text className="font-bold text-base">2</Text>
               <Text>Anfragen</Text>
@@ -152,8 +153,8 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         </Text>
         <View className="flex-row justify-between flex-wrap mx-6 my-2">
   
-          {posts.map((post, index) => (
-            <Image key={index} source={post.source} className="rounded-3xl aspect-square my-2" style={{width: "47%"}}/>
+          {dummyData[0].posts.map((url, index) => (
+            <Image key={index} source={url} className="rounded-3xl aspect-square my-2" style={{width: "47%"}}/>
           ))}
     
         </View>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +7,6 @@ import {
   ScrollView,
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
-import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Icon } from "native-base";
@@ -23,23 +21,19 @@ type User = {
   isFollowing: boolean;
 };
 
-interface RouteParams {
-  type?: number;
-}
-
 type RootStackParamList = {
   GeneralProfile: { user: User };
 };
 
 type NavigationType = StackNavigationProp<RootStackParamList, 'GeneralProfile'>;
 
-const UserList = () => {
+type Props = {
+  type: number;
+  users: User[];
+};
+
+const UserList: React.FC<Props> = ({type, users}) => {
   const navigation = useNavigation<NavigationType>();
-  const route = useRoute();
-
-  const params = route.params as RouteParams;
-
-  const type = params.type ? params.type : 0;
 
   const handleAccept = () => {
     console.log("Nutzer akzeptiert.");
@@ -49,40 +43,8 @@ const UserList = () => {
     console.log("Nutzer abgelehnt.");
   };
 
-  const initialUsers = [
-    {
-      id: "1",
-      username: "top_G_3",
-      nickname: "Aleks069",
-      avatarUrl: require("../assets/images/Max.jpeg"),
-      posts: [
-        require("../assets/images/Ei.jpeg"),
-        require("../assets/images/Luca.jpeg"),
-      ],
-      isFollowing: true,
-    },
-    {
-      id: "2",
-      username: "koenig_kemal",
-      nickname: "Kevin",
-      avatarUrl: require("../assets/images/Kevin.jpeg"),
-      posts: [
-        require("../assets/images/Adrian.jpeg"),
-        require("../assets/images/Luca.jpeg"),
-        require("../assets/images/Aleks.jpeg"),
-      ],
-      isFollowing: true,
-    },
-  ];
-
-  const [users, setUsers] = useState<User[]>(initialUsers);
-
-  const handleFollowPress = (id: string) => {
-    setUsers((currentUsers) =>
-      currentUsers.map((user) =>
-        user.id === id ? { ...user, isFollowing: !user.isFollowing } : user,
-      ),
-    );
+  const handleFollowPress = () => {
+    console.log("Nutzer folgen oder entfolgen")
   };
 
   return (
@@ -94,7 +56,7 @@ const UserList = () => {
         renderItem={({ item }) => (
           <View 
           className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
-          style={{...SHADOWS.medium}}>
+          style={{...SHADOWS.small}}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("GeneralProfile", { user: item });
@@ -121,9 +83,8 @@ const UserList = () => {
               <TouchableOpacity
               className="py-1 px-2 rounded-3xl"
                 style={{borderWidth: 1}}
-                onPress={() => handleFollowPress(item.id)}
+                onPress={() => handleFollowPress()}
               >
-                {/* hier muss Prüfung rein, ob schon gefolgt oder nicht */}
                 <Text className="text-xs">
                   {type === 0 && "Folgen"}
                   {type === 1 && "Entfolgen"}
