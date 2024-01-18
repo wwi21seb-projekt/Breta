@@ -9,7 +9,7 @@ import Impressum from "../screens/Impressum";
 import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerListScreen";
-import GeneralProfile from "../screens/GeneralProfileScreen"
+import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
 
 const Stack = createStackNavigator();
