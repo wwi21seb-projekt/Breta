@@ -20,7 +20,7 @@ const posts = [
 ];
 
 type RootStackParamList = {
-  UserList: { type: number };
+  FollowerList: { type: number };
   Authentification: undefined;
   EditProfile: undefined
 };
@@ -125,21 +125,21 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("UserList", { type: 0 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 0 })}
             >
               <Text className="font-bold text-base">{followerCount}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("UserList", { type: 1 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 1 })}
             >
               <Text className="font-bold text-base">{followingCount}</Text>
               <Text>Gefolgt</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="items-center justify-center p-3"
-              onPress={() => navigation.navigate("UserList", { type: 2 })}
+              onPress={() => navigation.navigate("FollowerList", { type: 2 })}
             >
               <Text className="font-bold text-base">2</Text>
               <Text>Anfragen</Text>

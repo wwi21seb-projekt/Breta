@@ -8,8 +8,8 @@ import TabBottomBar from "./TabBottomBar";
 import Impressum from "../screens/Impressum";
 import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
-import UserList from "../screens/UserList";
-import FollowerProfile from "../screens/FollowerProfile";
+import FollowerList from "../screens/FollowerListScreen";
+import GeneralProfile from "../screens/GeneralProfileScreen"
 import EditProfile from "../screens/EditProfileScreen";
 
 const Stack = createStackNavigator();
@@ -26,8 +26,8 @@ const AppNavigator: React.FC = () => {
         >
           <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
           <Stack.Screen name="Impressum" component={Impressum} />
-          <Stack.Screen name="UserList" component={UserList} />
-          <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
+          <Stack.Screen name="FollowerList" component={FollowerList} />
+          <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
           <Stack.Screen name="EditProfile" component={EditProfile} />

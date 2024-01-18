@@ -12,13 +12,14 @@ import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Icon } from "native-base";
+import { useNavigation } from '@react-navigation/native';
 
 type User = {
   id: string;
   username: string;
   nickname: string;
-  avatarUrl: string;
-  posts: string[];
+  avatarUrl: number;
+  posts: number[];
   isFollowing: boolean;
 };
 
@@ -26,15 +27,14 @@ interface RouteParams {
   type?: number;
 }
 
-export type RootStackParamList = {
-  FollowerProfile: { user: User };
+type RootStackParamList = {
+  GeneralProfile: { user: User };
 };
 
-type Props = {
-  navigation: StackNavigationProp<RootStackParamList, "FollowerProfile">;
-};
+type NavigationType = StackNavigationProp<RootStackParamList, 'GeneralProfile'>;
 
-const UserList: React.FC<Props> = ({ navigation }) => {
+const UserList = () => {
+  const navigation = useNavigation<NavigationType>();
   const route = useRoute();
 
   const params = route.params as RouteParams;
@@ -49,7 +49,7 @@ const UserList: React.FC<Props> = ({ navigation }) => {
     console.log("Nutzer abgelehnt.");
   };
 
-  const initialUsers: User[] = [
+  const initialUsers = [
     {
       id: "1",
       username: "top_G_3",
@@ -97,7 +97,7 @@ const UserList: React.FC<Props> = ({ navigation }) => {
           style={{...SHADOWS.medium}}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("FollowerProfile", { user: item });
+                navigation.navigate("GeneralProfile", { user: item });
               }}
               className="flex-1 flex-row items-center"
             >
