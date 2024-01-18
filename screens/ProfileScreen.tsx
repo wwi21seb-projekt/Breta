@@ -14,11 +14,6 @@ import {dummyData} from "../DummyData";
 
 import axios, { AxiosError } from "axios";
 
-const posts = [
-  { name: "kevin", source: require("../assets/images/Kevin.jpeg") },
-  { name: "luca", source: require("../assets/images/Luca.jpeg") },
-  { name: "max", source: require("../assets/images/Max.jpeg") },
-];
 
 type RootStackParamList = {
   FollowerList: { type: number, users: any };
@@ -36,7 +31,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [status, setStatus] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");
+  // const [profilePicture, setProfilePicture] = useState("");
   const [followerCount, setFollowerCount] = useState("");
   const [followingCount, setFollowingCount] = useState("");
   const [postsCount, setPostsCount] = useState("");
@@ -50,7 +45,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         setUsername(response.data.username);
         setNickname(response.data.nickname);
         setStatus(response.data.status);
-        setProfilePicture(posts[2].source);
+        // setProfilePicture(response.data.source);
         setFollowerCount(response.data.follower);
         setFollowingCount(response.data.following);
         setPostsCount(response.data.posts);
