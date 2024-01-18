@@ -10,18 +10,19 @@ import { baseUrl } from "../env";
 
 const Search = () => {
 
-  // type User = {
-  //   username: string,
-  //   nickname: string,
-  //   profilePictureUrl: string
-  // }
+  interface User {
+    username: string;
+    nickname: string;
+    profilePictureUrl: string;
+  }
 
-  let data: any
+  let data!: any
 
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebounce(searchInput, 1000);
 
   const [showResultList, setshowResultList] = useState(false)
+  const [users, setUsers] = useState<User[]>([])
   
 
 
@@ -48,7 +49,8 @@ const Search = () => {
       }
 
       if (response?.ok){
-        console.log(data)
+        setUsers(data.records)
+        console.log(users)
         setshowResultList(true)
       }
     })();
@@ -60,28 +62,28 @@ const Search = () => {
   }
 
   return (
-    <SafeAreaView className='bg-white'>
-      <View className='flex flex-row  bg-lightgray rounded-full m-4'>
-        <TextInput value={searchInput} placeholder='search for users' className='flex-1 p-4' onChangeText={handleSearchInputChange}/>
-          <TouchableOpacity className='flex items-center justify-center m-4'>
-            <Icon as={Ionicons} name="search-outline" size="xl" color="black"/>
-          </TouchableOpacity>
+    <SafeAreaView>
+      <View className='bg-white'>
+        <View className='flex flex-row  bg-lightgray rounded-full m-4'>
+          <TextInput value={searchInput} placeholder='search for users' className='flex-1 p-4' onChangeText={handleSearchInputChange}/>
+            <TouchableOpacity className='flex items-center justify-center m-4'>
+              <Icon as={Ionicons} name="search-outline" size="xl" color="black"/>
+            </TouchableOpacity>
+        </View>
       </View>
 
       {showResultList === true && (
         <View>
           <FlatList
-            data={data}
+            data={users}
             keyExtractor={(item) => item.username}
             renderItem={({item}) => (
-              <View>
-                <Text>ist die view am arsch?</Text>
-                <Text>item.username</Text>
-                <Text>item.nickname</Text>
-              </View>
+            <View>
+              <Text>{item.username}</Text>
+              <Text>{item.nickname}</Text>
+            </View>
             )}
             >
-
           </FlatList>
           </View>
       )}
