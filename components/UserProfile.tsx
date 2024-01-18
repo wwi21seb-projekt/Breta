@@ -51,43 +51,45 @@ const UserProfile: React.FC<Props> = ({user, personal}) => {
   const [postsCount, setPostsCount] = useState("");
 
   useEffect(() => {
+    const handleAxiosError = (error: AxiosError) => {
+      if (axios.isAxiosError(error) && error.response) {
+        switch (error.response.status) {
+          case 401:
+            setNotAuthorized(true);
+            break;
+          case 404:
+            setUserNotFound(true);
+            break;
+          default:
+            console.log("Unbekannter Fehler");
+        }
+      } else {
+        console.log("Netzwerkfehler oder keine Antwort vom Server");
+      }
+    };
+  
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `${baseUrl}users/:username`,
-        );
-        setUsername(response.data.username);
-        setNickname(response.data.nickname);
-        setStatus(response.data.status);
-        // setProfilePicture(response.data.source);
-        setFollowerCount(response.data.follower);
-        setFollowingCount(response.data.following);
-        setPostsCount(response.data.posts);
+        const response = await axios.get(`${baseUrl}users/:username`);
+        const { username, nickname, status, follower, following, posts } = response.data;
+        setUsername(username);
+        setNickname(nickname);
+        setStatus(status);
+        setFollowerCount(follower);
+        setFollowingCount(following);
+        setPostsCount(posts);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError;
-          if (axiosError.response) {
-            switch (axiosError.response.status) {
-              case 401:
-                setNotAuthorized(true);
-                break;
-              case 404:
-                setUserNotFound(true);
-                break;
-              default:
-                console.log("Unbekannter Fehler");
-            }
-          } else {
-            console.log("Netzwerkfehler oder keine Antwort vom Server");
-          }
+          handleAxiosError(error);
         } else {
           console.log("Ein unerwarteter Fehler ist aufgetreten");
         }
       }
     };
-
+  
     fetchUserData();
   }, []);
+  
 
   if (notAuthorized) {
     return (

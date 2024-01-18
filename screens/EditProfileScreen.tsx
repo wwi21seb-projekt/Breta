@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native';
-import { COLORS, SHADOWS, SIZES } from '../theme';
+import { COLORS, SHADOWS } from '../theme';
 import FloatingTextInput from '../components/FloatingTextInput';
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import axios from "axios";
 import { baseUrl } from "../env";
 import { Icon } from "native-base";
-import { useRoute } from "@react-navigation/native";
 
 
 interface RouteParams {
@@ -25,7 +24,7 @@ const EditProfileScreen = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordFieldVisible, setIsPasswordFieldVisible] = useState(false);
   const [isChangeSuccess, setIsChangeSuccess] = useState(false);
   const [nicknameHeight, setNicknameHeight] = useState();
   const [statusHeight, setStatusHeight] = useState();
@@ -72,7 +71,7 @@ const handleTrivialInfoChange = () => {
       })
       .then(function (response) {
         if (response.status == 200) {
-          setIsPasswordVisible(!isPasswordVisible); 
+          setIsPasswordFieldVisible(!isPasswordFieldVisible); 
           setIsChangeSuccess(true)
         }
       })
@@ -141,11 +140,11 @@ const handleTrivialInfoChange = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setIsPasswordVisible(false);
+      setIsPasswordFieldVisible(false);
       setIsChangeSuccess(false);
       
       return () => {
-        setIsPasswordVisible(false);
+        setIsPasswordFieldVisible(false);
         setIsChangeSuccess(false);
         setOldPassword("");
         setNewPassword("");
@@ -158,12 +157,6 @@ const handleTrivialInfoChange = () => {
     return (
       <SafeAreaView className="flex bg-white justify-center items-center">
         <Text className="text-lg">Du musst dich erst anmelden</Text>
-        {/* <TouchableOpacity
-          style={styles.errorButton}
-          onPress={() => navigation.navigate("Authentification" as never)}
-        >
-          Anmelden
-        </TouchableOpacity> */}
       </SafeAreaView>
     );
   } else if (casualError) {
@@ -219,11 +212,11 @@ const handleTrivialInfoChange = () => {
     
 
       <View className="bg-white">
-      <TouchableOpacity className="flex-row mt-6 ml-8 mb-3 items-center" onPress={() => {setIsPasswordVisible(!isPasswordVisible); setIsChangeSuccess(false)}}>
-        {isPasswordVisible && (
+      <TouchableOpacity className="flex-row mt-6 ml-8 mb-3 items-center" onPress={() => {setIsPasswordFieldVisible(!isPasswordFieldVisible); setIsChangeSuccess(false)}}>
+        {isPasswordFieldVisible && (
           <Icon as={Ionicons} name="chevron-down-outline" size="sm" color={COLORS.darkgray} />
         )}
-        {!isPasswordVisible && (
+        {!isPasswordFieldVisible && (
           <Icon as={Ionicons} name="chevron-forward-outline" size="sm" color={COLORS.darkgray}/>
         )}
       
@@ -235,7 +228,7 @@ const handleTrivialInfoChange = () => {
           <Text className="my-44 text-green">Das Passwort wurde erfolgreich geändert!</Text>
         )}
 
-      {isPasswordVisible && (
+      {isPasswordFieldVisible && (
         <View className="bg-white">
           <FloatingTextInput 
             secureTextEntry={true}
