@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,7 +49,7 @@ const UserList: React.FC<Props> = ({ type, users }) => {
   };
 
   return (
-    <ScrollView className="bg-white">
+    <View className="bg-white">
       <FlatList
         className="my-6"
         data={users}
@@ -107,7 +108,7 @@ const UserList: React.FC<Props> = ({ type, users }) => {
           </View>
         )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
