@@ -30,7 +30,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="FollowerProfile" component={FollowerProfile} />
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
-          <Stack.Screen name="PostPage" component={Post}/>
+          <Stack.Screen name="PostPage" component={Post} />
         </Stack.Navigator>
       </NativeBaseProvider>
     </NavigationContainer>

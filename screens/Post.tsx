@@ -6,8 +6,8 @@ import axios from 'axios'
 
 
 const Post = ({ navigation }) => {
-  const [postText, changePostText] = useState('')
-  const [postError, setPostError] = useState('')
+  const [postText, changePostText] = useState("");
+  const [postError, setPostError] = useState("");
 
   const createPost = () => {
     axios
@@ -17,22 +17,24 @@ const Post = ({ navigation }) => {
       .then(function (response) {
         if (response.status === 201) {
           setPostError("");
-          navigation.navigate('TopBar')
+          navigation.navigate("TopBar");
         }
       })
       .catch(function (error) {
         switch (error.response.status) {
           case 400: {
-            setPostError('The request body is invalid. Please check the request body and try again.')
-            break
+            setPostError(
+              "The request body is invalid. Please check the request body and try again.",
+            );
+            break;
           }
           case 401: {
-            setPostError('Unauthorized')
-            break
+            setPostError("Unauthorized");
+            break;
           }
         }
-      })
-  }
+      });
+  };
 
   return (
     <View className="bg-white flex-1">
@@ -40,7 +42,9 @@ const Post = ({ navigation }) => {
         <TextInput
           className='flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-[#ccc] rounded-[8px] p-2'
           value={postText}
-          onChangeText={(post) => { changePostText(post) }}
+          onChangeText={(post) => {
+            changePostText(post);
+          }}
           multiline={true}
           numberOfLines={8} // Anzahl der sichtbaren Zeilen
           placeholder="Verfasse hier deinen Text ..."
@@ -70,7 +74,7 @@ const Post = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default Post
+export default Post;
