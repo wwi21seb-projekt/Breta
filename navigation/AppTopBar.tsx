@@ -1,8 +1,9 @@
 import { Icon, HStack, Text } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { COLORS } from "../theme";
 import { useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -18,14 +19,11 @@ type RootStackParamList = {
   Home: undefined;
   Impressum: undefined;
 };
+type NavigationType = StackNavigationProp<RootStackParamList, "Home">;
 
-type AppTopBarProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
-};
-
-const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
+const AppTopBar = () => {
+  const navigation = useNavigation<NavigationType>();
   const route = useRoute();
-
   const canGoBack = navigation.canGoBack();
 
   
