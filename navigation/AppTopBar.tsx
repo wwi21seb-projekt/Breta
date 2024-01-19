@@ -1,9 +1,8 @@
 import { Icon, HStack, Text } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   TouchableOpacity,
