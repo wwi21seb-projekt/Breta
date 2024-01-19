@@ -1,6 +1,6 @@
 import { useState, React } from 'react'
 import { TextInput, TouchableOpacity, View, Text } from 'react-native'
-import { COLORS } from '../theme'
+import { SHADOWS, COLORS} from '../theme'
 import { baseUrl } from '../env'
 import axios from 'axios'
 
@@ -59,7 +59,7 @@ const Post = ({ navigation }) => {
       </View>
       <View className="bg-white justify-center flex-row">
         <TouchableOpacity
-          style={{ backgroundColor: postText === '' ? COLORS.lightgray : COLORS.primary }}
+          style={{ backgroundColor: postText === '' ? COLORS.lightgray : COLORS.primary, ...SHADOWS.small }}
           className='flex-1 mt-[50px] mx-[120px] p-3 items-center rounded-[18px]'
           disabled={postText === ''}
           onPress={() => { createPost() }}
