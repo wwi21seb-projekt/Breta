@@ -1,35 +1,21 @@
-import {useEffect, useState} from 'react'
-import {ScrollView, TextInput, View, TouchableOpacity, Text, SafeAreaView} from 'react-native'
+import { useEffect, useState } from 'react'
+import { TextInput, View, TouchableOpacity, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import {FlatList, Icon} from 'native-base'
+import { FlatList, Icon } from 'native-base'
 import { useDebounce } from 'use-debounce'
 import { baseUrl } from "../env";
-
-
-
-
+import { COLORS } from "../theme"
+import { User, ResponseData } from "../components/types/UserListTypes"
 const Search = () => {
-
-  interface User {
-    username: string;
-    nickname: string;
-    profilePictureUrl: string;
-  }
-
-  let data!: any
-
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebounce(searchInput, 1000);
-
+  
   const [showResultList, setshowResultList] = useState(false)
   const [users, setUsers] = useState<User[]>([])
   
-
-
   useEffect(() => {
-    
-
     (async () => {
+      let data!: ResponseData
       const encodedSearchValue = encodeURIComponent(debouncedSearchInput)
 
       const urlWithParams = `${baseUrl}users?username=${encodedSearchValue}&offset=0&limit=3000`
@@ -62,12 +48,12 @@ const Search = () => {
   }
 
   return (
-    <SafeAreaView>
+    <View>
       <View className='bg-white'>
         <View className='flex flex-row  bg-lightgray rounded-full m-4'>
           <TextInput value={searchInput} placeholder='search for users' className='flex-1 p-4' onChangeText={handleSearchInputChange}/>
             <TouchableOpacity className='flex items-center justify-center m-4'>
-              <Icon as={Ionicons} name="search-outline" size="xl" color="black"/>
+              <Icon as={Ionicons} name="search-outline" size="xl" color={COLORS.black}/>
             </TouchableOpacity>
         </View>
       </View>
@@ -87,7 +73,7 @@ const Search = () => {
           </FlatList>
           </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 export default Search
