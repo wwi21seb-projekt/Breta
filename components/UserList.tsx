@@ -3,9 +3,7 @@ import {
   Text,
   Image,
   FlatList,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
+  TouchableOpacity
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
