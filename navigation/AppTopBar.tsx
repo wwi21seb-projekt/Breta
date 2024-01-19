@@ -9,7 +9,7 @@ import {
   View,
   Platform,
   StatusBar,
-  Image
+  Image,
 } from "react-native";
 
 const logoUrl = "../assets/images/Breta_Logo.png";
@@ -25,7 +25,6 @@ const AppTopBar = () => {
   const route = useRoute();
   const canGoBack = navigation.canGoBack();
 
-  
   let headerTitle: string;
 
   if (route.name === "Impressum") {
@@ -37,11 +36,11 @@ const AppTopBar = () => {
   } else if (route.name === "FollowedList") {
     headerTitle = "Gefolgt";
   } else if (route.name === "FriendRequest") {
-    headerTitle = "Freundschaftsanfragen"
+    headerTitle = "Freundschaftsanfragen";
   } else if (route.name === "ConfirmCode") {
     headerTitle = "Login";
   } else {
-    headerTitle =  ""
+    headerTitle = "";
   }
 
   return (
@@ -58,30 +57,37 @@ const AppTopBar = () => {
               className="self-start"
               onPress={() => navigation.goBack()}
             >
-              <Icon as={Ionicons} name="arrow-back" size="xl" color={COLORS.black} />
+              <Icon
+                as={Ionicons}
+                name="arrow-back"
+                size="xl"
+                color={COLORS.black}
+              />
             </TouchableOpacity>
           )}
         </View>
 
         <View className="flex-2 justify-center">
-        { headerTitle !== "" ? (
-          <Text className="text-xl font-bold">{headerTitle}</Text>
-        ) : (
-          <Image source={require(logoUrl)} className="w-20 h-full"/>
-        )}
-          </View>
+          {headerTitle !== "" ? (
+            <Text className="text-xl font-bold">{headerTitle}</Text>
+          ) : (
+            <Image source={require(logoUrl)} className="w-20 h-full" />
+          )}
+        </View>
 
         <View className="flex-1 justify-center">
           <TouchableOpacity
             className="self-end"
             onPress={() => navigation.navigate("Impressum")}
           >
-            {headerTitle !== "Impressum" && <Icon
-              as={Ionicons}
-              name="information-circle-outline"
-              size="lg"
-              color={COLORS.black}
-            />}
+            {headerTitle !== "Impressum" && (
+              <Icon
+                as={Ionicons}
+                name="information-circle-outline"
+                size="lg"
+                color={COLORS.black}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </HStack>

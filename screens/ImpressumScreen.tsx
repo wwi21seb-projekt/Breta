@@ -20,7 +20,9 @@ const Impressum = () => {
         });
         data = await response.json();
       } catch (error) {
-        setError("Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.")
+        setError(
+          "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
+        );
       }
       if (response?.ok) {
         setImpressumText(data.text);
@@ -31,19 +33,18 @@ const Impressum = () => {
   if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
-      <Text className="text-base">{error}</Text>
-    </View>
+        <Text className="text-base">{error}</Text>
+      </View>
     );
-  }
-  else return (
-    <View className="pb-10 px-5 bg-white h-full">
-      <ScrollView showsVerticalScrollIndicator={false}>
-      <Text className="text-base">{impressumText}</Text>
-      <Text className="text-base">{impressumText}</Text>
-    </ScrollView>
-    </View>
-  );
-}
+  } else
+    return (
+      <View className="pb-10 px-5 bg-white h-full">
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text className="text-base">{impressumText}</Text>
+          <Text className="text-base">{impressumText}</Text>
+        </ScrollView>
+      </View>
+    );
+};
 
 export default Impressum;
-

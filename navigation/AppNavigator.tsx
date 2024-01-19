@@ -21,7 +21,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Navigator
           screenOptions={({ navigation }) => ({
             headerShown: true,
-            header: () => <AppTopBar/>,
+            header: () => <AppTopBar />,
           })}
         >
           <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
