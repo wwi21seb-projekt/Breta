@@ -2,8 +2,13 @@ import { Icon, HStack, Text, Center } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRoute } from "@react-navigation/native";
-import { SafeAreaView, TouchableOpacity, View } from "react-native";
-
+import {
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Platform,
+  StatusBar,
+} from "react-native";
 type RootStackParamList = {
   Home: undefined;
   Impressum: undefined;
@@ -43,7 +48,12 @@ const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView className="bg-white">
+    <SafeAreaView
+      className="bg-white"
+      style={{
+        paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
+      }}
+    >
       <HStack className="px-3 py-1">
         <View className="flex-1 justify-center">
           {canGoBack && (
