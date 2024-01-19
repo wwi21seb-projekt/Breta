@@ -1,42 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import axios from "axios";
-import { COLORS } from "../theme";
+import { useState, useEffect } from "react";
+import { Text, View } from "react-native";
+import { baseUrl } from "../env";
 
-export default function Impressum() {
+const Impressum = () => {
   const [impressumText, setImpressumText] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchImpressum = async () => {
+    (async () => {
+      let data;
+      let response;
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/v1/imprint",
-        );
-        setImpressumText(response.data.text);
-        console.log(impressumText);
+        response = await fetch(`${baseUrl}imprint`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        data = await response.json();
       } catch (error) {
-        console.error("Fehler beim Abrufen des Impressums:", error);
+        setError("Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.")
       }
-    };
+      if (response?.ok) {
+        setImpressumText(data.text);
+      }
+    })();
+  });
 
-    fetchImpressum();
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <Text>Impressum</Text>
-      <Text>{impressumText}</Text>
-      <StatusBar style="auto" />
+  if (error !== "") {
+    return (
+      <View className="p-6 bg-white h-full">
+      <Text className="text-base">{error}</Text>
+    </View>
+    );
+  }
+  else return (
+    <View className="p-6 bg-white h-full">
+      <Text className="text-base">{impressumText}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default Impressum;
+
