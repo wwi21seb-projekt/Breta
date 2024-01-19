@@ -1,7 +1,6 @@
-import { useState, React} from 'react'
-import { StyleSheet, TextInput, TouchableOpacity, View, Text} from 'react-native'
-import styles from '../stylesheets/stylePost'
-import { COLORS, SIZES } from '../theme'
+import { useState, React } from 'react'
+import { TextInput, TouchableOpacity, View, Text } from 'react-native'
+import { COLORS } from '../theme'
 import { baseUrl } from '../env'
 import axios from 'axios'
 
@@ -39,8 +38,7 @@ const Post = ({ navigation }) => {
     <View className="bg-white flex-1">
       <View className="bg-white justify-center flex-row">
         <TextInput
-          style={styles.textInput} 
-          className='flex-1 border-2 mt-10 ml-2.5 mr-2.5'
+          className='flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-[#ccc] rounded-[8px] p-2'
           value={postText}
           onChangeText={(post) => { changePostText(post) }}
           multiline={true}
@@ -50,24 +48,23 @@ const Post = ({ navigation }) => {
         />
       </View>
       <View className="mt-1.5 ml-2.5 justify-start flex-row" >
-        <Text style={{ color: COLORS.black, fontSize: SIZES.small }}>{postText.length} / 256</Text>
+        <Text className='text-black text-xs'>{postText.length} / 256</Text>
       </View>
       <View>
       {!(postError.length === 0) && (
-        <Text
-          style={{ color: COLORS.red, paddingTop: 20, textAlign: "center" }}
-        >
+        <Text className='text-red pt-5 text-center'>
           {postError}
         </Text>
       )}
       </View>
       <View className="bg-white justify-center flex-row">
         <TouchableOpacity
-          style={[styles.postButton, { backgroundColor: postText === '' ? COLORS.lightgray : COLORS.primary }]}
+          style={{ backgroundColor: postText === '' ? COLORS.lightgray : COLORS.primary }}
+          className='flex-1 mt-[50px] mx-[120px] p-3 items-center rounded-[18px]'
           disabled={postText === ''}
           onPress={() => { createPost() }}
         >
-          <Text style={{ color: COLORS.black, fontSize: SIZES.small }}>
+          <Text className='text-black text-xs'>
             Beitrag erstellen
           </Text>
         </TouchableOpacity>

@@ -58,9 +58,7 @@ const TabBottomBar: React.FC = () => {
             }
           })}
         options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="" />
-          ),
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
             <View style={stylePlusIcon.addIcon}>
               <Icon
