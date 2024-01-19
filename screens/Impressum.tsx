@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 import { baseUrl } from "../env";
+import { ScrollView } from "native-base";
 
 const Impressum = () => {
   const [impressumText, setImpressumText] = useState("");
@@ -35,8 +36,11 @@ const Impressum = () => {
     );
   }
   else return (
-    <View className="p-6 bg-white h-full">
+    <View className="pb-10 px-5 bg-white h-full">
+      <ScrollView showsVerticalScrollIndicator={false}>
       <Text className="text-base">{impressumText}</Text>
+      <Text className="text-base">{impressumText}</Text>
+    </ScrollView>
     </View>
   );
 }
