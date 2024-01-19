@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity
-} from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
