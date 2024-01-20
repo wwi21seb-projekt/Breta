@@ -9,12 +9,12 @@ import {
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { dummyData } from "../DummyData";
+import { dummyUrls } from "../DummyData";
 import { User } from "../components/types/User";
 
 
 type RootStackParamList = {
-  FollowerList: { type: number };
+  FollowerList: { type: string };
   Authentification: undefined;
   EditProfile: { user: any };
 };
@@ -74,7 +74,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               <TouchableOpacity
                 className="items-center justify-center p-3"
                 onPress={() =>
-                  navigation.navigate("FollowerList", { type: 0 })
+                  navigation.navigate("FollowerList", { type: "followers" })
                 }
               >
                 <Text className="font-bold text-base">{user.follower}</Text>
@@ -84,7 +84,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 className="items-center justify-center p-3"
                 onPress={() =>
                   navigation.navigate("FollowerList", {
-                    type: 1
+                    type: "following"
                   })
                 }
               >
@@ -96,7 +96,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                   className="items-center justify-center p-3"
                   onPress={() => console.log("Wird noch implementiert")
                     // navigation.navigate("FollowerList", {
-                    //   type: 2
+                    //   type: "request"
                   
                     // })
                   }
@@ -109,7 +109,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
           </View>
           <Text className="font-bold text-xl ml-6">Beiträge</Text>
           <View className="flex-row justify-between flex-wrap mx-6 my-2">
-            {dummyData[0].posts.map((url, index) => (
+            {dummyUrls.map((url, index) => (
               <Image
                 key={index}
                 source={url}

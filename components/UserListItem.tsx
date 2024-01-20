@@ -4,29 +4,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+import { ListUser } from "./types/UserListTypes";
 
-type User = {
-  id: string;
-  username: string;
-  nickname: string;
-  avatarUrl: number;
-  posts: number[];
-  isFollowing: boolean;
-};
+// type RootStackParamList = {
+//   GeneralProfile: { user: User };
+// };
 
-type RootStackParamList = {
-  GeneralProfile: { user: User };
-};
-
-type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
+// type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 
 type Props = {
-  type: number;
-  users: User[];
+  type: string;
+  user: ListUser;
 };
 
-const UserList: React.FC<Props> = ({ type, users }) => {
-  const navigation = useNavigation<NavigationType>();
+const UserList: React.FC<Props> = ({ type, user }) => {
+  // const navigation = useNavigation<NavigationType>();
 
   const handleAccept = () => {
     console.log("Nutzer akzeptiert.");
@@ -41,29 +33,25 @@ const UserList: React.FC<Props> = ({ type, users }) => {
   };
 
   return (
-    <View className="bg-white">
-      <FlatList
-        className="my-6"
-        data={users}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
+    <View
             className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
             style={{ ...SHADOWS.small }}
           >
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("GeneralProfile", { user: item });
+                console.log("Auf User Profil navigieren")
+                // navigation.navigate("GeneralProfile", { user: item });
               }}
               className="flex-1 flex-row items-center"
             >
               <Image
-                source={item.avatarUrl}
+              source={require("../assets/images/Max.jpeg")}
+                // source={user.profilePictureUrl} sobald Bilder da sind
                 className="aspect-square rounded-full w-10"
               />
-              <Text className="text-base ml-3">{item.username}</Text>
+              <Text className="text-base ml-3">{user.username}</Text>
             </TouchableOpacity>
-            {type === 2 ? (
+            {type === "request" ? (
               <>
                 <TouchableOpacity
                   className="mr-2"
@@ -92,15 +80,12 @@ const UserList: React.FC<Props> = ({ type, users }) => {
                 onPress={() => handleFollowPress()}
               >
                 <Text className="text-xs">
-                  {type === 0 && "Folgen"}
-                  {type === 1 && "Entfolgen"}
+                  {type === "followers" && "Folgen"}
+                  {type === "following" && "Entfolgen"}
                 </Text>
               </TouchableOpacity>
             )}
           </View>
-        )}
-      />
-    </View>
   );
 };
 
