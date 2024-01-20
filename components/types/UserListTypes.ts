@@ -1,11 +1,11 @@
-export interface User {
+export interface ListUser {
   username: string;
   nickname: string;
   profilePictureUrl: string;
 }
 
 export interface ResponseData {
-  records: User[];
+  records: ListUser[];
   pagination: {
     offset: number;
     limit: number;

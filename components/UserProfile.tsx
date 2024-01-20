@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
