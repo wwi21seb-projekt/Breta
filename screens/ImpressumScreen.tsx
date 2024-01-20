@@ -25,7 +25,8 @@ const Impressum = () => {
           setError(
             "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
           );
-      }} catch (error) {
+        }
+      } catch (error) {
         setError(
           "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
         );
@@ -39,7 +40,7 @@ const Impressum = () => {
         <Text className="text-base">{error}</Text>
       </View>
     );
-  } else if(impressumText !== ""){
+  } else if (impressumText !== "") {
     return (
       <View className="pb-10 px-5 bg-white h-full">
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -50,11 +51,12 @@ const Impressum = () => {
   } else {
     return (
       <View className="p-6 bg-white h-full">
-        <Text className="text-base">Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.</Text>
+        <Text className="text-base">
+          Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.
+        </Text>
       </View>
     );
   }
-
 };
 
 export default Impressum;
