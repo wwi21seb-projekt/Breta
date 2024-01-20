@@ -18,14 +18,17 @@ const Impressum = () => {
             "Content-Type": "application/json",
           },
         });
-        data = await response.json();
-      } catch (error) {
+        if (response.ok) {
+          data = await response.json();
+          setImpressumText(data.text);
+        } else {
+          setError(
+            "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
+          );
+      }} catch (error) {
         setError(
           "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
         );
-      }
-      if (response?.ok) {
-        setImpressumText(data.text);
       }
     })();
   });
@@ -36,15 +39,22 @@ const Impressum = () => {
         <Text className="text-base">{error}</Text>
       </View>
     );
-  } else
+  } else if(impressumText !== ""){
     return (
       <View className="pb-10 px-5 bg-white h-full">
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text className="text-base">{impressumText}</Text>
-          <Text className="text-base">{impressumText}</Text>
         </ScrollView>
       </View>
     );
+  } else {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.</Text>
+      </View>
+    );
+  }
+
 };
 
 export default Impressum;
