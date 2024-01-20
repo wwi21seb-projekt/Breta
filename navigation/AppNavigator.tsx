@@ -5,7 +5,7 @@ import { NativeBaseProvider } from "native-base";
 import AppTopBar from "./AppTopBar";
 import TabBottomBar from "./TabBottomBar";
 
-import Impressum from "../screens/Impressum";
+import Impressum from "../screens/ImpressumScreen";
 import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerListScreen";
@@ -21,7 +21,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Navigator
           screenOptions={({ navigation }) => ({
             headerShown: true,
-            header: () => <AppTopBar navigation={navigation} />,
+            header: () => <AppTopBar />,
           })}
         >
           <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
