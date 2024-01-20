@@ -8,44 +8,52 @@ import { COLORS } from "../theme";
 import { User, ResponseData } from "../components/types/UserListTypes";
 const Search = () => {
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput] = useDebounce(searchInput, 1000);
+  const [debouncedSearchInput] = useDebounce(searchInput, 500);
 
   const [showResultList, setshowResultList] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
+    if (!searchInput.trim()) {
+      return;
+    }
     (async () => {
-      let data!: ResponseData;
-      const encodedSearchValue = encodeURIComponent(debouncedSearchInput);
+    let data!: ResponseData;
+    const encodedSearchValue = encodeURIComponent(debouncedSearchInput);
 
-      const urlWithParams = `${baseUrl}users?username=${encodedSearchValue}&offset=0&limit=3000`;
+    const urlWithParams = `${baseUrl}users?username=${encodedSearchValue}&offset=0&limit=3000`;
 
-      console.log(urlWithParams);
-      let response;
+    console.log(urlWithParams);
+    let response;
 
-      try {
-        response = await fetch(urlWithParams, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        data = await response.json();
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      data = await response.json();
+    } catch (error) {
+      console.log(error);
+    }
 
-      if (response?.ok) {
-        setUsers(data.records);
-        console.log(users);
-        setshowResultList(true);
-      }
-    })();
-    console.log(debouncedSearchInput);
+    if (response?.ok) {
+      setUsers(data.records);
+      console.log(users);
+      setshowResultList(true);
+    }
+  })();
+  console.log(debouncedSearchInput);
   }, [debouncedSearchInput]);
 
   const handleSearchInputChange = (searchInput: string) => {
-    setSearchInput(searchInput);
+    if (searchInput === ""){
+      setSearchInput("")
+      setshowResultList(false)
+    }else{
+      setSearchInput(searchInput);
+    }
   };
 
   return (
