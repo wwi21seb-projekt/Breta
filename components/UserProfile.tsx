@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,24 +9,13 @@ import {
 } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { baseUrl } from "../env";
 import { useNavigation } from "@react-navigation/native";
 import { dummyData } from "../DummyData";
-import axios, { AxiosError } from "axios";
+import { User } from "../components/types/User";
 
-const users = dummyData;
-
-type User = {
-  id: string;
-  username: string;
-  nickname: string;
-  avatarUrl: number;
-  posts: number[];
-  isFollowing: boolean;
-};
 
 type RootStackParamList = {
-  FollowerList: { type: number; users: any };
+  FollowerList: { type: number };
   Authentification: undefined;
   EditProfile: { user: any };
 };
@@ -39,89 +28,20 @@ type NavigationType = StackNavigationProp<RootStackParamList, "FollowerList">;
 
 const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const navigation = useNavigation<NavigationType>();
-  const [userNotFound, setUserNotFound] = useState(false);
-  const [notAuthorized, setNotAuthorized] = useState(false);
-  const [username, setUsername] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [status, setStatus] = useState("");
-  // const [profilePicture, setProfilePicture] = useState("");
-  const [followerCount, setFollowerCount] = useState("");
-  const [followingCount, setFollowingCount] = useState("");
-  const [postsCount, setPostsCount] = useState("");
 
-  useEffect(() => {
-    const handleAxiosError = (error: AxiosError) => {
-      if (axios.isAxiosError(error) && error.response) {
-        switch (error.response.status) {
-          case 401:
-            setNotAuthorized(true);
-            break;
-          case 404:
-            setUserNotFound(true);
-            break;
-          default:
-            console.log("Unbekannter Fehler");
-        }
-      } else {
-        console.log("Netzwerkfehler oder keine Antwort vom Server");
-      }
-    };
-
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}users/:username`);
-        const { username, nickname, status, follower, following, posts } =
-          response.data;
-        setUsername(username);
-        setNickname(nickname);
-        setStatus(status);
-        setFollowerCount(follower);
-        setFollowingCount(following);
-        setPostsCount(posts);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          handleAxiosError(error);
-        } else {
-          console.log("Ein unerwarteter Fehler ist aufgetreten");
-        }
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  if (notAuthorized) {
     return (
-      <SafeAreaView className="flex bg-white justify-center items-center">
-        <Text className="text-lg">Du musst dich erst anmelden</Text>
-        <TouchableOpacity
-          className="bg-primary my-10 px-16 py-8 rounded-xl shadow-md"
-          onPress={() => navigation.navigate("Authentification")}
-        >
-          Anmelden
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  } else if (userNotFound) {
-    return (
-      <SafeAreaView className="flex bg-white justify-center items-center">
-        <Text className="text-lg">User not found</Text>
-      </SafeAreaView>
-    );
-  } else
-    return (
-      <SafeAreaView className="flex bg-white">
-        <ScrollView>
-          <Image source={user.avatarUrl} className="w-full h-48" />
-
-          <View className="items-center p-10">
-            <Text className="text-xl font-bold">{nickname}</Text>
-            <Text className="font-base text-darkgray">@{username}</Text>
-            <Text className="my-4">{status}</Text>
+      <View className="bg-white pb-4">
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Image source={require("../assets/images/Max.jpeg")} className="w-full h-48" />
+          {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
+          <View className="items-center p-6">
+            <Text className="text-2xl font-bold mb-2">{user.nickname}</Text>
+            <Text className="italic text-lg text-darkgray mb-6">@{user.username}</Text>
+            <Text className="mb-8">{user.status}</Text>
             {personal === true ? (
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
-                className="bg-white my-10 px-12 py-4 rounded-full"
+                className="bg-white mb-10 px-12 py-4 rounded-full"
                 onPress={() =>
                   navigation.navigate("EditProfile", { user: user })
                 }
@@ -149,41 +69,40 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
             <View className="w-full justify-center flex-row space-around">
               <View className="items-center justify-center p-3">
-                <Text className="font-bold text-base">{postsCount}</Text>
+                <Text className="font-bold text-base">{user.posts}</Text>
                 <Text>Beiträge</Text>
               </View>
               <TouchableOpacity
                 className="items-center justify-center p-3"
                 onPress={() =>
-                  navigation.navigate("FollowerList", { type: 0, users })
+                  navigation.navigate("FollowerList", { type: 0 })
                 }
               >
-                <Text className="font-bold text-base">{followerCount}</Text>
+                <Text className="font-bold text-base">{user.follower}</Text>
                 <Text>Follower</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="items-center justify-center p-3"
                 onPress={() =>
                   navigation.navigate("FollowerList", {
-                    type: 1,
-                    users: dummyData,
+                    type: 1
                   })
                 }
               >
-                <Text className="font-bold text-base">{followingCount}</Text>
+                <Text className="font-bold text-base">{user.following}</Text>
                 <Text>Gefolgt</Text>
               </TouchableOpacity>
               {personal === true && (
                 <TouchableOpacity
                   className="items-center justify-center p-3"
-                  onPress={() =>
-                    navigation.navigate("FollowerList", {
-                      type: 2,
-                      users: dummyData,
-                    })
+                  onPress={() => console.log("Wird noch implementiert")
+                    // navigation.navigate("FollowerList", {
+                    //   type: 2
+                  
+                    // })
                   }
                 >
-                  <Text className="font-bold text-base">2</Text>
+                  <Text className="font-bold text-base">0</Text>
                   <Text>Anfragen</Text>
                 </TouchableOpacity>
               )}
@@ -201,7 +120,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
             ))}
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
 };
 export default UserProfile;
