@@ -11,6 +11,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { dummyUrls } from "../DummyData";
 import { User } from "../components/types/User";
+import { baseUrl } from "../env";
 
 
 type RootStackParamList = {
@@ -28,6 +29,86 @@ type NavigationType = StackNavigationProp<RootStackParamList, "FollowerList">;
 const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const navigation = useNavigation<NavigationType>();
 
+  const following = user.username;
+  const [isFollowed, setIsFollowed] = useState(user.subscriptionId === "" ? false : true);
+  const [error, setError] = useState("");
+  
+  const handleSubscription = async () => {
+    let response;
+    if (!isFollowed) {
+      try {
+        response = await fetch(`${baseUrl}subscriptions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            following 
+          })
+        });
+  
+        if (response.ok) {
+          setIsFollowed(true);
+        } else {
+          switch (response.status) {
+            case 401:
+              setError("Auf das Login Popup navigieren!");
+              break;
+            case 404:
+              setError("Der Nutzer, den du abbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.");
+              break;
+            case 406:
+              setError("Du kannst dir nicht selbst folgen.");
+              break;
+            case 409:
+              setError("Du folgst diesem Nutzer bereits.");
+              break;  
+            default:
+              setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+          }
+        }
+      } catch (error) {
+        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      }
+    }
+    else {
+      try {
+        response = await fetch(`${baseUrl}subscriptions:${user.subscriptionId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+        if (response.ok) {
+          setIsFollowed(false);
+        } else {
+          switch (response.status) {
+            case 401:
+              setError("Auf das Login Popup navigieren!");
+              break;
+            case 403:
+              setError("Du kannst nur deine eigenen Abbonements löschen.");
+              break;
+            case 404:
+              setError("Der Nutzer, den du deabbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.");
+              break; 
+            default:
+              setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+          }
+        }
+      } catch (error) {
+        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      }
+    }
+    
+  };
+  if (error !== "") {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">{error}</Text>
+      </View>
+    );
+    } else {
     return (
       <View className="bg-white pb-4">
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -59,9 +140,9 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 <TouchableOpacity
                   style={{ ...SHADOWS.small }}
                   className="bg-white my-10 px-12 py-3 rounded-2xl"
-                  onPress={() => console.log("User folgen")}
+                  onPress={() => handleSubscription()}
                 >
-                  <Text>{user.subscriptionId === "" ? ("Folgen") : ("Entfolgen")}</Text>
+                  <Text>{isFollowed  ? "Entfolgen": "Folgen"}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -121,5 +202,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         </ScrollView>
       </View>
     );
+            }
 };
 export default UserProfile;

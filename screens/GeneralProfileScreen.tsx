@@ -60,7 +60,7 @@ const GeneralProfileScreen = () => {
       );
     } else if (user !== undefined) {
       return (
-        <UserProfile personal={true} user={user} />
+        <UserProfile personal={false} user={user} />
       )
     } 
      else {

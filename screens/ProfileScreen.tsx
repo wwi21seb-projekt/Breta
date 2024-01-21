@@ -4,7 +4,7 @@ import { View, Text } from "react-native";
 import { User } from "../components/types/User";
 import { baseUrl } from "../env";
 
-const personalUserUsername = "test_user"
+const personalUserUsername = "aleks_069"
 
 const ProfileScreen = () => {
 

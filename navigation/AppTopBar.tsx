@@ -39,7 +39,11 @@ const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
     );
   } else if (route.name === "ConfirmCode") {
     headerTitle = <Text className="text-lg font-bold">Login</Text>;
-  } else {
+  } 
+  else if (route.name === "Error") {
+    headerTitle = "";
+  }
+  else {
     headerTitle = (
       <Text fontSize="20" fontWeight="bold">
         BRE<Text style={{ color: "aqua" }}>T</Text>A
