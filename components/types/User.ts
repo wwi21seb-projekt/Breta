@@ -6,4 +6,5 @@ export interface User {
   follower: number;
   following: number;
   posts: number;
+  subscriptionId: string;
 }

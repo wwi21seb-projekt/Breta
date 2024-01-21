@@ -89,7 +89,7 @@ const FollowerListScreen = () => {
           data={records}
           keyExtractor={(item) => item.user.username}
           renderItem={({ item }) => (
-            <UserList type={type} user={item.user} />
+            <UserList user={item.user} subscriptionId={item.subscriptionId}/>
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}
@@ -102,7 +102,7 @@ const FollowerListScreen = () => {
   else {
     return (
     <View className="p-6 bg-white h-full">
-      <Text className="text-base">Etwas ist schiefgelaufen. Vmqmdersuche es später erneut.</Text>
+      <Text className="text-base">Etwas ist schiefgelaufen. Versuche es später erneut.</Text>
     </View>
   );
     }

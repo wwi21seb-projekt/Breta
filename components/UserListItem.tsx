@@ -1,32 +1,31 @@
-import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
-import { SHADOWS, COLORS } from "../theme";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { ListUser } from "./types/UserListTypes";
 
-// type RootStackParamList = {
-//   GeneralProfile: { user: User };
-// };
-
-// type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
-
-type Props = {
-  type: string;
-  user: ListUser;
+type RootStackParamList = {
+  GeneralProfile: { username: string };
 };
 
-const UserList: React.FC<Props> = ({ type, user }) => {
-  // const navigation = useNavigation<NavigationType>();
+type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 
-  const handleAccept = () => {
-    console.log("Nutzer akzeptiert.");
-  };
+type Props = {
+  user: ListUser;
+  subscriptionId?: string;
+};
 
-  const handleReject = () => {
-    console.log("Nutzer abgelehnt.");
-  };
+const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
+  const navigation = useNavigation<NavigationType>();
+
+  // Nur relevant für Freundschaftsanfragen
+  // const handleAccept = () => {
+  //   console.log("Nutzer akzeptiert.");
+  // };
+
+  // const handleReject = () => {
+  //   console.log("Nutzer abgelehnt.");
+  // };
 
   const handleFollowPress = () => {
     console.log("Nutzer folgen oder entfolgen");
@@ -39,8 +38,7 @@ const UserList: React.FC<Props> = ({ type, user }) => {
           >
             <TouchableOpacity
               onPress={() => {
-                console.log("Auf User Profil navigieren")
-                // navigation.navigate("GeneralProfile", { user: item });
+                navigation.navigate("GeneralProfile", { username: user.username });
               }}
               className="flex-1 flex-row items-center"
             >
@@ -51,8 +49,8 @@ const UserList: React.FC<Props> = ({ type, user }) => {
               />
               <Text className="text-base ml-3">{user.username}</Text>
             </TouchableOpacity>
-            {type === "request" ? (
-              <>
+
+              {/* Das wäre für eine Freundschaftsanfrage
                 <TouchableOpacity
                   className="mr-2"
                   onPress={() => handleAccept()}
@@ -71,22 +69,19 @@ const UserList: React.FC<Props> = ({ type, user }) => {
                     size="md"
                     color={COLORS.red}
                   />
-                </TouchableOpacity>
-              </>
-            ) : (
+                </TouchableOpacity> */}
+          
               <TouchableOpacity
                 className="py-1 px-2 rounded-3xl"
                 style={{ borderWidth: 1 }}
                 onPress={() => handleFollowPress()}
               >
                 <Text className="text-xs">
-                  {type === "followers" && "Folgen"}
-                  {type === "following" && "Entfolgen"}
+                  {subscriptionId === "" ? ("Folgen") : ("Entfolgen")}
                 </Text>
               </TouchableOpacity>
-            )}
           </View>
   );
 };
 
-export default UserList;
+export default UserListItem;

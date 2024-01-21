@@ -61,7 +61,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                   className="bg-white my-10 px-12 py-3 rounded-2xl"
                   onPress={() => console.log("User folgen")}
                 >
-                  <Text>Folgen</Text>
+                  <Text>{user.subscriptionId === "" ? ("Folgen") : ("Entfolgen")}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -94,7 +94,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               {personal === true && (
                 <TouchableOpacity
                   className="items-center justify-center p-3"
-                  onPress={() => console.log("Wird noch implementiert")
+                  onPress={() => console.log("Freundschaftsanfragen: Wird noch implementiert")
                     // navigation.navigate("FollowerList", {
                     //   type: "request"
                   

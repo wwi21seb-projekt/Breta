@@ -41,7 +41,6 @@ const ProfileScreen = () => {
         }
       } catch (error) {
        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-       console.log(error)
       }
      })();
   });
