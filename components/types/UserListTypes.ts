@@ -12,3 +12,18 @@ export interface ResponseData {
     records: number;
   };
 }
+
+export interface ListRecords {
+  subscriptionId: string,
+    subscriptionDate: string,
+    user: ListUser,
+}
+
+export interface FollowerResponseData {
+  records: ListRecords[];
+  pagination: {
+    offset: number;
+    limit: number;
+    records: number;
+  };
+}
