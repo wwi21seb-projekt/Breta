@@ -14,9 +14,9 @@ export interface ResponseData {
 }
 
 export interface ListRecords {
-  subscriptionId: string,
-    subscriptionDate: string,
-    user: ListUser,
+  subscriptionId: string;
+  subscriptionDate: string;
+  user: ListUser;
 }
 
 export interface FollowerResponseData {

@@ -17,7 +17,7 @@ import { User } from "../components/types/User";
 
 type RouteParams = {
   user: User;
-}
+};
 
 const EditProfileScreen = () => {
   const route = useRoute();
@@ -26,7 +26,7 @@ const EditProfileScreen = () => {
   const [error, setError] = useState("");
   const [errorText, setErrorText] = useState("");
   const [confirmText, setConfirmText] = useState("");
-  const [isInfoChangeSuccessful, setIsInfoChangeSuccessful] =useState(false);
+  const [isInfoChangeSuccessful, setIsInfoChangeSuccessful] = useState(false);
   const [nickname, setNickname] = useState(user?.nickname);
   const [status, setStatus] = useState(user?.status);
   const [oldPassword, setOldPassword] = useState("");
@@ -36,7 +36,7 @@ const EditProfileScreen = () => {
   const [isPasswordFieldVisible, setIsPasswordFieldVisible] = useState(false);
   const [nicknameHeight, setNicknameHeight] = useState();
   const [statusHeight, setStatusHeight] = useState();
-  
+
   const specialCharacter = /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/;
 
   const maxCharactersNickname = 25;
@@ -45,14 +45,15 @@ const EditProfileScreen = () => {
   const checkSpecialChar = () => {
     if (specialCharacter.test(newPassword)) {
       setContainsSpecialChar(true);
-      setErrorText("")
-    }
-    else {
+      setErrorText("");
+    } else {
       setContainsSpecialChar(false);
-      setErrorText("Dein neues Passwort muss mindestens 1 Sonderzeichen enthalten!")
+      setErrorText(
+        "Dein neues Passwort muss mindestens 1 Sonderzeichen enthalten!",
+      );
     }
   };
- 
+
   const handleTrivialInfoChange = async () => {
     let response;
 
@@ -63,9 +64,9 @@ const EditProfileScreen = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nickname, 
-          status    
-        })
+          nickname,
+          status,
+        }),
       });
 
       if (response.ok) {
@@ -76,21 +77,21 @@ const EditProfileScreen = () => {
       } else {
         switch (response.status) {
           case 400:
-            setError("Deine Profildaten konnten nicht aktualisiert werden. Versuche es später erneut.");
+            setError(
+              "Deine Profildaten konnten nicht aktualisiert werden. Versuche es später erneut.",
+            );
             break;
           case 401:
             setError("Auf das Login Popup navigieren!");
             break;
           default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
         }
       }
     } catch (error) {
       setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
     }
   };
-      
-
 
   const handlePasswordChange = async () => {
     let response;
@@ -102,9 +103,9 @@ const EditProfileScreen = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          oldPassword, 
-          newPassword    
-        })
+          oldPassword,
+          newPassword,
+        }),
       });
 
       if (response.ok) {
@@ -117,7 +118,9 @@ const EditProfileScreen = () => {
         switch (response.status) {
           case 400:
             setIsPasswordFieldVisible(false);
-            setConfirmText("Dein Passwort konnte nicht geändert werden. Versuche es später erneut.");
+            setConfirmText(
+              "Dein Passwort konnte nicht geändert werden. Versuche es später erneut.",
+            );
             setTimeout(() => {
               setConfirmText("");
             }, 3000);
@@ -125,16 +128,18 @@ const EditProfileScreen = () => {
           case 401:
             setError("Auf das Login Popup navigieren!");
             break;
-          case 403: 
+          case 403:
             setOldPassword("");
             setErrorText("Dein altes Passwort stimmt nicht!");
             setTimeout(() => {
               setErrorText("");
             }, 3000);
-            break;      
+            break;
           default:
             setIsPasswordFieldVisible(false);
-            setConfirmText("Dein Passwort konnte nicht geändert werden. Versuche es später erneut.");
+            setConfirmText(
+              "Dein Passwort konnte nicht geändert werden. Versuche es später erneut.",
+            );
             setTimeout(() => {
               setConfirmText("");
             }, 3000);
@@ -166,16 +171,17 @@ const EditProfileScreen = () => {
   };
 
   const handleNewPassword = () => {
-    setErrorText("")
-    if (newPassword !== ""){
-      if (newPassword.length  < 8){
-        setErrorText("Dein neues Passwort muss mindestens 8 Zeichen lang sein!");
-      }
-      else {
+    setErrorText("");
+    if (newPassword !== "") {
+      if (newPassword.length < 8) {
+        setErrorText(
+          "Dein neues Passwort muss mindestens 8 Zeichen lang sein!",
+        );
+      } else {
         checkSpecialChar();
       }
-  }
-   if (confirmNewPassword !== "") {
+    }
+    if (confirmNewPassword !== "") {
       if (newPassword !== confirmNewPassword) {
         setErrorText("Die Passwörter stimmen nicht überein!");
       }
@@ -183,14 +189,13 @@ const EditProfileScreen = () => {
   };
 
   const handleConfirmNewPassword = () => {
-    setErrorText("")
+    setErrorText("");
     if (newPassword !== "") {
       if (newPassword !== confirmNewPassword) {
         setErrorText("Die Passwörter stimmen nicht überein!");
       }
     }
   };
-
 
   useFocusEffect(
     React.useCallback(() => {
@@ -212,7 +217,11 @@ const EditProfileScreen = () => {
     );
   } else if (user !== undefined) {
     return (
-      <ScrollView className="bg-white" automaticallyAdjustKeyboardInsets={true} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="bg-white"
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+      >
         <View className="items-center">
           <Image
             source={require("../assets/images/Max.jpeg")}
@@ -304,7 +313,15 @@ const EditProfileScreen = () => {
         </View>
 
         {confirmText !== "" && (
-          <Text className="ml-8 text-xs" style={{color: confirmText === "Dein Passwort wurde erfolgreich geändert." ? COLORS.green : COLORS.red}}>
+          <Text
+            className="ml-8 text-xs"
+            style={{
+              color:
+                confirmText === "Dein Passwort wurde erfolgreich geändert."
+                  ? COLORS.green
+                  : COLORS.red,
+            }}
+          >
             {confirmText}
           </Text>
         )}
@@ -341,7 +358,9 @@ const EditProfileScreen = () => {
               onBlur={handleConfirmNewPassword}
             />
             {errorText && (
-              <Text className="self-center mx-6 text-xs text-red mb-4">{errorText}</Text>
+              <Text className="self-center mx-6 text-xs text-red mb-4">
+                {errorText}
+              </Text>
             )}
             <TouchableOpacity
               className="items-center mt-6 mb-20 mx-20 py-3 rounded-full"
@@ -361,7 +380,7 @@ const EditProfileScreen = () => {
                 oldPassword === "" ||
                 newPassword.length < 8 ||
                 newPassword !== confirmNewPassword ||
-                !containsSpecialChar 
+                !containsSpecialChar
               }
             >
               <Text className="text-base">Passwort ändern</Text>
@@ -372,12 +391,13 @@ const EditProfileScreen = () => {
     );
   } else {
     return (
-    <View className="p-6 bg-white h-full">
-      <Text className="text-base">Etwas ist schiefgelaufen. Versuche es später erneut.</Text>
-    </View>
-  );
-    }
-    
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">
+          Etwas ist schiefgelaufen. Versuche es später erneut.
+        </Text>
+      </View>
+    );
+  }
 };
 
 export default EditProfileScreen;

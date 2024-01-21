@@ -7,11 +7,9 @@ import { useRoute } from "@react-navigation/native";
 
 type RouteParams = {
   username: string;
-}
-
+};
 
 const GeneralProfileScreen = () => {
-
   const route = useRoute();
   const params = route.params as RouteParams;
   const username = params.username;
@@ -40,36 +38,37 @@ const GeneralProfileScreen = () => {
               setError("Auf das Login Popup navigieren!");
               break;
             case 404:
-              setError("Das Profil konnte nicht geladen werden. Versuche es später erneut.");
+              setError(
+                "Das Profil konnte nicht geladen werden. Versuche es später erneut.",
+              );
               break;
             default:
-              setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+              setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
           }
         }
       } catch (error) {
-       setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
       }
-     })();
-    });
+    })();
+  });
 
-    if (error !== "") {
-      return (
-        <View className="p-6 bg-white h-full">
-          <Text className="text-base">{error}</Text>
-        </View>
-      );
-    } else if (user !== undefined) {
-      return (
-        <UserProfile personal={false} user={user} />
-      )
-    } 
-     else {
-      return (
-        <View className="p-6 bg-white h-full">
-          <Text className="text-base">Etwas ist schiefgelaufen. Versuche es später erneut.</Text>
-        </View>
-      )
-    } 
-  };
+  if (error !== "") {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">{error}</Text>
+      </View>
+    );
+  } else if (user !== undefined) {
+    return <UserProfile personal={false} user={user} />;
+  } else {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">
+          Etwas ist schiefgelaufen. Versuche es später erneut.
+        </Text>
+      </View>
+    );
+  }
+};
 
 export default GeneralProfileScreen;

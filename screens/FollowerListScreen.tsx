@@ -3,12 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
-import { ListRecords, FollowerResponseData } from "../components/types/UserListTypes";
+import {
+  ListRecords,
+  FollowerResponseData,
+} from "../components/types/UserListTypes";
 
 interface RouteParams {
   type: string;
 }
-
 
 const FollowerListScreen = () => {
   const route = useRoute();
@@ -23,7 +25,7 @@ const FollowerListScreen = () => {
 
   const fetchUsers = async (loadMore: boolean) => {
     if (!hasMoreData) {
-      return; 
+      return;
     }
     let data!: FollowerResponseData;
     let response;
@@ -49,16 +51,17 @@ const FollowerListScreen = () => {
             setError("Auf das Login Popup navigieren!");
             break;
           case 404:
-            setError("Die Nutzer konnten nicht geladen werden. Versuche es später erneut.");
+            setError(
+              "Die Nutzer konnten nicht geladen werden. Versuche es später erneut.",
+            );
             break;
           default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
         }
       }
     } catch (error) {
-        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-    }
-    finally {
+      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    } finally {
       setLoadingMore(false);
     }
   };
@@ -70,18 +73,17 @@ const FollowerListScreen = () => {
     }
   };
 
-
   useEffect(() => {
     fetchUsers(false);
   }, []);
 
-  if (error !== ""){
+  if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>
       </View>
     );
-  } else if (records.length > 0){
+  } else if (records.length > 0) {
     return (
       <View className="bg-white h-full">
         <FlatList
@@ -89,23 +91,26 @@ const FollowerListScreen = () => {
           data={records}
           keyExtractor={(item) => item.user.username}
           renderItem={({ item }) => (
-            <UserList user={item.user} subscriptionId={item.subscriptionId}/>
+            <UserList user={item.user} subscriptionId={item.subscriptionId} />
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}
-          onEndReachedThreshold={0.2} 
-          ListFooterComponent={loadingMore ? <ActivityIndicator size={'small'} /> : null}
+          onEndReachedThreshold={0.2}
+          ListFooterComponent={
+            loadingMore ? <ActivityIndicator size={"small"} /> : null
+          }
         />
       </View>
-    )
-  }
-  else {
+    );
+  } else {
     return (
-    <View className="p-6 bg-white h-full">
-      <Text className="text-base">Etwas ist schiefgelaufen. Versuche es später erneut.</Text>
-    </View>
-  );
-    }
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">
+          Etwas ist schiefgelaufen. Versuche es später erneut.
+        </Text>
+      </View>
+    );
+  }
 };
 
 export default FollowerListScreen;

@@ -1,18 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { dummyUrls } from "../DummyData";
 import { User } from "../components/types/User";
 import { baseUrl } from "../env";
-
 
 type RootStackParamList = {
   FollowerList: { type: string };
@@ -30,9 +23,11 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const navigation = useNavigation<NavigationType>();
 
   const following = user.username;
-  const [isFollowed, setIsFollowed] = useState(user.subscriptionId === "" ? false : true);
+  const [isFollowed, setIsFollowed] = useState(
+    user.subscriptionId === "" ? false : true,
+  );
   const [error, setError] = useState("");
-  
+
   const handleSubscription = async () => {
     let response;
     if (!isFollowed) {
@@ -43,10 +38,10 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            following 
-          })
+            following,
+          }),
         });
-  
+
         if (response.ok) {
           setIsFollowed(true);
         } else {
@@ -55,30 +50,34 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               setError("Auf das Login Popup navigieren!");
               break;
             case 404:
-              setError("Der Nutzer, den du abbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.");
+              setError(
+                "Der Nutzer, den du abbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.",
+              );
               break;
             case 406:
               setError("Du kannst dir nicht selbst folgen.");
               break;
             case 409:
               setError("Du folgst diesem Nutzer bereits.");
-              break;  
+              break;
             default:
-              setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+              setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
           }
         }
       } catch (error) {
         setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
       }
-    }
-    else {
+    } else {
       try {
-        response = await fetch(`${baseUrl}subscriptions:${user.subscriptionId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          }
-        });
+        response = await fetch(
+          `${baseUrl}subscriptions:${user.subscriptionId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
         if (response.ok) {
           setIsFollowed(false);
         } else {
@@ -90,17 +89,18 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               setError("Du kannst nur deine eigenen Abbonements löschen.");
               break;
             case 404:
-              setError("Der Nutzer, den du deabbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.");
-              break; 
+              setError(
+                "Der Nutzer, den du deabbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.",
+              );
+              break;
             default:
-              setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+              setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
           }
         }
       } catch (error) {
         setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
       }
     }
-    
   };
   if (error !== "") {
     return (
@@ -108,15 +108,20 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         <Text className="text-base">{error}</Text>
       </View>
     );
-    } else {
+  } else {
     return (
       <View className="bg-white pb-4">
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Image source={require("../assets/images/Max.jpeg")} className="w-full h-48" />
+          <Image
+            source={require("../assets/images/Max.jpeg")}
+            className="w-full h-48"
+          />
           {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
           <View className="items-center p-6">
             <Text className="text-2xl font-bold mb-2">{user.nickname}</Text>
-            <Text className="italic text-lg text-darkgray mb-6">@{user.username}</Text>
+            <Text className="italic text-lg text-darkgray mb-6">
+              @{user.username}
+            </Text>
             <Text className="mb-8">{user.status}</Text>
             {personal === true ? (
               <TouchableOpacity
@@ -142,7 +147,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                   className="bg-white my-10 px-12 py-3 rounded-2xl"
                   onPress={() => handleSubscription()}
                 >
-                  <Text>{isFollowed  ? "Entfolgen": "Folgen"}</Text>
+                  <Text>{isFollowed ? "Entfolgen" : "Folgen"}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -165,7 +170,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 className="items-center justify-center p-3"
                 onPress={() =>
                   navigation.navigate("FollowerList", {
-                    type: "following"
+                    type: "following",
                   })
                 }
               >
@@ -175,10 +180,14 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               {personal === true && (
                 <TouchableOpacity
                   className="items-center justify-center p-3"
-                  onPress={() => console.log("Freundschaftsanfragen: Wird noch implementiert")
+                  onPress={
+                    () =>
+                      console.log(
+                        "Freundschaftsanfragen: Wird noch implementiert",
+                      )
                     // navigation.navigate("FollowerList", {
                     //   type: "request"
-                  
+
                     // })
                   }
                 >
@@ -202,6 +211,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         </ScrollView>
       </View>
     );
-            }
+  }
 };
 export default UserProfile;
