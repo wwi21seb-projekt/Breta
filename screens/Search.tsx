@@ -6,12 +6,38 @@ import { useDebounce } from "use-debounce";
 import { baseUrl } from "../env";
 import { COLORS } from "../theme";
 import { User, ResponseData } from "../components/types/UserListTypes";
+import { TabView, SceneMap } from 'react-native-tab-view';
+
+
 const Search = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
 
   const [showResultList, setshowResultList] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+
+  //components for tabs -> in future gonna be UserList and own SearchPostFeed comps
+  const userList = () => {
+    return(
+      <View>
+            <FlatList
+              data={users}
+              keyExtractor={(item) => item.username}
+              renderItem={({ item }) => (
+                <View>
+                  <Text>{item.username}</Text>
+                  <Text>{item.nickname}</Text>
+                </View>
+              )}
+            ></FlatList>
+          </View>
+    )
+  }
+  
+  //initialize SceneMap for Tabview
+  const renderScene = SceneMap({
+    userList: userList
+  })
 
   useEffect(() => {
     if (!searchInput.trim()) {
