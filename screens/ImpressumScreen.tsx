@@ -32,7 +32,7 @@ const Impressum = () => {
         );
       }
     })();
-  });
+  }, []);
 
   if (error !== "") {
     return (
