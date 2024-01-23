@@ -4,7 +4,7 @@ import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { ListUser } from "./types/UserListTypes";
-import { baseUrl } from "../env";
+import { handleSubscription } from "./HandleSubscription";
 
 type RootStackParamList = {
   GeneralProfile: { username: string };
@@ -24,6 +24,7 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
   const [isFollowed, setIsFollowed] = useState(
     subscriptionId === "" ? false : true,
   );
+  const subscriptionIdString = subscriptionId !== undefined ? subscriptionId : "";
   const [error, setError] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
@@ -35,77 +36,7 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
   //   console.log("Nutzer abgelehnt.");
   // };
 
-  const handleSubscription = async () => {
-    let response;
-    if (!isFollowed) {
-      try {
-        response = await fetch(`${baseUrl}subscriptions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            following,
-          }),
-        });
 
-        if (response.ok) {
-          setIsFollowed(true);
-        } else {
-          switch (response.status) {
-            case 401:
-              setError("Auf das Login Popup navigieren!");
-              break;
-            case 404:
-              setError(
-                "Der Nutzer, den du abbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.",
-              );
-              break;
-            case 406:
-              setError("Du kannst dir nicht selbst folgen.");
-              break;
-            case 409:
-              setError("Du folgst diesem Nutzer bereits.");
-              break;
-            default:
-              setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-          }
-        }
-      } catch (error) {
-        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-      }
-    } else {
-      try {
-        response = await fetch(`${baseUrl}subscriptions:${subscriptionId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          setIsFollowed(false);
-        } else {
-          switch (response.status) {
-            case 401:
-              setError("Auf das Login Popup navigieren!");
-              break;
-            case 403:
-              setError("Du kannst nur deine eigenen Abbonements löschen.");
-              break;
-            case 404:
-              setError(
-                "Der Nutzer, den du deabbonieren möchtest, wurde nicht gefunden. Versuche es später erneut.",
-              );
-              break;
-            default:
-              setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-          }
-        }
-      } catch (error) {
-        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-      }
-    }
-  };
   if (error !== "") {
     navigation.navigate("Error", { error: error });
   } else {
@@ -152,7 +83,7 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
         <TouchableOpacity
           className="py-1 px-2 rounded-3xl"
           style={{ borderWidth: 1 }}
-          onPress={() => handleSubscription()}
+          onPress={() => handleSubscription(isFollowed, setIsFollowed, following, subscriptionIdString, setError)}
         >
           <Text className="text-xs">{isFollowed ? "Entfolgen" : "Folgen"}</Text>
         </TouchableOpacity>
