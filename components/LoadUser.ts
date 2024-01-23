@@ -2,8 +2,11 @@ import { baseUrl } from "../env";
 import { Dispatch, SetStateAction } from "react";
 import { User } from "../components/types/User";
 
-
-export const loadUser = async (username: string, setUser: Dispatch<SetStateAction<User | undefined>>, setError: Dispatch<SetStateAction<string>>) => {
+export const loadUser = async (
+  username: string,
+  setUser: Dispatch<SetStateAction<User | undefined>>,
+  setError: Dispatch<SetStateAction<string>>,
+) => {
   let data;
   const urlWithParams = `${baseUrl}users/:${username}`;
   let response;

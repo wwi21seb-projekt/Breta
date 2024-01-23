@@ -14,7 +14,6 @@ const ProfileScreen = () => {
     loadUser(personalUserUsername, setUser, setError);
   }, []);
 
-
   if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">

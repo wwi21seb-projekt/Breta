@@ -21,10 +21,9 @@ type Props = {
 const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
   const navigation = useNavigation<NavigationType>();
   const following = user.username;
-  const [isFollowed, setIsFollowed] = useState(
-    subscriptionId !== ""
-  );
-  const subscriptionIdString = subscriptionId !== undefined ? subscriptionId : "";
+  const [isFollowed, setIsFollowed] = useState(subscriptionId !== "");
+  const subscriptionIdString =
+    subscriptionId !== undefined ? subscriptionId : "";
   const [error, setError] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
@@ -35,7 +34,6 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
   // const handleReject = () => {
   //   console.log("Nutzer abgelehnt.");
   // };
-
 
   if (error !== "") {
     navigation.navigate("Error", { error: error });
@@ -83,7 +81,15 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
         <TouchableOpacity
           className="py-1 px-2 rounded-3xl"
           style={{ borderWidth: 1 }}
-          onPress={() => handleSubscription(isFollowed, setIsFollowed, following, subscriptionIdString, setError)}
+          onPress={() =>
+            handleSubscription(
+              isFollowed,
+              setIsFollowed,
+              following,
+              subscriptionIdString,
+              setError,
+            )
+          }
         >
           <Text className="text-xs">{isFollowed ? "Entfolgen" : "Folgen"}</Text>
         </TouchableOpacity>

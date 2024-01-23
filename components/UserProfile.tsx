@@ -23,9 +23,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const navigation = useNavigation<NavigationType>();
 
   const following = user.username;
-  const [isFollowed, setIsFollowed] = useState(
-    user.subscriptionId !== ""
-  );
+  const [isFollowed, setIsFollowed] = useState(user.subscriptionId !== "");
   const [error, setError] = useState("");
   const subscriptionId = user.subscriptionId;
   if (error !== "") {
@@ -71,7 +69,15 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 <TouchableOpacity
                   style={{ ...SHADOWS.small }}
                   className="bg-white my-10 px-12 py-3 rounded-2xl"
-                  onPress={() => handleSubscription(isFollowed, setIsFollowed, following, subscriptionId, setError)}
+                  onPress={() =>
+                    handleSubscription(
+                      isFollowed,
+                      setIsFollowed,
+                      following,
+                      subscriptionId,
+                      setError,
+                    )
+                  }
                 >
                   <Text>{isFollowed ? "Entfolgen" : "Folgen"}</Text>
                 </TouchableOpacity>
