@@ -1,5 +1,5 @@
 import UserList from "../components/UserListItem";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";

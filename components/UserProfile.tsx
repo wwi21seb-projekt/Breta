@@ -5,7 +5,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { dummyUrls } from "../DummyData";
 import { User } from "../components/types/User";
-import { baseUrl } from "../env";
 import { handleSubscription } from "./HandleSubscription";
 
 type RootStackParamList = {
@@ -25,7 +24,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
   const following = user.username;
   const [isFollowed, setIsFollowed] = useState(
-    user.subscriptionId === "" ? false : true,
+    user.subscriptionId !== ""
   );
   const [error, setError] = useState("");
   const subscriptionId = user.subscriptionId;

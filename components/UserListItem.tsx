@@ -22,7 +22,7 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
   const navigation = useNavigation<NavigationType>();
   const following = user.username;
   const [isFollowed, setIsFollowed] = useState(
-    subscriptionId === "" ? false : true,
+    subscriptionId !== ""
   );
   const subscriptionIdString = subscriptionId !== undefined ? subscriptionId : "";
   const [error, setError] = useState("");
