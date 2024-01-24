@@ -2,11 +2,10 @@ import { useState, React } from "react";
 import { TextInput, TouchableOpacity, View, Text } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import axios from "axios";
 
 const Post = ({ navigation }) => {
 
-  const [postText, changePostText] = useState("");
+  const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
 
   const createPost = () => {
@@ -54,7 +53,7 @@ const Post = ({ navigation }) => {
           className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-[#ccc] rounded-[8px] p-2"
           value={postText}
           onChangeText={(post) => {
-            changePostText(post);
+            setPostText(post)
           }}
           multiline={true}
           numberOfLines={8} // Anzahl der sichtbaren Zeilen
@@ -66,7 +65,7 @@ const Post = ({ navigation }) => {
         <Text className="text-black text-xs">{postText.length} / 256</Text>
       </View>
       <View>
-        {!(postError.length === 0) && (
+        {postError.length !== 0 && (
           <Text className="text-red pt-5 text-center">{postError}</Text>
         )}
       </View>
