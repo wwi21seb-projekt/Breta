@@ -1,9 +1,18 @@
-import { useState, React } from "react";
+import { useState} from "react";
 import { TextInput, TouchableOpacity, View, Text } from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 
-const Post = ({ navigation }) => {
+type RootStackParamList = {
+  Feed: undefined
+};
+
+type PostScreenprops = {
+  navigation: StackNavigationProp<RootStackParamList, "Feed">;
+}
+
+const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
 
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
@@ -24,7 +33,7 @@ const Post = ({ navigation }) => {
         case 201:
           await response.json()
           setPostError("")
-          navigation.navigate("TabBottomBar")
+          navigation.navigate("TabBottomBar", {screen: "Feed"})
           break
         case 400:
           setPostError("The request body is invalid. Please check the request body and try again.");
@@ -32,6 +41,8 @@ const Post = ({ navigation }) => {
         case 401:
           setPostError("Unauthorized")
           break
+        default:
+        console.error(response.status)
       }
     } catch (error) {
         console.error("Network error:", error)
@@ -82,4 +93,4 @@ const Post = ({ navigation }) => {
   );
 };
 
-export default Post;
+export default PostScreen;
