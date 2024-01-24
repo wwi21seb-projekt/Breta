@@ -1,54 +1,54 @@
-import { useState} from "react";
+import { useState } from "react";
 import { TextInput, TouchableOpacity, View, Text } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 
 type RootStackParamList = {
-  Feed: undefined
+  Feed: undefined;
 };
 
 type PostScreenprops = {
   navigation: StackNavigationProp<RootStackParamList, "Feed">;
-}
+};
 
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
-
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
 
   const createPost = async () => {
-    let response
+    let response;
     try {
       response = await fetch(`${baseUrl}posts`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          postText
-        })
+          postText,
+        }),
       });
       switch (response.status) {
         case 201:
-          await response.json()
-          setPostError("")
-          navigation.navigate("TabBottomBar", {screen: "Feed"})
-          break
+          await response.json();
+          setPostError("");
+          navigation.navigate("TabBottomBar", { screen: "Feed" });
+          break;
         case 400:
-          setPostError("The request body is invalid. Please check the request body and try again.");
-          break
+          setPostError(
+            "The request body is invalid. Please check the request body and try again.",
+          );
+          break;
         case 401:
-          setPostError("Unauthorized")
-          break
+          setPostError("Unauthorized");
+          break;
         default:
-        console.error(response.status)
+          console.error(response.status);
       }
     } catch (error) {
-        console.error("Network error:", error)
-      }
+      console.error("Network error:", error);
     }
-  
+  };
 
   return (
     <View className="bg-white flex-1">
@@ -57,7 +57,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2"
           value={postText}
           onChangeText={(post) => {
-            setPostText(post)
+            setPostText(post);
           }}
           multiline={true}
           numberOfLines={8} // Anzahl der sichtbaren Zeilen
