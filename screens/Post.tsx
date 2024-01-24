@@ -8,12 +8,10 @@ const Post = ({ navigation }) => {
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
 
-  const createPost = () => {
-
-    async () => {
-      let response;
-      try {
-        response = await fetch(`${baseUrl}posts`, {
+  const createPost = async () => {
+    let response;
+    try {
+      response = await fetch(`${baseUrl}posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
