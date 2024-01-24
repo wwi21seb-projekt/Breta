@@ -2,4 +2,7 @@
 // Aplha Server URL: https://alpha.c930.net/
 // Beta Server URL: https://www.server-beta.de/api/
 
-export const baseUrl = "http://localhost:3000/api/v1/";
+// URL for development
+//export const baseUrl = "http://localhost:3000/api/";
+
+export const baseUrl = "https://www.server-beta.de/api/";
