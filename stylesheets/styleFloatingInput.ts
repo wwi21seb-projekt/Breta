@@ -48,16 +48,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     ...SHADOWS.medium,
   },
-  registerButton: {
-    backgroundColor: COLORS.primary,
-    flex: 1,
-    marginTop: 50,
-    marginHorizontal: 120,
-    padding: 12,
-    alignItems: "center",
-    borderRadius: 18,
-    ...SHADOWS.medium,
-  },
   error: {
     marginLeft: 60,
     fontSize: SIZES.small,

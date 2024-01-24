@@ -9,46 +9,41 @@ const Post = ({ navigation }) => {
   const [postError, setPostError] = useState("");
 
   const createPost = async () => {
-    let response;
+    let response
     try {
       response = await fetch(`${baseUrl}posts`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            postText
-          })
-        });
-    
-        if (response.status === 201) {
-          await response.json();
-          setPostError("");
-          navigation.navigate("TopBar");
-        } 
-      } catch (error) {
-        if (error.status) {
-          switch (error.status) {
-            case 400:
-              setPostError("The request body is invalid. Please check the request body and try again.");
-              break;
-            case 401:
-              setPostError("Unauthorized");
-              break;
-          }
-        } else {
-          console.error("Network error:", error);
-        }
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          postText
+        })
+      });
+      switch (response.status) {
+        case 201:
+          await response.json()
+          setPostError("")
+          navigation.navigate("TabBottomBar")
+          break
+        case 400:
+          setPostError("The request body is invalid. Please check the request body and try again.");
+          break
+        case 401:
+          setPostError("Unauthorized")
+          break
+      }
+    } catch (error) {
+        console.error("Network error:", error)
       }
     }
-    
-  }
+  
 
   return (
     <View className="bg-white flex-1">
       <View className="bg-white justify-center flex-row">
         <TextInput
-          className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-[#ccc] rounded-[8px] p-2"
+          className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2"
           value={postText}
           onChangeText={(post) => {
             setPostText(post)
