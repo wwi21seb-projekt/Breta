@@ -32,7 +32,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         case 201:
           await response.json();
           setPostError("");
-          navigation.navigate("TabBottomBar", { screen: "Feed" });
+          navigation.navigate("Feed");
           break;
         case 400:
           setPostError(

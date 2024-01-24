@@ -50,12 +50,6 @@ const TabBottomBar: React.FC = () => {
       <Tabs.Screen
         name="Post"
         component={Post}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("PostPage" as never);
-          },
-        })}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
