@@ -6,35 +6,47 @@ import axios from 'axios'
 
 
 const Post = ({ navigation }) => {
+
   const [postText, changePostText] = useState("");
   const [postError, setPostError] = useState("");
 
   const createPost = () => {
-    axios
-      .post(`${baseUrl}posts`, {
-        // Daten
-      })
-      .then(function (response) {
+
+    async () => {
+      let response;
+      try {
+        response = await fetch(`${baseUrl}posts`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            postText
+          })
+        });
+    
         if (response.status === 201) {
+          await response.json();
           setPostError("");
           navigation.navigate("TopBar");
-        }
-      })
-      .catch(function (error) {
-        switch (error.response.status) {
-          case 400: {
-            setPostError(
-              "The request body is invalid. Please check the request body and try again.",
-            );
-            break;
+        } 
+      } catch (error) {
+        if (error.status) {
+          switch (error.status) {
+            case 400:
+              setPostError("The request body is invalid. Please check the request body and try again.");
+              break;
+            case 401:
+              setPostError("Unauthorized");
+              break;
           }
-          case 401: {
-            setPostError("Unauthorized");
-            break;
-          }
+        } else {
+          console.error("Network error:", error);
         }
-      });
-  };
+      }
+    }
+    
+  }
 
   return (
     <View className="bg-white flex-1">
