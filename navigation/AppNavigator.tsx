@@ -11,6 +11,7 @@ import ConfirmCode from "../screens/ConfirmCode";
 import FollowerList from "../screens/FollowerListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
+import Error from "../screens/ErrorScreen";
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="Error" component={Error} />
         </Stack.Navigator>
       </NativeBaseProvider>
     </NavigationContainer>

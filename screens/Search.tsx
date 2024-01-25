@@ -5,13 +5,13 @@ import { FlatList, Icon } from "native-base";
 import { useDebounce } from "use-debounce";
 import { baseUrl } from "../env";
 import { COLORS } from "../theme";
-import { User, ResponseData } from "../components/types/UserListTypes";
+import { ListUser, ResponseData } from "../components/types/UserListTypes";
 const Search = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 1000);
 
   const [showResultList, setshowResultList] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<ListUser[]>([]);
 
   useEffect(() => {
     (async () => {
