@@ -8,7 +8,7 @@ import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
-  FollowerList: { type: string };
+  FollowerList: { type: string, username: string };
   Authentification: undefined;
   EditProfile: { user: any };
 };
@@ -92,7 +92,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
               <TouchableOpacity
                 className="items-center justify-center p-3"
                 onPress={() =>
-                  navigation.navigate("FollowerList", { type: "followers" })
+                  navigation.navigate("FollowerList", { type: "followers", username: user.username })
                 }
               >
                 <Text className="font-bold text-base">{user.follower}</Text>
@@ -102,7 +102,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 className="items-center justify-center p-3"
                 onPress={() =>
                   navigation.navigate("FollowerList", {
-                    type: "following",
+                    type: "following", username: user.username
                   })
                 }
               >
