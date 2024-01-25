@@ -6,7 +6,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { SIZES, SHADOWS, COLORS } from "../constants/theme";
+import { SIZES, SHADOWS, COLORS } from "../theme";
 import axios from "axios";
 import { useNavigation } from "react-router-dom";
 

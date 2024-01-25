@@ -1,218 +1,41 @@
-import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import {
-  VStack,
-  HStack,
-  Button,
-  IconButton,
-  Icon,
-  Text,
-  NativeBaseProvider,
-  Center,
-  Box,
-  StatusBar,
-} from "native-base";
-
-import { StyleSheet, View, Platform } from "react-native";
-
-import TabBarIcon from "../components/TabBarIcon";
-import TabBarText from "../components/TabBarText";
-
-import Chat from "../screens/Chat";
-import Post from "../screens/Post";
-import Profile from "../screens/Profile";
-import Search from "../screens/Search";
+import { NativeBaseProvider } from "native-base";
 
 import AppTopBar from "./AppTopBar";
+import TabBottomBar from "./TabBottomBar";
 
-import FeedScreen from "../screens/FeedScreen";
-import AuthScreen from "../screens/AuthScreen";
+import Impressum from "../screens/ImpressumScreen";
+import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCode";
-import { COLORS } from "../constants/theme";
-import Impressum from "../components/Impressum";
+import FollowerList from "../screens/FollowerListScreen";
+import GeneralProfile from "../screens/GeneralProfileScreen";
+import EditProfile from "../screens/EditProfileScreen";
+import Error from "../screens/ErrorScreen";
 
-const MainStack = createStackNavigator();
+const Stack = createStackNavigator();
 
-const Main: React.FC = () => {
-  return (
-    <MainStack.Navigator
-      screenOptions={{ headerShown: true, header: () => <AppTopBar /> }}
-    >
-      <MainStack.Screen name="TopBar" component={MainTabs} />
-      <MainStack.Screen name="Impressum" component={Impressum} />
-      <MainStack.Screen
-        name="Feed"
-        component={FeedScreen}
-        options={{
-          title: "",
-          cardStyle: {
-            backgroundColor: COLORS.white,
-          },
-          headerTransparent: true,
-        }}
-      />
-      <MainStack.Screen
-        name="Auth"
-        component={AuthScreen}
-        options={{
-          title: "",
-          cardStyle: {
-            backgroundColor: COLORS.white,
-          },
-          headerTransparent: true,
-        }}
-      />
-      <MainStack.Screen
-        name="CodePage"
-        component={ConfirmCode}
-        options={{ headerShown: false }}
-      />
-    </MainStack.Navigator>
-  );
-};
-
-const Tabs = createBottomTabNavigator();
-
-const MainTabs: React.FC = () => {
-  return (
-    <>
-      <Tabs.Navigator screenOptions={{ headerShown: false }}>
-        <Tabs.Screen
-          name="Feed"
-          component={FeedScreen}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"home"}
-                color={"black"}
-                style={{ marginRight: 10 }}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="Chat"
-          component={Chat}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"chatbubble"}
-                color={"black"}
-                style={{ marginRight: 10 }}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="Post"
-          component={Post}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-
-            tabBarIcon: ({ focused }) => (
-              <View style={styles.addIcon}>
-                <TabBarIcon
-                  focused={focused}
-                  icon={"add"}
-                  color={"black"}
-                  style={styles.addIconPlus}
-                />
-              </View>
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="Search"
-          component={Search}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"search"}
-                color={"black"}
-                style={{ marginRight: 10, fontWeight: 600 }}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            tabBarLabel: ({ focused }) => (
-              <TabBarText focused={focused} title="" />
-            ),
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                focused={focused}
-                icon={"person"}
-                color={"black"}
-                style={{ marginRight: 10 }}
-              />
-            ),
-          }}
-        />
-      </Tabs.Navigator>
-    </>
-  );
-};
-
-const styles = StyleSheet.create({
-  addIcon: {
-    fontWeight: "bold",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    color: "black",
-    marginBottom: 25,
-    width: 55,
-    height: 55,
-    borderRadius: 50,
-    shadowRadius: 5,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
-  },
-
-  addIconPlus: {
-    fontSize: 32,
-    fontWeight: "700",
-  },
-});
-
-export default () => {
+const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <NativeBaseProvider>
-        <Main />
+        <Stack.Navigator
+          screenOptions={({ navigation }) => ({
+            headerShown: true,
+            header: () => <AppTopBar />,
+          })}
+        >
+          <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
+          <Stack.Screen name="Impressum" component={Impressum} />
+          <Stack.Screen name="FollowerList" component={FollowerList} />
+          <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
+          <Stack.Screen name="Authentification" component={Authentification} />
+          <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="Error" component={Error} />
+        </Stack.Navigator>
       </NativeBaseProvider>
     </NavigationContainer>
   );
 };
+export default AppNavigator;
