@@ -61,7 +61,7 @@ const FeedScreen = () => {
   }, []);
 
   return (
-    <ScrollView className="bg-gray p-2.5 my-2.5">
+    <ScrollView className="bg-lightgray p-2.5 my-2.5">
       {posts.map((post) => (
         <TextPostCard
           key={post.postId}
