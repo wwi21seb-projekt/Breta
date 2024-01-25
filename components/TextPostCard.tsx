@@ -88,7 +88,7 @@ const TextPostCard: React.FC<Props> = (props) => {
           />
           <View className="flex-1 ml-2">
             <Text className="font-bold">{username}</Text>
-            <Text className="text-xs text-gray-500">{date}</Text>
+            <Text className="text-xs text-gray">{date}</Text>
           </View>
           <TouchableOpacity onPress={openCommentModal}>
           <Icon
@@ -146,7 +146,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                     <View className="flex-1">
                       <Text className="font-bold">{comment.username}</Text>
                       <Text>{comment.text}</Text>
-                      <Text className="text-xs text-gray-500">
+                      <Text className="text-xs text-gray">
                         {comment.date}
                       </Text>
                     </View>
