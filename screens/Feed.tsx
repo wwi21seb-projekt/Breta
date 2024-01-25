@@ -5,7 +5,7 @@ import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 
 const FeedScreen = () => {
-  const [posts, setPosts] = useState<Post[]>([]); 
+  const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [lastPostId, setLastPostId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

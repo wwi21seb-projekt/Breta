@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { View, Text, Image, Icon } from "native-base";
-import { TextInput,Dimensions, ScrollView ,TouchableOpacity, Modal } from "react-native";
+import {
+  TextInput,
+  Dimensions,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import { SHADOWS, COLORS } from "../theme";
-
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -12,7 +17,7 @@ interface Comment {
   text: string;
   username: string;
   profilePic: string;
-  date: string; 
+  date: string;
 }
 
 interface Props {
@@ -30,13 +35,13 @@ const TextPostCard: React.FC<Props> = (props) => {
     postContent,
     profilePic,
     date,
-    initialLikes = 149999
+    initialLikes = 149999,
   } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
-  const [isCommentModalVisible, setCommentModalVisible] = useState(false); 
-  const [commentText, setCommentText] = useState(""); 
-  const [comments, setComments] = useState([]); 
+  const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState([]);
 
   const addComment = () => {
     if (commentText.trim()) {
@@ -77,11 +82,12 @@ const TextPostCard: React.FC<Props> = (props) => {
     setCommentModalVisible(false);
   };
 
- 
-
   return (
     <View className="items-center mx-2.5 mb-5">
-      <View className="w-full bg-white rounded-full p-4 z-20 relative" style={{ ...SHADOWS.small }}>
+      <View
+        className="w-full bg-white rounded-full p-4 z-20 relative"
+        style={{ ...SHADOWS.small }}
+      >
         <View className="flex-row items-center justify-between">
           <Image
             source={{ uri: profilePic }}
@@ -92,7 +98,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             <Text className="text-xs text-lightgray">{date}</Text>
           </View>
           <TouchableOpacity onPress={openCommentModal}>
-          <Icon
+            <Icon
               as={Ionicons}
               name="chatbox-ellipses-outline"
               size={24}
@@ -128,10 +134,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             <View className="flex-row justify-between items-center border-b border-lightgray pb-4">
               <Text className="text-lg font-bold">Kommentare</Text>
               <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-              <Icon
-              as={Ionicons}
-              name="close" size={24} color="black"
-            />
+                <Icon as={Ionicons} name="close" size={24} color="black" />
               </TouchableOpacity>
             </View>
             <ScrollView className="pt-4">
@@ -168,7 +171,10 @@ const TextPostCard: React.FC<Props> = (props) => {
                 value={commentText}
                 multiline
               />
-              <TouchableOpacity className="bg-brigtBlue p-3" onPress={addComment}>
+              <TouchableOpacity
+                className="bg-brigtBlue p-3"
+                onPress={addComment}
+              >
                 <Text className="text-brigtBlue font-bold text-sm">Posten</Text>
               </TouchableOpacity>
             </View>
