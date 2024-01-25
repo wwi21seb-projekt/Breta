@@ -9,37 +9,35 @@ const AuthScreen = () => {
   const [showRegistration, setShowRegistration] = useState(true);
 
   const handleButtonPress = () => {
-    setShowRegistration(!showRegistration);
+    setShowRegistration(!showRegistration)
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={{ flexDirection: "row", marginVertical: 40 }}>
+    <SafeAreaView className="flex-1 bg-white ">
+      <View className="flex-row my-10">
         <TouchableOpacity
           style={[
-            styles.buttonSwitch,
+            ...SHADOWS.small,
             {
               backgroundColor: showRegistration ? COLORS.primary : COLORS.white,
             },
-            { marginLeft: 40 },
           ]}
           onPress={() => !showRegistration && handleButtonPress()}
-        >
-          <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
+        className="flex-1 items-center p-3 rounded-xl ml-10">
+          <Text className="text-black text-xl">
             Registrierung
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            styles.buttonSwitch,
             {
               backgroundColor: showRegistration ? COLORS.white : COLORS.primary,
             },
-            { marginRight: 40 },
           ]}
+          className="flex-1 items-center p-3 rounded-xl mr-10"
           onPress={() => showRegistration && handleButtonPress()}
-        >
-          <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
+          >
+          <Text className="text-black text-xl">
             Login
           </Text>
         </TouchableOpacity>
@@ -58,4 +56,4 @@ const AuthScreen = () => {
   );
 };
 
-export default AuthScreen;
+export default AuthScreen
