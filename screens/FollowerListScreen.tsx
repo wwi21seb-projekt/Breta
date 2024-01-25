@@ -3,14 +3,11 @@ import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
-import {
-  AboRecords,
-  SearchRecords,
-} from "../components/types/UserListTypes";
+import { AboRecords, SearchRecords } from "../components/types/UserListTypes";
 
 interface RouteParams {
   type: string;
-  username: string
+  username: string;
 }
 
 const FollowerListScreen = () => {
