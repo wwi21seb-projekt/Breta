@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 
 const FeedScreen = () => {
-  const [posts, setPosts] = useState<Post[]>([]); // Verwendung der Post-Schnittstelle
+  const [posts, setPosts] = useState<Post[]>([]); 
   const [error, setError] = useState<string | null>(null);
   const [lastPostId, setLastPostId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ const FeedScreen = () => {
   }, []);
 
   return (
-    <ScrollView className="bg-gray-200 p-2.5 my-2.5">
+    <ScrollView className="bg-gray p-2.5 my-2.5">
       {posts.map((post) => (
         <TextPostCard
           key={post.postId}

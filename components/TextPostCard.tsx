@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, Image } from "native-base";
-import { StyleSheet, TouchableOpacity, Modal } from "react-native";
-import { TextInput } from "react-native";
-import { Button } from "react-native";
-import { Dimensions } from "react-native";
-import { ScrollView } from "react-native";
-import { Animated } from "react-native";
+import { View, Text, Image, Icon } from "native-base";
+import { TextInput,Dimensions, ScrollView ,TouchableOpacity, Modal } from "react-native";
+import { SHADOWS } from "../theme";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -15,7 +11,7 @@ interface Comment {
   text: string;
   username: string;
   profilePic: string;
-  date: string; // Fügen Sie diese Zeile hinzu, wenn sie noch nicht existiert
+  date: string; 
 }
 
 interface Props {
@@ -33,15 +29,13 @@ const TextPostCard: React.FC<Props> = (props) => {
     postContent,
     profilePic,
     date,
-    initialLikes = 149999,
-    style,
+    initialLikes = 149999
   } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
-  const [isCommentModalVisible, setCommentModalVisible] = useState(false); // Zustand für das Kommentar-Popup
-  const [commentText, setCommentText] = useState(""); // Zustand für den Kommentar-Text
-  const [comments, setComments] = useState([]); // Hält die Liste der Kommentare
-  const [modalY, setModalY] = useState(new Animated.Value(windowHeight));
+  const [isCommentModalVisible, setCommentModalVisible] = useState(false); 
+  const [commentText, setCommentText] = useState(""); 
+  const [comments, setComments] = useState([]); 
 
   const addComment = () => {
     if (commentText.trim()) {
@@ -82,14 +76,11 @@ const TextPostCard: React.FC<Props> = (props) => {
     setCommentModalVisible(false);
   };
 
-  const handleCommentSubmit = () => {
-    setCommentText("");
-    closeCommentModal();
-  };
+ 
 
   return (
     <View className="items-center mx-2.5 mb-5">
-      <View className="w-full bg-white rounded-full p-4 shadow-lg z-20 relative">
+      <View className="w-full bg-white rounded-full p-4 z-20 relative" style={{ ...SHADOWS.small }}>
         <View className="flex-row items-center justify-between">
           <Image
             source={{ uri: profilePic }}
@@ -100,7 +91,8 @@ const TextPostCard: React.FC<Props> = (props) => {
             <Text className="text-xs text-gray-500">{date}</Text>
           </View>
           <TouchableOpacity onPress={openCommentModal}>
-            <Ionicons
+          <Icon
+              as={Ionicons}
               name="chatbox-ellipses-outline"
               size={24}
               className="mr-1"
@@ -125,14 +117,12 @@ const TextPostCard: React.FC<Props> = (props) => {
       </View>
 
       <Modal
-        animationType="slide"
-        transparent={true}
         visible={isCommentModalVisible}
         onRequestClose={() => setCommentModalVisible(false)}
       >
         <View className="flex-1 justify-end bg-opacity-50">
           <View className="bg-white rounded-t-xl p-5 h-3/4">
-            <View className="flex-row justify-between items-center border-b border-gray-200 pb-4">
+            <View className="flex-row justify-between items-center border-b border-gray pb-4">
               <Text className="text-lg font-bold">Kommentare</Text>
               <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
                 <Ionicons name="close" size={24} color="black" />
@@ -164,7 +154,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 ))
               )}
             </ScrollView>
-            <View className="flex-row items-center border-t border-gray-200 p-4">
+            <View className="flex-row items-center border-t border-gray p-4">
               <TextInput
                 className="flex-1 mr-4 bg-gray rounded-full p-3 text-sm"
                 placeholder="Schreiben Sie einen Kommentar..."
