@@ -5,4 +5,4 @@
 // URL for development
 //export const baseUrl = "http://localhost:3000/api/";
 
-export const baseUrl = "http://192.168.0.161:3000/api/";
+export const baseUrl = "https://alpha.c930.net/api/";
