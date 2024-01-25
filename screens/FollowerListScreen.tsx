@@ -4,8 +4,8 @@ import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
 import {
-  ListRecords,
-  FollowerResponseData,
+  AboRecords,
+  SearchRecords,
 } from "../components/types/UserListTypes";
 
 interface RouteParams {
@@ -19,7 +19,7 @@ const FollowerListScreen = () => {
   const type = params.type ? params.type : "";
   const username = params.username ? params.username : "";
 
-  const [records, setRecords] = useState<ListRecords[]>([]);
+  const [records, setRecords] = useState<AboRecords[]>([]);
   const [error, setError] = useState("");
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -29,7 +29,7 @@ const FollowerListScreen = () => {
     if (!hasMoreData) {
       return;
     }
-    let data!: FollowerResponseData;
+    let data!: SearchRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
     const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${offset}&limit=10`;
