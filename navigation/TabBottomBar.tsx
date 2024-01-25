@@ -10,6 +10,7 @@ import Chat from "../screens/Chat";
 import Post from "../screens/Post";
 import Search from "../screens/Search";
 import Profile from "../screens/ProfileScreen";
+import FeedScreen from "../screens/Feed";
 
 const Tabs = createBottomTabNavigator();
 
