@@ -79,8 +79,7 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
                 </TouchableOpacity> */}
 
         <TouchableOpacity
-          className="py-1 px-2 rounded-3xl"
-          style={{ borderWidth: 1 }}
+          className="py-1 px-2 rounded-3xl border"
           onPress={() =>
             handleSubscription(
               isFollowed,
