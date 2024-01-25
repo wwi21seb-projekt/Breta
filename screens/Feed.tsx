@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import TextPostCard from '../components/TextPostCard';
+import React, { useState, useEffect } from "react";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
+import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 
@@ -18,7 +18,7 @@ const FeedScreen = () => {
 
     setLoading(true);
     const url = `${baseUrl}feed?limit=10&feedType=global`;
-    
+
     try {
       response = await fetch(url, {
         method: "GET",
@@ -29,14 +29,14 @@ const FeedScreen = () => {
 
       if (response.ok) {
         data = await response.json();
-      const transformedPosts = data.records.map((record: any) => ({
-        username: record.author.username,
-        profilePic: record.author.profilePictureUrl,
-        date: new Date(record.creationDate).toLocaleDateString(),
-        postContent: record.content
-      }));
-      setPosts(prevPosts => [...prevPosts, ...transformedPosts]);
-      setLastPostId(data.pagination.lastPostId); 
+        const transformedPosts = data.records.map((record: any) => ({
+          username: record.author.username,
+          profilePic: record.author.profilePictureUrl,
+          date: new Date(record.creationDate).toLocaleDateString(),
+          postContent: record.content,
+        }));
+        setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
+        setLastPostId(data.pagination.lastPostId);
       } else {
         switch (response.status) {
           case 401:
@@ -53,31 +53,26 @@ const FeedScreen = () => {
       }
     } catch (error) {
       setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-    } 
+    }
   };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-
   return (
     <ScrollView className="bg-gray-200 p-2.5 my-2.5">
       {posts.map((post) => (
         <TextPostCard
           key={post.postId}
-          username={post.username} 
-          profilePic={post.profilePic} 
-          date={post.date} 
-          postContent={post.postContent} 
-          
+          username={post.username}
+          profilePic={post.profilePic}
+          date={post.date}
+          postContent={post.postContent}
         />
       ))}
     </ScrollView>
   );
-  
 };
-
-
 
 export default FeedScreen;
