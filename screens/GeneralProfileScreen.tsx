@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { User } from "../components/types/User";
 import { Text, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { loadUser } from "../components/LoadUser";
+import { loadUser } from "../components/functions/LoadUser";
 
 type RouteParams = {
   username: string;

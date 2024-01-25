@@ -1,6 +1,6 @@
-import { baseUrl } from "../env";
+import { baseUrl } from "../../env";
 import { Dispatch, SetStateAction } from "react";
-import { User } from "../components/types/User";
+import { User } from "../types/User";
 
 export const loadUser = async (
   username: string,

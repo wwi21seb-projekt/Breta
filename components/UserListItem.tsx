@@ -4,7 +4,7 @@ import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { ListUser } from "./types/UserListTypes";
-import { handleSubscription } from "./HandleSubscription";
+import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
   GeneralProfile: { username: string };

@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { dummyUrls } from "../DummyData";
 import { User } from "../components/types/User";
-import { handleSubscription } from "./HandleSubscription";
+import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
   FollowerList: { type: string };

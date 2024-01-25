@@ -1,4 +1,4 @@
-import { baseUrl } from "../env";
+import { baseUrl } from "../../env";
 import { Dispatch, SetStateAction } from "react";
 
 export const handleSubscription = async (

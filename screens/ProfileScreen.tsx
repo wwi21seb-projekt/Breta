@@ -2,7 +2,7 @@ import UserProfile from "../components/UserProfile";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { User } from "../components/types/User";
-import { loadUser } from "../components/LoadUser";
+import { loadUser } from "../components/functions/LoadUser";
 
 const personalUserUsername = "aleks_069";
 
