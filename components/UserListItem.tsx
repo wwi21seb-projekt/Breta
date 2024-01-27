@@ -14,14 +14,20 @@ type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 
 type Props = {
   username: string;
-  profilePictureUrl: string,
+  profilePictureUrl: string;
   followingId?: string;
 };
 
-const UserListItem: React.FC<Props> = ({ username, profilePictureUrl, followingId }) => {
+const UserListItem: React.FC<Props> = ({
+  username,
+  profilePictureUrl,
+  followingId,
+}) => {
   const navigation = useNavigation<NavigationType>();
   const [isFollowed, setIsFollowed] = useState(followingId !== "");
-  const [subscriptionId, setSubscriptionId] = useState(followingId !== undefined ? followingId : "");
+  const [subscriptionId, setSubscriptionId] = useState(
+    followingId !== undefined ? followingId : "",
+  );
   const [error, setError] = useState("");
 
   // Nur relevant für Freundschaftsanfragen

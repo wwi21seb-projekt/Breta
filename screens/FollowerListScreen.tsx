@@ -90,7 +90,11 @@ const FollowerListScreen = () => {
           data={records}
           keyExtractor={(item) => item.username}
           renderItem={({ item }) => (
-            <UserListItem username={item.username} profilePictureUrl={item.profilePictureUrl} followingId={item.followingId} />
+            <UserListItem
+              username={item.username}
+              profilePictureUrl={item.profilePictureUrl}
+              followingId={item.followingId}
+            />
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}

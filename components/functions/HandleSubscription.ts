@@ -33,7 +33,7 @@ export const handleSubscription = async (
         setIsFollowed(!isFollowed);
         if (!isFollowed) {
           const data = await response.json();
-          setSubscriptionId(data.subscriptionId); 
+          setSubscriptionId(data.subscriptionId);
         } else {
           setSubscriptionId("");
         }
