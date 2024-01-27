@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { ListUser } from "./types/UserListTypes";
 import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
@@ -22,8 +21,7 @@ type Props = {
 const UserListItem: React.FC<Props> = ({ username, profilePictureUrl, followingId }) => {
   const navigation = useNavigation<NavigationType>();
   const [isFollowed, setIsFollowed] = useState(followingId !== "");
-  const subscriptionIdString =
-    followingId !== undefined ? followingId : "";
+  const [subscriptionId, setSubscriptionId] = useState(followingId !== undefined ? followingId : "");
   const [error, setError] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
@@ -85,7 +83,8 @@ const UserListItem: React.FC<Props> = ({ username, profilePictureUrl, followingI
               isFollowed,
               setIsFollowed,
               username,
-              subscriptionIdString,
+              subscriptionId,
+              setSubscriptionId,
               setError,
             )
           }
