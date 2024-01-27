@@ -6,6 +6,7 @@ export const handleSubscription = async (
   setIsFollowed: Dispatch<SetStateAction<boolean>>,
   following: string,
   subscriptionId: string,
+  setSubscriptionId: Dispatch<SetStateAction<string>>,
   setError: Dispatch<SetStateAction<string>>,
 ) => {
   const handleErrorResponse = (status: number) => {
@@ -30,6 +31,12 @@ export const handleSubscription = async (
       const response = await fetch(url, options);
       if (response.ok) {
         setIsFollowed(!isFollowed);
+        if (!isFollowed) {
+          const data = await response.json();
+          setSubscriptionId(data.subscriptionId);
+        } else {
+          setSubscriptionId("");
+        }
       } else {
         handleErrorResponse(response.status);
       }

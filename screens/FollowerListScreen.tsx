@@ -1,4 +1,4 @@
-import UserList from "../components/UserListItem";
+import UserListItem from "../components/UserListItem";
 import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -29,7 +29,7 @@ const FollowerListScreen = () => {
     let data!: SearchRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
-    const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${offset}&limit=10`;
+    const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${newOffset}&limit=10`;
 
     try {
       response = await fetch(urlWithParams, {
@@ -88,9 +88,13 @@ const FollowerListScreen = () => {
         <FlatList
           className="my-6"
           data={records}
-          keyExtractor={(item) => item.user.username}
+          keyExtractor={(item) => item.username}
           renderItem={({ item }) => (
-            <UserList user={item.user} subscriptionId={item.subscriptionId} />
+            <UserListItem
+              username={item.username}
+              profilePictureUrl={item.profilePictureUrl}
+              followingId={item.followingId}
+            />
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}
