@@ -26,7 +26,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const [isFollowed, setIsFollowed] = useState(user.subscriptionId !== "");
   const [error, setError] = useState("");
   const [subscriptionId, setSubscriptionId] = useState(user.subscriptionId);
-  // const subscriptionId = user.subscriptionId;
   if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
