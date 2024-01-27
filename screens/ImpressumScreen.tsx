@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Text, View } from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
 
 const Impressum = () => {
   const [impressumText, setImpressumText] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -31,10 +32,20 @@ const Impressum = () => {
           "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
         );
       }
-    })();
+    })()
+    .finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  if (error !== "") {
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>

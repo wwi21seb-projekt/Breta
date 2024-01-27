@@ -19,6 +19,7 @@ const FollowerListScreen = () => {
   const [records, setRecords] = useState<AboRecords[]>([]);
   const [error, setError] = useState("");
   const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
 
@@ -73,10 +74,20 @@ const FollowerListScreen = () => {
   };
 
   useEffect(() => {
-    fetchUsers(false);
+    fetchUsers(false)
+    .finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  if (error !== "") {
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>
