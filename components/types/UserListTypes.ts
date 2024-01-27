@@ -7,9 +7,11 @@ export interface ListUser {
 
 // For the abo display
 export interface AboRecords {
-  subscriptionId: string;
-  subscriptionDate: string;
-  user: ListUser;
+  followerId: string;
+  followingId: string;
+  username: string;
+  nickname: string;
+  profilePictureUrl: string;
 }
 
 // For the search function

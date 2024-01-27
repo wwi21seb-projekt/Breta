@@ -1,4 +1,4 @@
-import UserList from "../components/UserListItem";
+import UserListItem from "../components/UserListItem";
 import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -88,9 +88,9 @@ const FollowerListScreen = () => {
         <FlatList
           className="my-6"
           data={records}
-          keyExtractor={(item) => item.user.username}
+          keyExtractor={(item) => item.username}
           renderItem={({ item }) => (
-            <UserList user={item.user} subscriptionId={item.subscriptionId} />
+            <UserListItem username={item.username} profilePictureUrl={item.profilePictureUrl} followingId={item.followingId} />
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}
