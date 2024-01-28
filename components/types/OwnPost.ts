@@ -3,9 +3,9 @@ export interface OwnPost {
     creationDate: string;
     content: string;
     location: {
-      longitude: string;
-      latitude: string;
-      accuracy: string;
+      longitude: number;
+      latitude: number;
+      accuracy: number;
     };
 }
 

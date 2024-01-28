@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
+import { View, Modal, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +31,9 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState("");
+  const [city, setCity] = useState("");
 
   const fetchPosts = async (loadMore: boolean) => {
     if (!hasMoreData) {
@@ -72,6 +75,64 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     }
   };
 
+  const deletePost = async () => {
+    let response;
+    const urlWithParams = `${baseUrl}posts/:${currentPostId}`
+    try {
+      response = await fetch(urlWithParams, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setModalVisible(false);
+      } else {
+        switch (response.status) {
+          case 401:
+            setError("Auf das Login Popup navigieren!");
+            break;
+          case 403:
+            setError("Du kannst nur deine eigenen Beiträge löschen.")
+            break;
+          case 403:
+            setError("Der Beitrag, den du löschen möchtest, konnte nicht gefunden werden. Versuche es später erneut.")
+            break;
+          default:
+            setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+        }
+      }
+    } catch (error) {
+      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    }
+  };
+
+  const getPlaceName = async (latitude: number, longitude: number) => {
+    let response;
+    let data;
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+    
+    try {
+      response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        data = await response.json();
+        setCity(data.address.city);
+      } else {
+        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      }
+      
+    } catch (error) {
+      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    }
+  };
+
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
       setLoadingMore(true);
@@ -80,12 +141,45 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   };
 
   useEffect(() => {
-    fetchPosts(false)
+    fetchPosts(false);
+    getPlaceName(50.09, 8.8);
   }, []);
 
   const renderHeader = () => {
     return (
       <View className="bg-white pb-4">
+        <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setCurrentPostId("");
+          setModalVisible(false)}}
+      >
+        <View className="flex-1 justify-center items-center" style={{backgroundColor: 'rgba(200, 200, 200, 0.8)'}}>
+          <View className="bg-white rounded-3xl px-8 py-4">
+            <Text className="text-lg mb-10">Möchtest du diesen Beitrag wirklich löschen?</Text>
+            <View className="flex-row">
+            <TouchableOpacity
+              onPress={() => 
+                deletePost()
+              }
+            >
+              <Text className="text-red text-base font-bold">Löschen</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="ml-auto"
+              onPress={() => {
+                setCurrentPostId("");
+                setModalVisible(false)}}
+            >
+              <Text className="text-black text-base font-bold">Abbrechen</Text>
+            </TouchableOpacity>
+          </View>
+          </View>
+        </View>
+        </Modal>
           <Image
             source={require("../assets/images/Max.jpeg")}
             className="w-full h-48"
@@ -206,10 +300,13 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1" 
         style={{ ...SHADOWS.small }}
         disabled={!personal}
-        onLongPress={()=> console.log("Jaaaa")}>
+        onLongPress={()=> {
+          setCurrentPostId(item.postId);
+          setModalVisible(true);
+          }}>
         <View className="flex-row">
-          <Text className="w-1/2 text-xs">{item.content}</Text>
-          <Text className="w-1/2 text-xs text-right">{item.creationDate}</Text>
+          <Text className="w-1/2 text-xs">{city}</Text>
+          <Text className="w-1/2 text-xs text-right">{item.creationDate.split('T')[0]}</Text>
         </View>
         <Text className="my-5 text-lg font-semibold text-center">{item.content}</Text>
       </TouchableOpacity>
