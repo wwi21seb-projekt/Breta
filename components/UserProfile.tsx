@@ -96,7 +96,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
           case 403:
             setError("Du kannst nur deine eigenen Beiträge löschen.")
             break;
-          case 403:
+          case 404:
             setError("Der Beitrag, den du löschen möchtest, konnte nicht gefunden werden. Versuche es später erneut.")
             break;
           default:
