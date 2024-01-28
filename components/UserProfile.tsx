@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, FlatList, SafeAreaView } from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -28,12 +28,20 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const [error, setError] = useState("");
   const [subscriptionId, setSubscriptionId] = useState(user.subscriptionId);
   const [posts, setPosts] = useState<OwnPost[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (loadMore: boolean) => {
+    if (!hasMoreData) {
+      return;
+    }
     let response;
     let data!: ResponseOwnPost;
+    let newOffset = loadMore ? offset + 3 : 0;
+    const urlWithParams = `${baseUrl}users/:${user.username}/feed?offset=${newOffset}&limit=3`
     try {
-      response = await fetch(`${baseUrl}users/:${user.username}/feed?offset=0&limit=10`, {
+      response = await fetch(urlWithParams, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +50,9 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
       if (response.ok) {
         data = await response.json();
-        setPosts(data.records);
+        setPosts(loadMore ? [...posts, ...data.records] : data.records);
+        setOffset(newOffset);
+        setHasMoreData(data.records.length === 3);
       } else {
         switch (response.status) {
           case 401:
@@ -57,14 +67,20 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
       }
     } catch (error) {
       setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const loadMorePosts = () => {
+    if (!loadingMore && hasMoreData) {
+      setLoadingMore(true);
+      fetchPosts(true);
     }
   };
 
   useEffect(() => {
-    fetchPosts()
-    // .finally(() => {
-    //   setLoading(false);
-    // });
+    fetchPosts(false)
   }, []);
 
   const renderHeader = () => {
@@ -199,6 +215,11 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
       </TouchableOpacity>
       )}
       showsVerticalScrollIndicator={false}
+      onEndReached={loadMorePosts}
+      onEndReachedThreshold={0.2}
+      ListFooterComponent={
+        loadingMore ? <ActivityIndicator size={"small"} /> : null
+      }
       ListHeaderComponent={renderHeader}
       />
     );
