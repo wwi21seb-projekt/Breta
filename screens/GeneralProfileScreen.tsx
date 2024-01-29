@@ -18,8 +18,7 @@ const GeneralProfileScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadUser(username, setUser, setError)
-    .finally(() => {
+    loadUser(username, setUser, setError).finally(() => {
       setLoading(false);
     });
   }, []);
@@ -30,8 +29,7 @@ const GeneralProfileScreen = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  }
-  else if (error !== "") {
+  } else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>

@@ -74,8 +74,7 @@ const FollowerListScreen = () => {
   };
 
   useEffect(() => {
-    fetchUsers(false)
-    .finally(() => {
+    fetchUsers(false).finally(() => {
       setLoading(false);
     });
   }, []);
@@ -86,8 +85,7 @@ const FollowerListScreen = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  }
-  else if (error !== "") {
+  } else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>

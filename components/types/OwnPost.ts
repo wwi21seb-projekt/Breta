@@ -1,18 +1,18 @@
 export interface OwnPost {
-    postId: string;
-    creationDate: string;
-    content: string;
-    location: {
-      longitude: number;
-      latitude: number;
-      accuracy: number;
-    };
-    city: string;
+  postId: string;
+  creationDate: string;
+  content: string;
+  location: {
+    longitude: number;
+    latitude: number;
+    accuracy: number;
+  };
+  city: string;
 }
 
 export interface ResponseOwnPost {
-    records: OwnPost[];
-    pagination: {
+  records: OwnPost[];
+  pagination: {
     offset: number;
     limit: number;
     records: number;

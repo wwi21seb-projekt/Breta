@@ -32,8 +32,7 @@ const Impressum = () => {
           "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
         );
       }
-    })()
-    .finally(() => {
+    })().finally(() => {
       setLoading(false);
     });
   }, []);
@@ -44,8 +43,7 @@ const Impressum = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  }
-  else if (error !== "") {
+  } else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>
