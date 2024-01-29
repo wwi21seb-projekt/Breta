@@ -33,7 +33,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentPostId, setCurrentPostId] = useState("");
-  const [city, setCity] = useState("");
 
   const fetchPosts = async (loadMore: boolean) => {
     if (!hasMoreData) {
@@ -53,7 +52,14 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
       if (response.ok) {
         data = await response.json();
-        setPosts(loadMore ? [...posts, ...data.records] : data.records);
+        const updatedRecords = await Promise.all(data.records.map(async record => {
+          const cityName = await getPlaceName(record.location.latitude, record.location.longitude);
+          return {
+              ...record,
+              city: cityName
+          };
+      }));
+        setPosts(loadMore ? [...posts, ...updatedRecords] : updatedRecords);
         setOffset(newOffset);
         setHasMoreData(data.records.length === 3);
       } else {
@@ -123,13 +129,13 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
       if (response.ok) {
         data = await response.json();
-        setCity(data.address.city);
+        return data.address.city;
       } else {
-        setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+        return "";
       }
       
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      return "";
     }
   };
 
@@ -142,7 +148,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
   useEffect(() => {
     fetchPosts(false);
-    getPlaceName(50.09, 8.8);
+    // getPlaceName(50.09, 8.8);
   }, []);
 
   const renderHeader = () => {
@@ -305,7 +311,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
           setModalVisible(true);
           }}>
         <View className="flex-row">
-          <Text className="w-1/2 text-xs">{city}</Text>
+          <Text className="w-1/2 text-xs">{item.city}</Text>
           <Text className="w-1/2 text-xs text-right">{item.creationDate.split('T')[0]}</Text>
         </View>
         <Text className="my-5 text-lg font-semibold text-center">{item.content}</Text>

@@ -7,6 +7,7 @@ export interface OwnPost {
       latitude: number;
       accuracy: number;
     };
+    city: string;
 }
 
 export interface ResponseOwnPost {
