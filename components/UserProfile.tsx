@@ -148,7 +148,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
   useEffect(() => {
     fetchPosts(false);
-    // getPlaceName(50.09, 8.8);
   }, []);
 
   const renderHeader = () => {
