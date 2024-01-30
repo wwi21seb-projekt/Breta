@@ -1,50 +1,46 @@
-import { Icon, HStack, Text, Center } from "native-base";
+import { Icon, HStack, Text } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useRoute } from "@react-navigation/native";
+import { COLORS } from "../theme";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import {
   SafeAreaView,
   TouchableOpacity,
   View,
   Platform,
   StatusBar,
+  Image,
 } from "react-native";
+
+const logoUrl = "../assets/images/Breta_Logo.png";
+
 type RootStackParamList = {
   Home: undefined;
   Impressum: undefined;
 };
+type NavigationType = StackNavigationProp<RootStackParamList, "Home">;
 
-type AppTopBarProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
-};
-
-const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
+const AppTopBar = () => {
+  const navigation = useNavigation<NavigationType>();
   const route = useRoute();
-
   const canGoBack = navigation.canGoBack();
 
-  let headerTitle;
+  let headerTitle: string;
 
   if (route.name === "Impressum") {
-    headerTitle = <Text className="text-lg font-bold">Impressum</Text>;
+    headerTitle = "Impressum";
   } else if (route.name === "Authentification") {
-    headerTitle = <Text className="text-lg font-bold">Authentifikation</Text>;
+    headerTitle = "Authentifikation";
   } else if (route.name === "FollowerList") {
-    headerTitle = <Text className="text-lg font-bold">Follower</Text>;
+    headerTitle = "Follower";
   } else if (route.name === "FollowedList") {
-    headerTitle = <Text className="text-lg font-bold">Gefolgt</Text>;
+    headerTitle = "Gefolgt";
   } else if (route.name === "FriendRequest") {
-    headerTitle = (
-      <Text className="text-lg font-bold">Freundschaftsanfragen</Text>
-    );
+    headerTitle = "Freundschaftsanfragen";
   } else if (route.name === "ConfirmCode") {
-    headerTitle = <Text className="text-lg font-bold">Login</Text>;
+    headerTitle = "Login";
   } else {
-    headerTitle = (
-      <Text fontSize="20" fontWeight="bold">
-        BRE<Text style={{ color: "aqua" }}>T</Text>A
-      </Text>
-    );
+    headerTitle = "";
   }
 
   return (
@@ -54,31 +50,44 @@ const AppTopBar: React.FC<AppTopBarProps> = ({ navigation }) => {
         paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
       }}
     >
-      <HStack className="px-3 py-1">
+      <HStack className="px-3 h-12 mb-2">
         <View className="flex-1 justify-center">
           {canGoBack && (
             <TouchableOpacity
               className="self-start"
               onPress={() => navigation.goBack()}
             >
-              <Icon as={Ionicons} name="arrow-back" size="xl" color="black" />
+              <Icon
+                as={Ionicons}
+                name="arrow-back"
+                size="xl"
+                color={COLORS.black}
+              />
             </TouchableOpacity>
           )}
         </View>
 
-        <View className="flex-2 justify-center">{headerTitle}</View>
+        <View className="flex-2 justify-center">
+          {headerTitle !== "" ? (
+            <Text className="text-xl font-bold">{headerTitle}</Text>
+          ) : (
+            <Image source={require(logoUrl)} className="w-20 h-full" />
+          )}
+        </View>
 
         <View className="flex-1 justify-center">
           <TouchableOpacity
             className="self-end"
             onPress={() => navigation.navigate("Impressum")}
           >
-            <Icon
-              as={Ionicons}
-              name="information-circle-outline"
-              size="lg"
-              color="black"
-            />
+            {headerTitle !== "Impressum" && (
+              <Icon
+                as={Ionicons}
+                name="information-circle-outline"
+                size="lg"
+                color={COLORS.black}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </HStack>

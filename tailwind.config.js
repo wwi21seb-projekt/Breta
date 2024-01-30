@@ -16,6 +16,8 @@ module.exports = {
       black: "#000000",
       green: "#4CD964",
       red: "#FF2D55",
+      brigtBlue: "#0096FF",
+      nyanza: "#ECFFDC",
     },
   },
   plugins: [],
