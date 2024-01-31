@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import TextPostCard from '../components/TextPostCard';
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
@@ -10,7 +10,7 @@ const FeedScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchPosts = async (type) => {
+  const fetchPosts = async (type: any) => {
     setLoading(true);
     const url = `${baseUrl}feed?limit=10&feedType=${type}`;
 
@@ -25,7 +25,7 @@ const FeedScreen = () => {
       }
 
       const data = await response.json();
-      return data.records.map((record) => ({
+      return data.records.map((record : any) => ({
         username: record.author?.username || 'Unbekannter Nutzer',
         profilePic: record.author?.profilePictureUrl || 'standard_pic_url',
         date: record.creationDate ? new Date(record.creationDate).toLocaleDateString() : 'Unbekanntes Datum',
@@ -49,9 +49,8 @@ const FeedScreen = () => {
   return (
     <ScrollView className='p-4'>
       <Text className='text-lg font-bold mb-4'>Persönliche Posts</Text>
-      {postsPersonal.map((post, index) => (
+      {postsPersonal.map((post) => (
         <TextPostCard
-          key={`personal-${index}`}
           username={post.username}
           profilePic={post.profilePic}
           date={post.date}
@@ -60,9 +59,8 @@ const FeedScreen = () => {
       ))}
 
       <Text className='text-lg font-bold mt-8 mb-4'>Globale Posts</Text>
-      {postsGlobal.map((post, index) => (
+      {postsGlobal.map((post) => (
         <TextPostCard
-          key={`global-${index}`}
           username={post.username}
           profilePic={post.profilePic}
           date={post.date}
