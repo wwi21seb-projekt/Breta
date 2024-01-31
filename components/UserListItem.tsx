@@ -15,12 +15,14 @@ type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 type Props = {
   username: string;
   profilePictureUrl: string;
+  enableFollowHandling: boolean;
   followingId?: string;
 };
 
 const UserListItem: React.FC<Props> = ({
   username,
   profilePictureUrl,
+  enableFollowHandling,
   followingId,
 }) => {
   const navigation = useNavigation<NavigationType>();
@@ -81,22 +83,23 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-
-        <TouchableOpacity
-          className="py-1 px-2 rounded-3xl border"
-          onPress={() =>
-            handleSubscription(
-              isFollowed,
-              setIsFollowed,
-              username,
-              subscriptionId,
-              setSubscriptionId,
-              setError,
-            )
-          }
-        >
-          <Text className="text-xs">{isFollowed ? "Entfolgen" : "Folgen"}</Text>
-        </TouchableOpacity>
+        {enableFollowHandling === true && (
+          <TouchableOpacity
+            className="py-1 px-2 rounded-3xl border"
+            onPress={() =>
+              handleSubscription(
+                isFollowed,
+                setIsFollowed,
+                username,
+                subscriptionId,
+                setSubscriptionId,
+                setError,
+              )
+            }
+          >
+            <Text className="text-xs">{isFollowed ? "Entfolgen" : "Folgen"}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }

@@ -93,6 +93,7 @@ const FollowerListScreen = () => {
             <UserListItem
               username={item.username}
               profilePictureUrl={item.profilePictureUrl}
+              enableFollowHandling={true}
               followingId={item.followingId}
             />
           )}
