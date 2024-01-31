@@ -47,7 +47,7 @@ const FeedScreen = () => {
   }, []);
 
   return (
-    <ScrollView className='bg-gray-200 p-4'>
+    <ScrollView className='p-4'>
       <Text className='text-lg font-bold mb-4'>Persönliche Posts</Text>
       {postsPersonal.map((post, index) => (
         <TextPostCard
@@ -70,7 +70,7 @@ const FeedScreen = () => {
         />
       ))}
 
-      {error && <Text className='text-red-500 text-center'>{error}</Text>}
+      {error && <Text className='text-red text-center'>{error}</Text>}
     </ScrollView>
   );
 };
