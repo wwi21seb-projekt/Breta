@@ -101,7 +101,8 @@ const TextPostCard: React.FC<Props> = (props) => {
             <Icon
               as={Ionicons}
               name="chatbox-ellipses-outline"
-              size={24}
+              size={6}
+              color={COLORS.black}
               className="mr-1"
             />
           </TouchableOpacity>
@@ -112,7 +113,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             <Icon
               as={Ionicons}
               name={isLiked ? "heart" : "heart-outline"}
-              size={24}
+              size={6}
               color={isLiked ? COLORS.primary : "black"}
               className="mr-1"
             />
@@ -129,12 +130,12 @@ const TextPostCard: React.FC<Props> = (props) => {
         visible={isCommentModalVisible}
         onRequestClose={() => setCommentModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-opacity-50">
-          <View className="bg-white rounded-t-xl p-5 h-3/4">
+        <View className="flex-1 justify-end">
+          <View className=" rounded-t-xl p-5 h-3/4">
             <View className="flex-row justify-between items-center border-b border-lightgray pb-4">
               <Text className="text-lg font-bold">Kommentare</Text>
               <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-                <Icon as={Ionicons} name="close" size={24} color="black" />
+                <Icon as={Ionicons} name="close" size={6} color="black" />
               </TouchableOpacity>
             </View>
             <ScrollView className="pt-4">
@@ -172,10 +173,10 @@ const TextPostCard: React.FC<Props> = (props) => {
                 multiline
               />
               <TouchableOpacity
-                className="bg-brigtBlue p-3"
+                className="bg-brigtBlue p-3 rounded-full"
                 onPress={addComment}
               >
-                <Text className="text-brigtBlue font-bold text-sm">Posten</Text>
+                <Text className=" font-bold text-sm">Posten</Text>
               </TouchableOpacity>
             </View>
           </View>
