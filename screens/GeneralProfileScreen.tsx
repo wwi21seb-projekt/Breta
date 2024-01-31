@@ -1,7 +1,7 @@
 import UserProfile from "../components/UserProfile";
 import { useState, useEffect } from "react";
 import { User } from "../components/types/User";
-import { Text, View } from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { loadUser } from "../components/functions/LoadUser";
 
@@ -15,12 +15,21 @@ const GeneralProfileScreen = () => {
   const username = params.username;
   const [user, setUser] = useState<User>();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadUser(username, setUser, setError);
+    loadUser(username, setUser, setError).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  if (error !== "") {
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  } else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>
