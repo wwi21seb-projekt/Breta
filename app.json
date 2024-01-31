@@ -30,7 +30,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/expo/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.breta.app"
     },
     "web": {
       "favicon": "./assets/expo/favicon.png"
