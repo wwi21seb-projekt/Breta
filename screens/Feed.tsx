@@ -49,8 +49,9 @@ const FeedScreen = () => {
   return (
     <ScrollView className='p-4'>
       <Text className='text-lg font-bold mb-4'>Persönliche Posts</Text>
-      {postsPersonal.map((post) => (
+      {postsPersonal.map((post, index) => (
         <TextPostCard
+          key={index}
           username={post.username}
           profilePic={post.profilePic}
           date={post.date}
@@ -59,8 +60,9 @@ const FeedScreen = () => {
       ))}
 
       <Text className='text-lg font-bold mt-8 mb-4'>Globale Posts</Text>
-      {postsGlobal.map((post) => (
+      {postsGlobal.map((post, index) => (
         <TextPostCard
+          key={index}
           username={post.username}
           profilePic={post.profilePic}
           date={post.date}
