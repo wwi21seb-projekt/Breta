@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, TouchableOpacity, View, Text } from "react-native";
+import { TextInput, TouchableOpacity, View, Text, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -51,6 +51,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View className="bg-white flex-1">
       <View className="bg-white justify-center flex-row">
         <TextInput
@@ -90,6 +91,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
