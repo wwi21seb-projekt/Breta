@@ -117,7 +117,7 @@ const Search = () => {
   const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
   const [hasMoreUsers, setHasMoreUsers] = useState(true);
   //limit noch auf 10 ändern!‚
-  let userLimit = 10
+  let userLimit = 2
 
   const fetchUsers = async (loadingMore: boolean) => {
     if(!hasMoreUsers || !searchInput.trim()){
@@ -160,7 +160,7 @@ const Search = () => {
   }
 
   const loadMoreUsers = () => {
-    console.log("loading more Users: ", loadingMoreUsers, "\nhas more users: ", hasMoreUsers )
+    //console.log("loading more Users: ", loadingMoreUsers, "\nhas more users: ", hasMoreUsers )
     if(!loadingMoreUsers && hasMoreUsers){
       setLoadingMoreUsers(true)
       fetchUsers(true)
@@ -181,7 +181,7 @@ const Search = () => {
     
     let data!: PostRecords 
     const encodedSearchValue = encodeURIComponent(debouncedSearchInput)
-    const urlWithParams = `${baseUrl}post?q=${encodedSearchValue}&offset=${lastPostId}&limit=${postLimit}`;
+    const urlWithParams = `${baseUrl}posts?q=${encodedSearchValue}&offset=${lastPostId}&limit=${postLimit}`;
     let response;
 
     try{
@@ -194,26 +194,30 @@ const Search = () => {
 
       if(response.ok) {
         data = await response.json();
-        setPosts(data.records);
+        setPosts([...posts, ...data.records]);
         setLastPostId(data.pagination.lastPostId);
+        console.log(data.pagination.lastPostId)
         setHasMorePosts(data.records.length === postLimit);
+        console.log(hasMorePosts)
       }else{
         switch(response.status){
           case 401:
             setPostSearchError("Sie sind nicht authentifiziert.");
             break;
           default:
-            setPostSearchError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+            setPostSearchError("Etwas ist schiefgelaufen. Versuche es später erneut." + response.status)
         }
       }
     }catch(error){
-      setPostSearchError("Es gab einen fehler bei der Kommunikation mit dem Server.")
+      setPostSearchError("Es gab einen fehler bei der Kommunikation mit dem Server." + error)
     }finally{
       setLoadingMorePosts(false)
     }
   }
 
   const loadMorePosts = () => {
+    console.log("loadingMorePosts: ", loadMorePosts)
+    console.log("hasMorePOsts: ", hasMorePosts)
     if(!loadingMorePosts && hasMorePosts){
       setLoadingMorePosts(true)
       fetchPosts()
@@ -232,8 +236,7 @@ const Search = () => {
   };
 
   return (
-    <View>
-      <View className="bg-white">
+    <View className="flex flex-col h-full bg-white pb-4">
         <View className="flex flex-row  bg-lightgray rounded-full m-4">
           <TextInput
             value={searchInput}
@@ -250,17 +253,14 @@ const Search = () => {
               />
           </TouchableOpacity>
         </View>
-      </View>
 
-      <View className="h-full">
       <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
-      initialLayout={{ width: layout.width, height: layout.height }}
+      initialLayout={{ width: layout.width }}
       renderTabBar={customTabBar}
       />
-      </View>
     </View>
   );
 };
