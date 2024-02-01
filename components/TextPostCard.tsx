@@ -27,6 +27,7 @@ interface Props {
   initialLikes?: number;
   postContent: any;
   style?: React.CSSProperties;
+  city: string;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
@@ -35,6 +36,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     postContent,
     profilePic,
     date,
+    city,
     initialLikes = 149999,
   } = props;
   const [likes, setLikes] = useState(initialLikes);
@@ -50,6 +52,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         text: commentText,
         username: username,
         profilePic: profilePic,
+        city: city,
       };
       setComments([...comments, newComment]);
       setCommentText("");
@@ -95,33 +98,40 @@ const TextPostCard: React.FC<Props> = (props) => {
           />
           <View className="flex-1 ml-2">
             <Text className="font-bold">{username}</Text>
-            <Text className="text-xs text-lightgray">{date}</Text>
+            <Text className="text-xs text-lightgray"> {city}</Text>
           </View>
-          <TouchableOpacity onPress={openCommentModal}>
-            <Icon
-              as={Ionicons}
-              name="chatbox-ellipses-outline"
-              size={24}
-              className="mr-1"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-row items-center"
-            onPress={handleLikePress}
-          >
-            <Icon
-              as={Ionicons}
-              name={isLiked ? "heart" : "heart-outline"}
-              size={24}
-              color={isLiked ? COLORS.primary : "black"}
-              className="mr-1"
-            />
-            <Text className="ml-1">{formatLikes(likes)}</Text>
-          </TouchableOpacity>
+
+          <View className="flex flex-col justify-end items-end">
+            <View className="flex flex-row">
+              <TouchableOpacity onPress={openCommentModal}>
+                <Icon
+                  as={Ionicons}
+                  name="chatbox-ellipses-outline"
+                  size={6}
+                  color={COLORS.black}
+                  className="mr-1"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={handleLikePress}
+              >
+                <Icon
+                  as={Ionicons}
+                  name={isLiked ? "heart" : "heart-outline"}
+                  size={6}
+                  color={isLiked ? COLORS.primary : "black"}
+                  className="mr-1"
+                />
+                <Text className="ml-1">{formatLikes(likes)}</Text>
+              </TouchableOpacity>
+            </View>
+            <Text className="text-xs text-lightgray text-l "> {date}</Text>
+          </View>
         </View>
       </View>
 
-      <View className="bg-nyanza w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10 relative">
+      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10 relative">
         <Text>{postContent}</Text>
       </View>
 
@@ -129,12 +139,12 @@ const TextPostCard: React.FC<Props> = (props) => {
         visible={isCommentModalVisible}
         onRequestClose={() => setCommentModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-opacity-50">
-          <View className="bg-white rounded-t-xl p-5 h-3/4">
+        <View className="flex-1 justify-end">
+          <View className=" rounded-t-xl p-5 h-3/4">
             <View className="flex-row justify-between items-center border-b border-lightgray pb-4">
               <Text className="text-lg font-bold">Kommentare</Text>
               <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-                <Icon as={Ionicons} name="close" size={24} color="black" />
+                <Icon as={Ionicons} name="close" size={6} color="black" />
               </TouchableOpacity>
             </View>
             <ScrollView className="pt-4">
@@ -172,10 +182,10 @@ const TextPostCard: React.FC<Props> = (props) => {
                 multiline
               />
               <TouchableOpacity
-                className="bg-brigtBlue p-3"
+                className="bg-brigtBlue p-3 rounded-full"
                 onPress={addComment}
               >
-                <Text className="text-brigtBlue font-bold text-sm">Posten</Text>
+                <Text className=" font-bold text-sm">Posten</Text>
               </TouchableOpacity>
             </View>
           </View>

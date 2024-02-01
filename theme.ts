@@ -9,6 +9,7 @@ const COLORS = {
   red: "#FF2D55",
   brigtBlue: "#0096FF",
   nyanza: "#ECFFDC",
+  transparent: "#00FFFFFF",
 };
 
 const SIZES = {
