@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
-import { AboRecords, SearchRecords } from "../components/types/UserListTypes";
+import { AboRecords, UserRecords } from "../components/types/UserListTypes";
 
 interface RouteParams {
   type: string;
@@ -26,7 +26,7 @@ const FollowerListScreen = () => {
     if (!hasMoreData) {
       return;
     }
-    let data!: SearchRecords;
+    let data!: UserRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
     const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${newOffset}&limit=10`;

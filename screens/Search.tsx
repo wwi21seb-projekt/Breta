@@ -5,19 +5,21 @@ import { FlatList, Icon } from "native-base";
 import { useDebounce } from "use-debounce";
 import { baseUrl } from "../env";
 import { COLORS } from "../theme";
-import { ListUser, SearchRecords } from "../components/types/UserListTypes";
+import { ListUser, UserRecords } from "../components/types/UserListTypes";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import UserListItem from "../components/UserListItem";
+import { Post, PostRecords } from '../components/types/PostSearchTypes'
+import TextPostCard from "../components/TextPostCard";
 
 
 
 const Search = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
-
   const [users, setUsers] = useState<ListUser[]>([]);
-
   const layout = useWindowDimensions();
+  const [userSearchError, setUserSearchError] = useState("");
+  const [postSearchError, setPostSearchError] = useState("");
 
   //style own TabBar since materials isn't fitting
   //any type since the types come directly from react-native-tab-view libary
@@ -33,36 +35,69 @@ const Search = () => {
   
   //components for tabs in TabView -> in future gonna be UserList and own SearchPostFeed comps
   const userList = () => {
-    return(
-      <View>
-            <FlatList
-              data={users}
-              keyExtractor={(item) => item.username}
-              renderItem={({ item }) => (
-                <UserListItem
-                  username={item.username}
-                  profilePictureUrl={item.profilePictureUrl}
-                  enableFollowHandling={false}
-            />
-              )}
-              showsVerticalScrollIndicator={false}
-              onEndReached={loadMoreUsers}
-              onEndReachedThreshold={0.2}
-              ListFooterComponent={
-                loadingMore ? <ActivityIndicator size={"small"} /> : null
-              }
-              ></FlatList>
-          </View>
-    )
+    if(userSearchError !== "") {
+      return (
+        <View className="p-6 bg-white h-full">
+          <Text className="text-base">{userSearchError}</Text>
+        </View>
+      );
+    } else {
+      return(
+        <View style={{flex: 1, height: layout.height}}>
+          <FlatList
+            data={users}
+            keyExtractor={(item) => item.username}
+            renderItem={({ item }) => (
+              <UserListItem
+                username={item.username}
+                profilePictureUrl={item.profilePictureUrl}
+                enableFollowHandling={false}
+          />
+            )}
+            showsVerticalScrollIndicator={false}
+            onEndReached={loadMoreUsers}
+            onEndReachedThreshold={0.2}
+            ListFooterComponent={
+              loadingMoreUsers ? <ActivityIndicator size={"small"} /> : null
+            }
+            ></FlatList>
+        </View>
+      )
+    }
   }
   
   const postList = () => {
-    return(
-      <View>
-        <Text>Hier kommen die posts hin!</Text>
-      </View>
-    )
-   
+    if(postSearchError !== "") {
+      return (
+        <View className="p-6 bg-white h-full">
+          <Text className="text-base">{postSearchError}</Text>
+        </View>
+      );
+    } else {
+      return(
+        <View style={{flex: 1, height: layout.height}}>
+          <FlatList
+            data={posts}
+            keyExtractor={(item) => item.postId}
+            renderItem={({ item }) => (
+              <TextPostCard
+                key={item.postId}
+                username={item.author.username}
+                profilePic={item.author.profilePictureUrl}
+                date={item.creationDate}
+                postContent={item.content}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            onEndReached={loadMorePosts}
+            onEndReachedThreshold={0.2}
+            ListFooterComponent={
+              loadingMorePosts ? <ActivityIndicator size={"small"} /> : null
+            }
+          ></FlatList>
+        </View>
+      )
+    }
   }
   
   //index and routes with title for TabView
@@ -78,22 +113,21 @@ const Search = () => {
     second: postList,
   })
 
-  const [error, setError] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMoreData, setHasMoreData] = useState(true);
+  const [userOffset, setUserOffset] = useState(0);
+  const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
+  const [hasMoreUsers, setHasMoreUsers] = useState(true);
   //limit noch auf 10 ändern!‚
-  let limit = 2
+  let userLimit = 10
 
   const fetchUsers = async (loadingMore: boolean) => {
-    if(!hasMoreData){
+    if(!hasMoreUsers || !searchInput.trim()){
       return;
     }
 
-    let data!: SearchRecords;
+    let data!: UserRecords;
     const encodedSearchValue = encodeURIComponent(debouncedSearchInput);
-    let newOffset = loadingMore ? offset + limit : 0;
-    const urlWithParams = `${baseUrl}users?username=${encodedSearchValue}&offset=${newOffset}&limit=${limit}`;
+    let newOffset = loadingMore ? userOffset + userLimit : 0;
+    const urlWithParams = `${baseUrl}users?username=${encodedSearchValue}&offset=${newOffset}&limit=${userLimit}`;
     let response;
 
     try {
@@ -101,92 +135,133 @@ const Search = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
+        }
       });
 
       if (response?.ok) {
         data = await response.json();
         setUsers(data.records);
-        setOffset(newOffset)
-        setHasMoreData(data.records.length === limit)
+        setUserOffset(newOffset)
+        setHasMoreUsers(data.records.length === userLimit)
       }else{
         switch(response.status){
           case 401:
-            setError("Sie sind nicht authentifiziert!")
+            setUserSearchError("Sie sind nicht authentifiziert!")
             break;
           default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+            setUserSearchError("Etwas ist schiefgelaufen. Versuche es später erneut.")
           }
         }
     } catch (error) {
-      setError("There has been an error while communicating with the server.")
+      setUserSearchError("Es gab einen fehler bei der Kommunikation mit dem Server.")
     } finally {
-      setLoadingMore(false)
+      setLoadingMoreUsers(false)
     }
   }
 
   const loadMoreUsers = () => {
-    if(!loadingMore && hasMoreData){
-      setLoadingMore(true)
+    console.log("loading more Users: ", loadingMoreUsers, "\nhas more users: ", hasMoreUsers )
+    if(!loadingMoreUsers && hasMoreUsers){
+      setLoadingMoreUsers(true)
       fetchUsers(true)
     }
   }
 
-  useEffect(() => {
-    if (!searchInput.trim()) {
+  const [lastPostId, setLastPostId] = useState("");
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  //limit noch auf 10 ändern!‚
+  let postLimit = 2
+  const [posts, setPosts] = useState<Post[]>([])
+
+  const fetchPosts = async () => {
+    if(!hasMorePosts || !searchInput.trim()){
       return;
     }
+    
+    let data!: PostRecords 
+    const encodedSearchValue = encodeURIComponent(debouncedSearchInput)
+    const urlWithParams = `${baseUrl}post?q=${encodedSearchValue}&offset=${lastPostId}&limit=${postLimit}`;
+    let response;
+
+    try{
+      response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      if(response.ok) {
+        data = await response.json();
+        setPosts(data.records);
+        setLastPostId(data.pagination.lastPostId);
+        setHasMorePosts(data.records.length === postLimit);
+      }else{
+        switch(response.status){
+          case 401:
+            setPostSearchError("Sie sind nicht authentifiziert.");
+            break;
+          default:
+            setPostSearchError("Etwas ist schiefgelaufen. Versuche es später erneut.")
+        }
+      }
+    }catch(error){
+      setPostSearchError("Es gab einen fehler bei der Kommunikation mit dem Server.")
+    }finally{
+      setLoadingMorePosts(false)
+    }
+  }
+
+  const loadMorePosts = () => {
+    if(!loadingMorePosts && hasMorePosts){
+      setLoadingMorePosts(true)
+      fetchPosts()
+    }
+  }
+
+  useEffect(() => {
     fetchUsers(false)
+    fetchPosts()
     console.log(debouncedSearchInput);
   }, [debouncedSearchInput]);
-
+  
   const handleSearchInputChange = (searchInput: string) => {
-    if (searchInput === ""){
-      setSearchInput("")
-    }else{
-      setSearchInput(searchInput);
-    }
+    setLastPostId("")
+    setSearchInput(searchInput)
   };
 
-  if(error !== "") {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
-      </View>
-    );
-  } else {
-    return (
-      <View>
-        <View className="bg-white">
-          <View className="flex flex-row  bg-lightgray rounded-full m-4">
-            <TextInput
-              value={searchInput}
-              placeholder="search for users"
-              className="flex-1 p-4"
-              onChangeText={handleSearchInputChange}
+  return (
+    <View>
+      <View className="bg-white">
+        <View className="flex flex-row  bg-lightgray rounded-full m-4">
+          <TextInput
+            value={searchInput}
+            placeholder="search for users"
+            className="flex-1 p-4"
+            onChangeText={handleSearchInputChange}
+            />
+          <TouchableOpacity className="flex items-center justify-center m-4">
+            <Icon
+              as={Ionicons}
+              name="search-outline"
+              size="xl"
+              color={COLORS.black}
               />
-            <TouchableOpacity className="flex items-center justify-center m-4">
-              <Icon
-                as={Ionicons}
-                name="search-outline"
-                size="xl"
-                color={COLORS.black}
-                />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View className="h-full">
-        <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width, height: layout.height }}
-        renderTabBar={customTabBar}
-        />
+          </TouchableOpacity>
         </View>
       </View>
+
+      <View className="h-full">
+      <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width, height: layout.height }}
+      renderTabBar={customTabBar}
+      />
+      </View>
+    </View>
   );
-  }
 };
 export default Search;
