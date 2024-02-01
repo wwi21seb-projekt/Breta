@@ -1,4 +1,4 @@
-import UserList from "../components/UserListItem";
+import UserListItem from "../components/UserListItem";
 import { useState, useEffect } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -19,6 +19,7 @@ const FollowerListScreen = () => {
   const [records, setRecords] = useState<AboRecords[]>([]);
   const [error, setError] = useState("");
   const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
 
@@ -29,7 +30,7 @@ const FollowerListScreen = () => {
     let data!: SearchRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
-    const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${offset}&limit=10`;
+    const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${newOffset}&limit=10`;
 
     try {
       response = await fetch(urlWithParams, {
@@ -73,10 +74,18 @@ const FollowerListScreen = () => {
   };
 
   useEffect(() => {
-    fetchUsers(false);
+    fetchUsers(false).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  if (error !== "") {
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  } else if (error !== "") {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">{error}</Text>
@@ -88,9 +97,13 @@ const FollowerListScreen = () => {
         <FlatList
           className="my-6"
           data={records}
-          keyExtractor={(item) => item.user.username}
+          keyExtractor={(item) => item.username}
           renderItem={({ item }) => (
-            <UserList user={item.user} subscriptionId={item.subscriptionId} />
+            <UserListItem
+              username={item.username}
+              profilePictureUrl={item.profilePictureUrl}
+              followingId={item.followingId}
+            />
           )}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMoreUsers}

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { ListUser } from "./types/UserListTypes";
 import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
@@ -14,16 +13,21 @@ type RootStackParamList = {
 type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 
 type Props = {
-  user: ListUser;
-  subscriptionId?: string;
+  username: string;
+  profilePictureUrl: string;
+  followingId?: string;
 };
 
-const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
+const UserListItem: React.FC<Props> = ({
+  username,
+  profilePictureUrl,
+  followingId,
+}) => {
   const navigation = useNavigation<NavigationType>();
-  const following = user.username;
-  const [isFollowed, setIsFollowed] = useState(subscriptionId !== "");
-  const subscriptionIdString =
-    subscriptionId !== undefined ? subscriptionId : "";
+  const [isFollowed, setIsFollowed] = useState(followingId !== "");
+  const [subscriptionId, setSubscriptionId] = useState(
+    followingId !== undefined ? followingId : "",
+  );
   const [error, setError] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
@@ -45,16 +49,16 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("GeneralProfile", { username: user.username });
+            navigation.navigate("GeneralProfile", { username: username });
           }}
           className="flex-1 flex-row items-center"
         >
           <Image
             source={require("../assets/images/Max.jpeg")}
-            // source={user.profilePictureUrl} sobald Bilder da sind
+            // source={profilePictureUrl} sobald Bilder da sind
             className="aspect-square rounded-full w-10"
           />
-          <Text className="text-base ml-3">{user.username}</Text>
+          <Text className="text-base ml-3">{username}</Text>
         </TouchableOpacity>
 
         {/* Das wäre für eine Freundschaftsanfrage
@@ -84,8 +88,9 @@ const UserListItem: React.FC<Props> = ({ user, subscriptionId }) => {
             handleSubscription(
               isFollowed,
               setIsFollowed,
-              following,
-              subscriptionIdString,
+              username,
+              subscriptionId,
+              setSubscriptionId,
               setError,
             )
           }
