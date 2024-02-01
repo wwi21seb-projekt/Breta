@@ -49,7 +49,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     let response;
     let data!: ResponseOwnPost;
     let newOffset = loadMore ? offset + 3 : 0;
-    const urlWithParams = `${baseUrl}users/:${user.username}/feed?offset=${newOffset}&limit=3`;
+    const urlWithParams = `${baseUrl}users/${user.username}/feed?offset=${newOffset}&limit=3`;
     try {
       response = await fetch(urlWithParams, {
         method: "GET",
@@ -74,7 +74,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         );
         setPosts(loadMore ? [...posts, ...updatedRecords] : updatedRecords);
         setOffset(newOffset);
-        setHasMoreData(data.records.length === 3);
+        setHasMoreData(data.pagination.records - data.pagination.offset > 0);
       } else {
         switch (response.status) {
           case 401:
@@ -96,7 +96,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
 
   const deletePost = async () => {
     let response;
-    const urlWithParams = `${baseUrl}posts/:${currentPostId}`;
+    const urlWithParams = `${baseUrl}posts/${currentPostId}`;
     try {
       response = await fetch(urlWithParams, {
         method: "DELETE",
@@ -207,6 +207,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         <Image
           source={require("../assets/images/Max.jpeg")}
           className="w-full h-48"
+          alt="Profilbild"
         />
         {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
         <View className="items-center p-6">

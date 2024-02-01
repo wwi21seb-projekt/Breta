@@ -83,10 +83,10 @@ const FeedScreen = () => {
       {postsPersonal.map((post, index) => (
         <TextPostCard
           key={`personal-${index}`}
-          username={post.username}
-          profilePic={post.profilePic}
-          date={post.date}
-          postContent={post.postContent}
+          username={post.author.username}
+          profilePic={post.author.profilePictureUrl}
+          date={post.creationDate}
+          postContent={post.content}
           city={post.city}
         />
       ))}
@@ -95,10 +95,10 @@ const FeedScreen = () => {
       {postsGlobal.map((post, index) => (
         <TextPostCard
           key={`global-${index}`}
-          username={post.username}
-          profilePic={post.profilePic}
-          date={post.date}
-          postContent={post.postContent}
+          username={post.author.username}
+          profilePic={post.author.profilePictureUrl}
+          date={post.creationDate}
+          postContent={post.content}
           city={post.city}
         />
       ))}
