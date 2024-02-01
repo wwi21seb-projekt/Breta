@@ -43,7 +43,7 @@ const Search = () => {
       );
     } else {
       return(
-        <View style={{flex: 1, height: layout.height}}>
+        <View>
           <FlatList
             data={users}
             keyExtractor={(item) => item.username}
@@ -75,7 +75,7 @@ const Search = () => {
       );
     } else {
       return(
-        <View style={{flex: 1, height: layout.height}}>
+        <View>
           <FlatList
             data={posts}
             keyExtractor={(item) => item.postId}
@@ -140,7 +140,7 @@ const Search = () => {
 
       if (response?.ok) {
         data = await response.json();
-        setUsers(data.records);
+        setUsers([...users, ...data.records]);
         setUserOffset(newOffset)
         setHasMoreUsers(data.records.length === userLimit)
       }else{
