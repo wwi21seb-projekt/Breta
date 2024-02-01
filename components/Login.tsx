@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { View, Text, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import FloatingTextInput from "../components/FloatingTextInput";
 import { baseUrl } from "../env";
 import styles from "../stylesheets/styleFloatingInput";
@@ -18,8 +18,8 @@ const Login = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleLogin = async () => {
-    let response
-    let data
+    let response;
+    let data;
     try {
       response = await fetch(`${baseUrl}users/login`, {
         method: "POST",
@@ -28,40 +28,40 @@ const Login = () => {
         },
         body: JSON.stringify({
           username: username,
-          password: password
-        })
-      })
-      data = await response.json()
+          password: password,
+        }),
+      });
+      data = await response.json();
       switch (response.status) {
         case 200:
           setError("");
           try {
-            await AsyncStorage.setItem('token', data.token);
-            await AsyncStorage.setItem('refreshToken', data.refreshToken);
+            await AsyncStorage.setItem("token", data.token);
+            await AsyncStorage.setItem("refreshToken", data.refreshToken);
           } catch (error) {
-            console.log("Error: ", error)
+            console.log("Error: ", error);
           }
           navigation.navigate("Feed" as never);
           break;
 
         case 401:
           setError("Bitte bestätige erst deinen Code");
-            //weiterleiten auf code eingeben page
-            break
+          //weiterleiten auf code eingeben page
+          break;
         case 403:
           setError("Die Email-Adresse oder das Passwort ist falsch");
-            // hier eventuell Email und Passwort Input leeren
-            break
+          // hier eventuell Email und Passwort Input leeren
+          break;
         case 404:
           setError("Die Email-Adresse oder das Passwort ist falsch");
-            // hier eventuell Email und Passwort Input leeren
-            break
+          // hier eventuell Email und Passwort Input leeren
+          break;
         default:
           console.error(response.status);
       }
     } catch (error) {
       console.error("Network error:", error);
-    } 
+    }
   };
 
   return (
@@ -90,15 +90,11 @@ const Login = () => {
           styles.loginButton,
           {
             backgroundColor:
-            isUsernameFilled && password.length >= 8
-                ? "#00CED1"
-                : "#d3d3d3",
+              isUsernameFilled && password.length >= 8 ? "#00CED1" : "#d3d3d3",
           },
         ]}
         onPress={handleLogin}
-        disabled={
-          !isUsernameFilled || password.length < 8
-        }
+        disabled={!isUsernameFilled || password.length < 8}
       >
         <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
       </TouchableOpacity>
