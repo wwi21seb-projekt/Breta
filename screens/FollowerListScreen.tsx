@@ -31,7 +31,7 @@ const FollowerListScreen = () => {
     let data!: UserRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
-    const urlWithParams = `${baseUrl}subscriptions/:${username}?type=${type}&offset=${newOffset}&limit=10`;
+    const urlWithParams = `${baseUrl}subscriptions/${username}?type=${type}&offset=${newOffset}&limit=10`;
 
     try {
       response = await fetch(urlWithParams, {

@@ -59,6 +59,7 @@ const UserListItem: React.FC<Props> = ({
             source={require("../assets/images/Max.jpeg")}
             // source={profilePictureUrl} sobald Bilder da sind
             className="aspect-square rounded-full w-10"
+            alt="Profilbild"
           />
           <Text className="text-base ml-3">{username}</Text>
         </TouchableOpacity>
