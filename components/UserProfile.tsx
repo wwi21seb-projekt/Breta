@@ -164,7 +164,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     fetchPosts(false);
   }, []);
 
-  if (notAuthorized) {
+  const renderHeader = () => {
     return (
       <View className="bg-white pb-4">
         <Modal

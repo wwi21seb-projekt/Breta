@@ -116,5 +116,5 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   );
   }
 };
+export default PostScreen
 
-export default PostScreen;
