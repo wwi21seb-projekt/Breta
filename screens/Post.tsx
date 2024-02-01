@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TextInput, TouchableOpacity, View, Text } from "react-native";
+import { TextInput, TouchableOpacity, View, Text, Keyboard, TouchableWithoutFeedback } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
@@ -65,7 +65,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     return <AuthScreen></AuthScreen>;
   } else {
     return (
-      <View className="bg-white flex-1">
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <View className="bg-white flex-1">
         <View className="bg-white justify-center flex-row">
           <TextInput
             className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2"
@@ -104,7 +105,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    );
+      </TouchableWithoutFeedback>
+  );
   }
 };
 
