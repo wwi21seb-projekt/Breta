@@ -103,7 +103,7 @@ const FeedScreen = () => {
         />
       ))}
 
-      {error && <Text className="text-red-500 text-center">{error}</Text>}
+      {error && <Text className="text-red text-center">{error}</Text>}
     </ScrollView>
   );
 };
