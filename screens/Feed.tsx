@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text } from 'react-native';
-import TextPostCard from '../components/TextPostCard';
+import React, { useState, useEffect } from "react";
+import { ScrollView, Text } from "react-native";
+import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 
@@ -29,7 +29,7 @@ const FeedScreen = () => {
     }
   };
 
-  const fetchPosts = async (type: 'personal' | 'global') => {
+  const fetchPosts = async (type: "personal" | "global") => {
     setLoading(true);
     const url = `${baseUrl}feed?limit=10&feedType=${type}`;
 
@@ -40,20 +40,27 @@ const FeedScreen = () => {
       });
 
       if (!response.ok) {
-        setError('Daten konnten nicht geladen werden');
+        setError("Daten konnten nicht geladen werden");
       }
 
       const data = await response.json();
-      const updatedRecords = await Promise.all(data.records.map(async (record: any) => ({
-        ...record,
-        username: record.author?.username || 'Unbekannter Nutzer',
-        profilePic: record.author?.profilePictureUrl || 'standard_pic_url',
-        date: record.creationDate ? new Date(record.creationDate).toLocaleDateString() : 'Unbekanntes Datum',
-        postContent: record.content || 'Kein Inhalt',
-        city: await getPlaceName(record.location.latitude, record.location.longitude),
-      })));
+      const updatedRecords = await Promise.all(
+        data.records.map(async (record: any) => ({
+          ...record,
+          username: record.author?.username || "Unbekannter Nutzer",
+          profilePic: record.author?.profilePictureUrl || "standard_pic_url",
+          date: record.creationDate
+            ? new Date(record.creationDate).toLocaleDateString()
+            : "Unbekanntes Datum",
+          postContent: record.content || "Kein Inhalt",
+          city: await getPlaceName(
+            record.location.latitude,
+            record.location.longitude,
+          ),
+        })),
+      );
 
-      if (type === 'personal') {
+      if (type === "personal") {
         setPostsPersonal(updatedRecords);
       } else {
         setPostsGlobal(updatedRecords);
@@ -66,13 +73,13 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    fetchPosts('personal');
-    fetchPosts('global');
+    fetchPosts("personal");
+    fetchPosts("global");
   }, []);
 
   return (
-    <ScrollView className='p-4 bg-white'>
-      <Text className='text-lg font-bold mb-4'>Persönliche Posts</Text>
+    <ScrollView className="p-4 bg-white">
+      <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
       {postsPersonal.map((post, index) => (
         <TextPostCard
           key={`personal-${index}`}
@@ -80,11 +87,11 @@ const FeedScreen = () => {
           profilePic={post.profilePic}
           date={post.date}
           postContent={post.postContent}
-          city={post.city} 
+          city={post.city}
         />
       ))}
 
-      <Text className='text-lg font-bold mt-8 mb-4'>Globale Posts</Text>
+      <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
       {postsGlobal.map((post, index) => (
         <TextPostCard
           key={`global-${index}`}
@@ -92,11 +99,11 @@ const FeedScreen = () => {
           profilePic={post.profilePic}
           date={post.date}
           postContent={post.postContent}
-          city={post.city} 
+          city={post.city}
         />
       ))}
 
-      {error && <Text className='text-red-500 text-center'>{error}</Text>}
+      {error && <Text className="text-red-500 text-center">{error}</Text>}
     </ScrollView>
   );
 };

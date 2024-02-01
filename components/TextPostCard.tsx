@@ -52,7 +52,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         text: commentText,
         username: username,
         profilePic: profilePic,
-        city: city
+        city: city,
       };
       setComments([...comments, newComment]);
       setCommentText("");
@@ -100,34 +100,33 @@ const TextPostCard: React.FC<Props> = (props) => {
             <Text className="font-bold">{username}</Text>
             <Text className="text-xs text-lightgray"> {city}</Text>
           </View>
-          
+
           <View className="flex flex-col justify-end items-end">
-          
             <View className="flex flex-row">
-          <TouchableOpacity onPress={openCommentModal}>
-            <Icon
-              as={Ionicons}
-              name="chatbox-ellipses-outline"
-              size={6}
-              color={COLORS.black}
-              className="mr-1"
-              />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-row items-center"
-            onPress={handleLikePress}
-            >
-            <Icon
-              as={Ionicons}
-              name={isLiked ? "heart" : "heart-outline"}
-              size={6}
-              color={isLiked ? COLORS.primary : "black"}
-              className="mr-1"
-              />
-            <Text className="ml-1">{formatLikes(likes)}</Text>
-          </TouchableOpacity>
-          </View>
-          <Text className="text-xs text-lightgray text-l "> {date}</Text>
+              <TouchableOpacity onPress={openCommentModal}>
+                <Icon
+                  as={Ionicons}
+                  name="chatbox-ellipses-outline"
+                  size={6}
+                  color={COLORS.black}
+                  className="mr-1"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={handleLikePress}
+              >
+                <Icon
+                  as={Ionicons}
+                  name={isLiked ? "heart" : "heart-outline"}
+                  size={6}
+                  color={isLiked ? COLORS.primary : "black"}
+                  className="mr-1"
+                />
+                <Text className="ml-1">{formatLikes(likes)}</Text>
+              </TouchableOpacity>
+            </View>
+            <Text className="text-xs text-lightgray text-l "> {date}</Text>
           </View>
         </View>
       </View>
