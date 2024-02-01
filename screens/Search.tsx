@@ -10,6 +10,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from '../components/types/PostSearchTypes'
 import TextPostCard from "../components/TextPostCard";
+import React from "react";
 
 
 
@@ -86,6 +87,7 @@ const Search = () => {
                 profilePic={item.author.profilePictureUrl}
                 date={item.creationDate}
                 postContent={item.content}
+                city={""}
               />
             )}
             showsVerticalScrollIndicator={false}
@@ -179,9 +181,9 @@ const Search = () => {
       return;
     }
     
-    let data!: PostRecords 
+    let data!: PostRecords
     const encodedSearchValue = encodeURIComponent(debouncedSearchInput)
-    const urlWithParams = `${baseUrl}posts?q=${encodedSearchValue}&offset=${lastPostId}&limit=${postLimit}`;
+    const urlWithParams = `${baseUrl}posts?q=${encodedSearchValue}&postId=${lastPostId}&limit=${postLimit}`;
     let response;
 
     try{
@@ -225,6 +227,19 @@ const Search = () => {
   }
 
   useEffect(() => {
+    if(debouncedSearchInput === ""){
+      //user reset
+      setUserOffset(0);
+      setLoadingMoreUsers(false);
+      setHasMoreUsers(true)
+      setUsers([])
+
+      //post reset
+      setLastPostId("")
+      setLoadingMorePosts(false)
+      setHasMorePosts(true)
+      setPosts([])
+    }
     fetchUsers(false)
     fetchPosts()
     console.log(debouncedSearchInput);

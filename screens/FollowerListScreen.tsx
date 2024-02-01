@@ -4,6 +4,7 @@ import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
 import { AboRecords, UserRecords } from "../components/types/UserListTypes";
+import React from "react";
 
 interface RouteParams {
   type: string;
