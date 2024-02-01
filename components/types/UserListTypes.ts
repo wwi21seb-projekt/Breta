@@ -15,7 +15,7 @@ export interface AboRecords {
 }
 
 // For the search function
-export interface SearchRecords {
+export interface UserRecords {
   records: AboRecords[];
   pagination: {
     offset: number;

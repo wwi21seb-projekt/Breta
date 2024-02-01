@@ -95,6 +95,7 @@ const TextPostCard: React.FC<Props> = (props) => {
           <Image
             source={{ uri: profilePic }}
             className="w-10 h-10 rounded-full"
+            alt="PB"
           />
           <View className="flex-1 ml-2">
             <Text className="font-bold">{username}</Text>
