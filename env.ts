@@ -3,6 +3,5 @@
 // Beta Server URL: https://www.server-beta.de/api/
 
 // URL for development
-//export const baseUrl = "http://localhost:3000/api/";
+export const baseUrl = "http://10.0.2.2:3000/api/";
 
-export const baseUrl = "https://www.server-beta.de/api/";
