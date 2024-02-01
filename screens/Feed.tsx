@@ -1,76 +1,109 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, Text } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 
 const FeedScreen = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
+  const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [lastPostId, setLastPostId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  let data;
-  let response;
-
-  const fetchPosts = async () => {
-    if (loading) return;
-
-    setLoading(true);
-    const url = `${baseUrl}feed?limit=10&feedType=global`;
-
+  const getPlaceName = async (latitude: number, longitude: number) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
     try {
-      response = await fetch(url, {
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
       if (response.ok) {
-        data = await response.json();
-        const transformedPosts = data.records.map((record: any) => ({
-          username: record.author.username,
-          profilePic: record.author.profilePictureUrl,
-          date: new Date(record.creationDate).toLocaleDateString(),
-          postContent: record.content,
-        }));
-        setPosts((prevPosts) => [...prevPosts, ...transformedPosts]);
-        setLastPostId(data.pagination.lastPostId);
+        const data = await response.json();
+        return data.address.city || "Unbekannte Stadt";
+      }
+      return "Unbekannte Stadt";
+    } catch {
+      return "Fehler beim Laden der Stadt";
+    }
+  };
+
+  const fetchPosts = async (type: "personal" | "global") => {
+    setLoading(true);
+    const url = `${baseUrl}feed?limit=10&feedType=${type}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        setError("Daten konnten nicht geladen werden");
+      }
+
+      const data = await response.json();
+      const updatedRecords = await Promise.all(
+        data.records.map(async (record: any) => ({
+          ...record,
+          username: record.author?.username || "Unbekannter Nutzer",
+          profilePic: record.author?.profilePictureUrl || "standard_pic_url",
+          date: record.creationDate
+            ? new Date(record.creationDate).toLocaleDateString()
+            : "Unbekanntes Datum",
+          postContent: record.content || "Kein Inhalt",
+          city: await getPlaceName(
+            record.location.latitude,
+            record.location.longitude,
+          ),
+        })),
+      );
+
+      if (type === "personal") {
+        setPostsPersonal(updatedRecords);
       } else {
-        switch (response.status) {
-          case 401:
-            setError("Auf das Login Popup navigieren!");
-            break;
-          case 404:
-            setError(
-              "Die Nutzer konnten nicht geladen werden. Versuche es später erneut.",
-            );
-            break;
-          default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-        }
+        setPostsGlobal(updatedRecords);
       }
     } catch (error) {
       setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPosts();
+    fetchPosts("personal");
+    fetchPosts("global");
   }, []);
 
   return (
-    <ScrollView className="bg-lightgray p-2.5 my-2.5">
-      {posts.map((post) => (
+    <ScrollView className="p-4 bg-white">
+      <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
+      {postsPersonal.map((post, index) => (
         <TextPostCard
-          key={post.postId}
+          key={`personal-${index}`}
           username={post.username}
           profilePic={post.profilePic}
           date={post.date}
           postContent={post.postContent}
+          city={post.city}
         />
       ))}
+
+      <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
+      {postsGlobal.map((post, index) => (
+        <TextPostCard
+          key={`global-${index}`}
+          username={post.username}
+          profilePic={post.profilePic}
+          date={post.date}
+          postContent={post.postContent}
+          city={post.city}
+        />
+      ))}
+
+      {error && <Text className="text-red text-center">{error}</Text>}
     </ScrollView>
   );
 };
