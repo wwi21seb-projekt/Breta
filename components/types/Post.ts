@@ -7,6 +7,8 @@ interface Post {
   creationDate: string;
   content: string;
   likes: string;
+  location: string;
+  city: string;
 }
 
 export default Post;
