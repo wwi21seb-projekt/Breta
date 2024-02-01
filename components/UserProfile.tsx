@@ -1,32 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
+  Modal,
   Text,
   Image,
-  ScrollView,
   TouchableOpacity,
-  SafeAreaView,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { SHADOWS } from "../theme";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { baseUrl } from "../env";
 import { useNavigation } from "@react-navigation/native";
-import { dummyData } from "../DummyData";
-import axios, { AxiosError } from "axios";
-
-const users = dummyData;
-
-type User = {
-  id: string;
-  username: string;
-  nickname: string;
-  avatarUrl: number;
-  posts: number[];
-  isFollowing: boolean;
-};
+import { User } from "../components/types/User";
+import { handleSubscription } from "./functions/HandleSubscription";
+import { baseUrl } from "../env";
+import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
 
 type RootStackParamList = {
-  FollowerList: { type: number; users: any };
+  FollowerList: { type: string; username: string };
   Authentification: undefined;
   EditProfile: { user: any };
 };
@@ -39,172 +30,331 @@ type NavigationType = StackNavigationProp<RootStackParamList, "FollowerList">;
 
 const UserProfile: React.FC<Props> = ({ user, personal }) => {
   const navigation = useNavigation<NavigationType>();
-  const [userNotFound, setUserNotFound] = useState(false);
-  const [notAuthorized, setNotAuthorized] = useState(false);
-  const [username, setUsername] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [status, setStatus] = useState("");
-  // const [profilePicture, setProfilePicture] = useState("");
-  const [followerCount, setFollowerCount] = useState("");
-  const [followingCount, setFollowingCount] = useState("");
-  const [postsCount, setPostsCount] = useState("");
-  const [token, setToken] = useState("")
 
-  useEffect(() => {
-    const handleAxiosError = (error: AxiosError) => {
-      if (axios.isAxiosError(error) && error.response) {
-        switch (error.response.status) {
+  const following = user.username;
+  const [isFollowed, setIsFollowed] = useState(user.subscriptionId !== "");
+  const [error, setError] = useState("");
+  const [subscriptionId, setSubscriptionId] = useState(user.subscriptionId);
+  const [posts, setPosts] = useState<OwnPost[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState("");
+
+  const fetchPosts = async (loadMore: boolean) => {
+    if (!hasMoreData) {
+      return;
+    }
+    let response;
+    let data!: ResponseOwnPost;
+    let newOffset = loadMore ? offset + 3 : 0;
+    const urlWithParams = `${baseUrl}users/:${user.username}/feed?offset=${newOffset}&limit=3`;
+    try {
+      response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        data = await response.json();
+        const updatedRecords = await Promise.all(
+          data.records.map(async (record) => {
+            const cityName = await getPlaceName(
+              record.location.latitude,
+              record.location.longitude,
+            );
+            return {
+              ...record,
+              city: cityName,
+            };
+          }),
+        );
+        setPosts(loadMore ? [...posts, ...updatedRecords] : updatedRecords);
+        setOffset(newOffset);
+        setHasMoreData(data.records.length === 3);
+      } else {
+        switch (response.status) {
           case 401:
-            setNotAuthorized(true);
+            setError("Auf das Login Popup navigieren!");
             break;
           case 404:
-            setUserNotFound(true);
+            setError("Die Beiträge konnten nicht geladen werden.");
             break;
           default:
-            console.log("Unbekannter Fehler");
+            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
         }
+      }
+    } catch (error) {
+      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const deletePost = async () => {
+    let response;
+    const urlWithParams = `${baseUrl}posts/:${currentPostId}`;
+    try {
+      response = await fetch(urlWithParams, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setModalVisible(false);
       } else {
-        console.log("Netzwerkfehler oder keine Antwort vom Server");
-      }
-    };
-
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}users/:username`);
-        const { username, nickname, status, follower, following, posts } =
-          response.data;
-        setUsername(username);
-        setNickname(nickname);
-        setStatus(status);
-        setFollowerCount(follower);
-        setFollowingCount(following);
-        setPostsCount(posts);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          handleAxiosError(error);
-        } else {
-          console.log("Ein unerwarteter Fehler ist aufgetreten");
+        switch (response.status) {
+          case 401:
+            setError("Auf das Login Popup navigieren!");
+            break;
+          case 403:
+            setError("Du kannst nur deine eigenen Beiträge löschen.");
+            break;
+          case 404:
+            setError(
+              "Der Beitrag, den du löschen möchtest, konnte nicht gefunden werden. Versuche es später erneut.",
+            );
+            break;
+          default:
+            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
         }
       }
-    };
+    } catch (error) {
+      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    }
+  };
 
-    fetchUserData();
+  const getPlaceName = async (latitude: number, longitude: number) => {
+    let response;
+    let data;
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+    try {
+      response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        data = await response.json();
+        return data.address.city;
+      } else {
+        return "";
+      }
+    } catch (error) {
+      return "";
+    }
+  };
+
+  const loadMorePosts = () => {
+    if (!loadingMore && hasMoreData) {
+      setLoadingMore(true);
+      fetchPosts(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts(false);
   }, []);
-
 
   if (notAuthorized) {
     return (
-      <SafeAreaView className="flex bg-white justify-center items-center">
-        <Text className="text-lg">Du musst dich erst anmelden</Text>
-        <TouchableOpacity
-          className="bg-primary my-10 px-16 py-8 rounded-xl shadow-md"
-          onPress={() => navigation.navigate("Authentification")}
+      <View className="bg-white pb-4">
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setCurrentPostId("");
+            setModalVisible(false);
+          }}
         >
-          Anmelden
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  } else if (userNotFound) {
-    return (
-      <SafeAreaView className="flex bg-white justify-center items-center">
-        <Text className="text-lg">User not found</Text>
-      </SafeAreaView>
-    );
-  } else
-    return (
-      <SafeAreaView className="flex bg-white">
-        <ScrollView>
-          <Image source={user.avatarUrl} className="w-full h-48" />
-
-          <View className="items-center p-10">
-            <Text className="text-xl font-bold">{nickname}</Text>
-            <Text className="font-base text-darkgray">@{username}</Text>
-            <Text className="my-4">{status}</Text>
-            {personal === true ? (
-              <TouchableOpacity
-                style={{ ...SHADOWS.small }}
-                className="bg-white my-10 px-12 py-4 rounded-full"
-                onPress={() =>
-                  navigation.navigate("EditProfile", { user: user })
-                }
-              >
-                <Text>Profil bearbeiten</Text>
-              </TouchableOpacity>
-            ) : (
-              <View className="w-full justify-center flex-row space-x-4">
-                <TouchableOpacity
-                  style={{ ...SHADOWS.small }}
-                  className="bg-white my-10 px-12 py-3 rounded-2xl"
-                  onPress={() => console.log("Chat starten")}
-                >
-                  <Text>Chatten</Text>
+          <View
+            className="flex-1 justify-center items-center"
+            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
+          >
+            <View className="bg-white rounded-3xl px-8 py-4">
+              <Text className="text-lg mb-10">
+                Möchtest du diesen Beitrag wirklich löschen?
+              </Text>
+              <View className="flex-row">
+                <TouchableOpacity onPress={() => deletePost()}>
+                  <Text className="text-red text-base font-bold">Löschen</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
-                  style={{ ...SHADOWS.small }}
-                  className="bg-white my-10 px-12 py-3 rounded-2xl"
-                  onPress={() => console.log("User folgen")}
+                  className="ml-auto"
+                  onPress={() => {
+                    setCurrentPostId("");
+                    setModalVisible(false);
+                  }}
                 >
-                  <Text>Folgen</Text>
+                  <Text className="text-black text-base font-bold">
+                    Abbrechen
+                  </Text>
                 </TouchableOpacity>
               </View>
-            )}
-
-            <View className="w-full justify-center flex-row space-around">
-              <View className="items-center justify-center p-3">
-                <Text className="font-bold text-base">{postsCount}</Text>
-                <Text>Beiträge</Text>
-              </View>
-              <TouchableOpacity
-                className="items-center justify-center p-3"
-                onPress={() =>
-                  navigation.navigate("FollowerList", { type: 0, users })
-                }
-              >
-                <Text className="font-bold text-base">{followerCount}</Text>
-                <Text>Follower</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="items-center justify-center p-3"
-                onPress={() =>
-                  navigation.navigate("FollowerList", {
-                    type: 1,
-                    users: dummyData,
-                  })
-                }
-              >
-                <Text className="font-bold text-base">{followingCount}</Text>
-                <Text>Gefolgt</Text>
-              </TouchableOpacity>
-              {personal === true && (
-                <TouchableOpacity
-                  className="items-center justify-center p-3"
-                  onPress={() =>
-                    navigation.navigate("FollowerList", {
-                      type: 2,
-                      users: dummyData,
-                    })
-                  }
-                >
-                  <Text className="font-bold text-base">2</Text>
-                  <Text>Anfragen</Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
-          <Text className="font-bold text-xl ml-6">Beiträge</Text>
-          <View className="flex-row justify-between flex-wrap mx-6 my-2">
-            {dummyData[0].posts.map((url, index) => (
-              <Image
-                key={index}
-                source={url}
-                className="rounded-3xl aspect-square my-2"
-                style={{ width: "47%" }}
-              />
-            ))}
+        </Modal>
+        <Image
+          source={require("../assets/images/Max.jpeg")}
+          className="w-full h-48"
+        />
+        {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
+        <View className="items-center p-6">
+          <Text className="text-2xl font-bold mb-2">{user.nickname}</Text>
+          <Text className="italic text-lg text-darkgray mb-6">
+            @{user.username}
+          </Text>
+          <Text className="mb-8">{user.status}</Text>
+          {personal === true ? (
+            <TouchableOpacity
+              style={{ ...SHADOWS.small }}
+              className="bg-white mb-10 px-12 py-4 rounded-full"
+              onPress={() => navigation.navigate("EditProfile", { user: user })}
+            >
+              <Text>Profil bearbeiten</Text>
+            </TouchableOpacity>
+          ) : (
+            <View className="w-full justify-center flex-row space-x-4">
+              <TouchableOpacity
+                style={{ ...SHADOWS.small }}
+                className="bg-white my-10 px-12 py-3 rounded-2xl"
+                onPress={() => console.log("Chat starten")}
+              >
+                <Text>Chatten</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ ...SHADOWS.small }}
+                className="bg-white my-10 px-12 py-3 rounded-2xl"
+                onPress={() =>
+                  handleSubscription(
+                    isFollowed,
+                    setIsFollowed,
+                    following,
+                    subscriptionId,
+                    setSubscriptionId,
+                    setError,
+                  )
+                }
+              >
+                <Text>{isFollowed ? "Entfolgen" : "Folgen"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View className="w-full justify-center flex-row space-around">
+            <View className="items-center justify-center p-3">
+              <Text className="font-bold text-base">{user.posts}</Text>
+              <Text>Beiträge</Text>
+            </View>
+            <TouchableOpacity
+              className="items-center justify-center p-3"
+              onPress={() =>
+                navigation.navigate("FollowerList", {
+                  type: "followers",
+                  username: user.username,
+                })
+              }
+            >
+              <Text className="font-bold text-base">{user.follower}</Text>
+              <Text>Follower</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="items-center justify-center p-3"
+              onPress={() =>
+                navigation.navigate("FollowerList", {
+                  type: "following",
+                  username: user.username,
+                })
+              }
+            >
+              <Text className="font-bold text-base">{user.following}</Text>
+              <Text>Gefolgt</Text>
+            </TouchableOpacity>
+            {personal === true && (
+              <TouchableOpacity
+                className="items-center justify-center p-3"
+                onPress={
+                  () =>
+                    console.log(
+                      "Freundschaftsanfragen: Wird noch implementiert",
+                    )
+                  // navigation.navigate("FollowerList", {
+                  //   type: "request"
+
+                  // })
+                }
+              >
+                <Text className="font-bold text-base">0</Text>
+                <Text>Anfragen</Text>
+              </TouchableOpacity>
+            )}
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        </View>
+        <Text className="font-bold text-xl ml-6">Beiträge</Text>
+      </View>
     );
-            
+  };
+
+  if (error !== "") {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">{error}</Text>
+      </View>
+    );
+  } else if (posts !== undefined) {
+    return (
+      <FlatList
+        className="bg-white"
+        data={posts}
+        keyExtractor={(item) => item.postId}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
+            style={{ ...SHADOWS.small }}
+            disabled={!personal}
+            onLongPress={() => {
+              setCurrentPostId(item.postId);
+              setModalVisible(true);
+            }}
+          >
+            <View className="flex-row">
+              <Text className="w-1/2 text-xs">{item.city}</Text>
+              <Text className="w-1/2 text-xs text-right">
+                {item.creationDate.split("T")[0]}
+              </Text>
+            </View>
+            <Text className="my-5 text-lg font-semibold text-center">
+              {item.content}
+            </Text>
+          </TouchableOpacity>
+        )}
+        showsVerticalScrollIndicator={false}
+        onEndReached={loadMorePosts}
+        onEndReachedThreshold={0.2}
+        ListFooterComponent={
+          loadingMore ? <ActivityIndicator size={"small"} /> : null
+        }
+        ListHeaderComponent={renderHeader}
+      />
+    );
+  } else {
+    return (
+      <View className="p-6 bg-white h-full">
+        <Text className="text-base">
+          Etwas ist schiefgelaufen. Versuche es später erneut.
+        </Text>
+      </View>
+    );
+  }
 };
 export default UserProfile;
