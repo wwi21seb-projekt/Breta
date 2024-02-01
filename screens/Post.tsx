@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState} from "react";
 import { TextInput, TouchableOpacity, View, Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
+import AuthScreen from "./AuthScreen"
 
 type RootStackParamList = {
   Feed: undefined;
@@ -15,6 +17,16 @@ type PostScreenprops = {
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
+  const [token, setToken] = useState("");
+
+
+  useEffect(() => {
+    async function getData(){
+      let t = await AsyncStorage.getItem("token");
+      setToken(t);
+    }
+    getData()
+  })
 
   const createPost = async () => {
     let response;
@@ -23,14 +35,14 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          postText,
-        }),
-      });
+          content: postText
+        })
+      })
       switch (response.status) {
         case 201:
-          await response.json();
           setPostError("");
           navigation.navigate("Feed");
           break;
@@ -40,7 +52,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           );
           break;
         case 401:
-          setPostError("Unauthorized");
+          setPostError("Unauthorized. Please login again");
           break;
         default:
           console.error(response.status);
@@ -48,8 +60,18 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     } catch (error) {
       console.error("Network error:", error);
     }
+  
+
   };
 
+  if(token === null){
+
+    return(
+      <AuthScreen></AuthScreen>
+    )
+  }
+  else{
+    
   return (
     <View className="bg-white flex-1">
       <View className="bg-white justify-center flex-row">
@@ -90,7 +112,9 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </View>
-  );
+  )
+        };
+        
 };
 
-export default PostScreen;
+export default PostScreen

@@ -6,12 +6,16 @@ import { useDebounce } from "use-debounce";
 import { baseUrl } from "../env";
 import { COLORS } from "../theme";
 import { User, ResponseData } from "../components/types/UserListTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import AuthScreen from "./AuthScreen";
+
 const Search = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 1000);
 
   const [showResultList, setshowResultList] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [token, setToken] = useState("")
 
   useEffect(() => {
     (async () => {
@@ -42,11 +46,24 @@ const Search = () => {
       }
     })();
     console.log(debouncedSearchInput);
+    async function getData(){
+      let t
+      t = await AsyncStorage.getItem("token");
+      setToken(t);
+    }
+    getData()
   }, [debouncedSearchInput]);
 
   const handleSearchInputChange = (searchInput: string) => {
     setSearchInput(searchInput);
   };
+
+  if (token === null) {
+    return (
+      <AuthScreen></AuthScreen>
+    )
+  }
+  else {
 
   return (
     <View>
@@ -85,5 +102,6 @@ const Search = () => {
       )}
     </View>
   );
+            }
 };
 export default Search;

@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import FloatingTextInput from "../components/FloatingTextInput";
-import axios from "axios";
 import { baseUrl } from "../env";
 import styles from "../stylesheets/styleFloatingInput";
 import { useNavigation } from "@react-navigation/native";
@@ -9,63 +9,73 @@ import { useState } from "react";
 
 const Login = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [isEmailFilled, setIsEmailFilled] = useState(false);
+  const [errorUsername, setErrorUsername] = useState("");
+  const [isUsernameFilled, setIsUsernameFilled] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleLogin = () => {
-    axios
-      .post(`${baseUrl}users/login`, {
-        email: email,
-        password: password,
+  const handleLogin = async () => {
+    let response
+    let data
+    try {
+      response = await fetch(`${baseUrl}users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
       })
-      .then(function (response) {
-        if (response.status == 200) {
+      data = await response.json()
+      switch (response.status) {
+        case 200:
+          setError("");
+          try {
+            await AsyncStorage.setItem('token', data.token);
+            await AsyncStorage.setItem('refreshToken', data.refreshToken);
+          } catch (error) {
+            console.log("Error: ", error)
+          }
           navigation.navigate("Feed" as never);
-        }
-      })
-      .catch(function (error) {
-        switch (error.response.status) {
-          case 401: {
-            console.log("Bitte bestätige erst deinen Code");
+          break;
+
+        case 401:
+          setError("Bitte bestätige erst deinen Code");
             //weiterleiten auf code eingeben page
-            break;
-          }
-          case 403: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
+            break
+        case 403:
+          setError("Die Email-Adresse oder das Passwort ist falsch");
             // hier eventuell Email und Passwort Input leeren
-            break;
-          }
-          case 404: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
+            break
+        case 404:
+          setError("Die Email-Adresse oder das Passwort ist falsch");
             // hier eventuell Email und Passwort Input leeren
-            break;
-          }
-        }
-      });
+            break
+        default:
+          console.error(response.status);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    } 
   };
 
   return (
     <View>
       <FloatingTextInput
-        label="Email Adresse"
-        value={email}
+        label="Username"
+        value={username}
         onChangeText={(text: any) => {
-          setEmail(text);
-          setIsEmailFilled(!!text);
-          setErrorEmail("");
-        }}
-        onBlur={() => {
-          if (!emailRegex.test(email)) {
-            setErrorEmail("Die Email-Adresse hat keine korrekte Form!");
-          }
+          setUsername(text);
+          setIsUsernameFilled(!!text);
+          setErrorUsername("");
         }}
       />
-      {errorEmail && <Text style={styles.error}>{errorEmail}</Text>}
+      {errorUsername && <Text style={styles.error}>{errorUsername}</Text>}
       <FloatingTextInput
         secureTextEntry={true}
         label="Passwort"
@@ -80,14 +90,14 @@ const Login = () => {
           styles.loginButton,
           {
             backgroundColor:
-              isEmailFilled && emailRegex.test(email) && password.length >= 8
+            isUsernameFilled && password.length >= 8
                 ? "#00CED1"
                 : "#d3d3d3",
           },
         ]}
         onPress={handleLogin}
         disabled={
-          !isEmailFilled || !emailRegex.test(email) || password.length < 8
+          !isUsernameFilled || password.length < 8
         }
       >
         <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
