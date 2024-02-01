@@ -227,6 +227,7 @@ const EditProfileScreen = () => {
             source={require("../assets/images/Max.jpeg")}
             // source={user?.profilePictureUrl} sobald die Bilder gehen
             className="w-3/5 h-36 rounded-full mt-8 mb-3"
+            alt="Profilbild"
           />
         </View>
         <Text className="italic text-lg text-darkgray self-center mb-4">
