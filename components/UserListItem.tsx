@@ -97,7 +97,9 @@ const UserListItem: React.FC<Props> = ({
               )
             }
           >
-            <Text className="text-xs">{isFollowed ? "Entfolgen" : "Folgen"}</Text>
+            <Text className="text-xs">
+              {isFollowed ? "Entfolgen" : "Folgen"}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
