@@ -10,6 +10,10 @@ npx expo start
 
 eas build --platform android --profile apk --local
 
+## IP Adress for android Emulator
+
+10.0.2.2
+
 ## Planning stuff
 
 - Trello Board
