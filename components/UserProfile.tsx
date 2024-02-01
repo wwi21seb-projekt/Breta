@@ -13,8 +13,6 @@ import { baseUrl } from "../env";
 import { useNavigation } from "@react-navigation/native";
 import { dummyData } from "../DummyData";
 import axios, { AxiosError } from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import AuthScreen from "../screens/AuthScreen";
 
 const users = dummyData;
 
@@ -91,20 +89,8 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     };
 
     fetchUserData();
-
-    async function getData(){
-      let t = await AsyncStorage.getItem("token");
-      setToken(t);
-    }
-    getData()
   }, []);
 
-  if (token === null) {
-    return (
-      <AuthScreen></AuthScreen>
-    )
-  }
-  else {
 
   if (notAuthorized) {
     return (
@@ -219,6 +205,6 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         </ScrollView>
       </SafeAreaView>
     );
-            }
+            
 };
 export default UserProfile;
