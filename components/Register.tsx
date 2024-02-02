@@ -274,18 +274,14 @@ const Register = () => {
       )}
       <TouchableOpacity
         style={{
-          flex: 1,
           backgroundColor: !checkForInput() ? COLORS.primary : COLORS.lightgray,
-          margin: 0,
-          padding: 12,
-          alignItems: "center",
-          borderRadius: 18,
           ...SHADOWS.medium,
         }}
+        className="p-4 mx-20 mt-10 items-center rounded-2xl"
         disabled={checkForInput()}
         onPress={() => register()}
       >
-        <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
+        <Text className="text-lg">
           Registrieren
         </Text>
       </TouchableOpacity>

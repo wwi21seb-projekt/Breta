@@ -5,7 +5,7 @@ import { baseUrl } from "../env";
 import styles from "../stylesheets/styleFloatingInput";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-// import { SIZES, COLORS } from "../constants/theme";
+import { COLORS } from "../theme";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -86,17 +86,17 @@ const Login = () => {
       />
       {error && <Text style={styles.error}>{error}</Text>}
       <TouchableOpacity
-        style={[
-          styles.loginButton,
+        style={
           {
             backgroundColor:
-              isUsernameFilled && password.length >= 8 ? "#00CED1" : "#d3d3d3",
-          },
-        ]}
+              isUsernameFilled && password.length >= 8 ? COLORS.primary : COLORS.lightgray,
+          }
+        }
+        className="p-4 mx-20 mt-10 items-center rounded-2xl"
         onPress={handleLogin}
         disabled={!isUsernameFilled || password.length < 8}
       >
-        <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
+        <Text className="text-lg">Einloggen</Text>
       </TouchableOpacity>
     </View>
   );
