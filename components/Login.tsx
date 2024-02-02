@@ -66,10 +66,10 @@ const Login = () => {
 
   return (
     <ScrollView
-        className="bg-white"
-        automaticallyAdjustKeyboardInsets={true}
-        showsVerticalScrollIndicator={false}
-      >
+      className="bg-white"
+      automaticallyAdjustKeyboardInsets={true}
+      showsVerticalScrollIndicator={false}
+    >
       <FloatingTextInput
         label="Username"
         value={username}
@@ -91,12 +91,12 @@ const Login = () => {
       />
       {error && <Text style={styles.error}>{error}</Text>}
       <TouchableOpacity
-        style={
-          {
-            backgroundColor:
-              isUsernameFilled && password.length >= 8 ? COLORS.primary : COLORS.lightgray,
-          }
-        }
+        style={{
+          backgroundColor:
+            isUsernameFilled && password.length >= 8
+              ? COLORS.primary
+              : COLORS.lightgray,
+        }}
         className="p-4 mx-20 mt-10 items-center rounded-2xl"
         onPress={handleLogin}
         disabled={!isUsernameFilled || password.length < 8}

@@ -198,10 +198,10 @@ const Register = () => {
 
   return (
     <ScrollView
-        className="bg-white"
-        automaticallyAdjustKeyboardInsets={true}
-        showsVerticalScrollIndicator={false}
-      >
+      className="bg-white"
+      automaticallyAdjustKeyboardInsets={true}
+      showsVerticalScrollIndicator={false}
+    >
       <FloatingTextInput
         label="Email Adresse"
         value={email}
@@ -287,9 +287,7 @@ const Register = () => {
         disabled={checkForInput()}
         onPress={() => register()}
       >
-        <Text className="text-lg">
-          Registrieren
-        </Text>
+        <Text className="text-lg">Registrieren</Text>
       </TouchableOpacity>
     </ScrollView>
   );
