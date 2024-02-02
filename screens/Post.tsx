@@ -11,9 +11,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import AuthScreen from "./AuthScreen";
-import Geolocation, { GeolocationResponse } from '@react-native-community/geolocation';
-import { position } from "native-base/lib/typescript/theme/styled-system";
 
 type RootStackParamList = {
   Feed: undefined;
@@ -38,12 +35,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     }
     getData()
 
-    Geolocation.getCurrentPosition(
-      position => {
-        setLongitude(position.coords.longitude)
-        setLatitude(position.coords.latitude)
-        setAccuracy(position.coords.accuracy)
-      })
   })
 
 
@@ -56,15 +47,10 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          content: postText,
-          location: {
-            longitude: longitude,
-            latitude: latitude,
-            accuracy: accuracy
-          }
+          content: postText
         })
       })
       switch (response.status) {
