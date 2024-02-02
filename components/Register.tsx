@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import FloatingTextInput from "../components/FloatingTextInput";
 import { SIZES, SHADOWS, COLORS } from "../theme";
 import axios from "axios";
@@ -197,7 +197,11 @@ const Register = () => {
   };
 
   return (
-    <View>
+    <ScrollView
+        className="bg-white"
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+      >
       <FloatingTextInput
         label="Email Adresse"
         value={email}
@@ -240,6 +244,7 @@ const Register = () => {
         }}
       ></TouchableOpacity>
       <FloatingTextInput
+        textContentType="oneTimeCode"
         secureTextEntry={true}
         label="Passwort"
         value={password}
@@ -253,6 +258,7 @@ const Register = () => {
         </Text>
       )}
       <FloatingTextInput
+        textContentType="oneTimeCode"
         secureTextEntry={true}
         label="Passwort bestätigen"
         value={repeatPassword}
@@ -277,7 +283,7 @@ const Register = () => {
           backgroundColor: !checkForInput() ? COLORS.primary : COLORS.lightgray,
           ...SHADOWS.medium,
         }}
-        className="p-4 mx-20 mt-10 items-center rounded-2xl"
+        className="p-4 mx-20 my-10 items-center rounded-2xl"
         disabled={checkForInput()}
         onPress={() => register()}
       >
@@ -285,7 +291,7 @@ const Register = () => {
           Registrieren
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 

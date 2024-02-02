@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FloatingTextInput from "../components/FloatingTextInput";
 import { baseUrl } from "../env";
@@ -65,7 +65,11 @@ const Login = () => {
   };
 
   return (
-    <View>
+    <ScrollView
+        className="bg-white"
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+      >
       <FloatingTextInput
         label="Username"
         value={username}
@@ -77,6 +81,7 @@ const Login = () => {
       />
       {errorUsername && <Text style={styles.error}>{errorUsername}</Text>}
       <FloatingTextInput
+        textContentType="oneTimeCode"
         secureTextEntry={true}
         label="Passwort"
         value={password}
@@ -98,7 +103,7 @@ const Login = () => {
       >
         <Text className="text-lg">Einloggen</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
