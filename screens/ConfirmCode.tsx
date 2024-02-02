@@ -45,7 +45,9 @@ const ConfirmCode = ({ navigation }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ value }),
+          body: 
+            JSON.stringify({token: value})
+          
         });
         switch (response.status) {
           case 200:
