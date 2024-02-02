@@ -34,12 +34,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
       setToken(t);
     }
     getData();
+  });
 
-  })
-
-
-  
-  
   const createPost = async () => {
     let response;
     try {
@@ -47,12 +43,12 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          content: postText
-        })
-      })
+          content: postText,
+        }),
+      });
       switch (response.status) {
         case 201:
           setPostError("");
