@@ -155,7 +155,7 @@ const Register = () => {
 
   const register = async () => {
     if (checkInputFields()) {
-      let response; 
+      let response;
       try {
         await AsyncStorage.setItem("user", username);
         response = await fetch(`${baseUrl}users`, {
@@ -163,7 +163,7 @@ const Register = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({username, password, nickname, email}),
+          body: JSON.stringify({ username, password, nickname, email }),
         });
         switch (response.status) {
           case 201:
