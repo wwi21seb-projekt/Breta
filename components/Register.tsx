@@ -4,6 +4,8 @@ import FloatingTextInput from "../components/FloatingTextInput";
 import { SIZES, SHADOWS, COLORS } from "../theme";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { baseUrl } from "../env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Register = () => {
   const navigation = useNavigation();
@@ -20,7 +22,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-  const baseUrl = "http://localhost:3000/api/v1/";
+
 
   const checkUsername = () => {
     if (/^[a-zA-Z0-9]+$/.test(username)) {
@@ -153,44 +155,46 @@ const Register = () => {
     }
   };
 
-  const register = () => {
+  const register = async () => {
+    
     if (checkInputFields()) {
-      axios
-        .post(baseUrl + "users", {
-          username: username,
-          nickname: nickname,
-          email: email,
+
+      let response;
+      try {
+        await AsyncStorage.setItem("user", username)
+        response = await fetch(`${baseUrl}users`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body:{
+            username: username,
+            password: password,
+            nickname: nickname,
+            email: email
+          }
         })
-        .then(function (response) {
-          console.log(response);
-          if (response.status == 201) {
+        switch (response.status) {
+          case 200:
             setServerError("");
-            navigation.navigate("CodePage" as never);
-          }
-        })
-        .catch(function (error) {
-          switch (error.response.status) {
-            case 400: {
-              console.log("400");
-              setServerError("Irgendwas ist schief gelaufen");
-              break;
+            navigation.navigate("ConfirmCode");
+            break;
+          case 400:
+            setServerError("Irgendwas ist schief gelaufen");
+            break;
+          case 409:
+            setServerError("Der User existiert schon");
+            break;
+          case 422: {
+            setServerError("Bitte geben Sie eine valide E-Mail ein");
+            break;
             }
-
-            case 409: {
-              console.log("409");
-              setServerError("Der User existiert schon");
-              break;
-            }
-
-            case 422: {
-              console.log("422");
-              setServerError("Bitte geben Sie eine valide E-Mail ein");
-              break;
-            }
-          }
-        });
-
-      // auslagern?
+          default:
+            console.error(response.status);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+      }
     } else {
       return;
     }
@@ -276,7 +280,7 @@ const Register = () => {
         style={{
           flex: 1,
           backgroundColor: !checkForInput() ? COLORS.primary : COLORS.lightgray,
-          margin: 160,
+          margin: 0,
           padding: 12,
           alignItems: "center",
           borderRadius: 18,

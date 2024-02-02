@@ -7,8 +7,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SIZES, SHADOWS, COLORS } from "../theme";
-import axios from "axios";
-import { useNavigation } from "react-router-dom";
 
 import {
   CodeField,
@@ -16,43 +14,18 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
+import { baseUrl } from "../env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 20,
-    alignContent: "center",
-    justifyContent: "center",
-  },
-  mediumTitle: { textAlign: "center", fontSize: 25 },
-  normal: { textAlign: "center", fontSize: 18 },
-  codeFieldRoot: { marginTop: 20 },
-  cell: {
-    width: 40,
-    height: 40,
-    lineHeight: 38,
-    fontSize: 24,
-    borderWidth: 2,
-    borderColor: "#00000030",
-    textAlign: "center",
-  },
   focusCell: {
     borderColor: "#000",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 
 const CELL_COUNT = 6;
 
-const ConfirmCode = () => {
-  const navigation = useNavigation();
-
-  const baseUrl = "http://localhost:3000/api/v1/";
+const ConfirmCode = ({ navigation }) => {
 
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -63,92 +36,102 @@ const ConfirmCode = () => {
   const [serverError, setServerError] = useState("");
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
-  const confirm = () => {
-    console.log(value);
+  const confirm = async () => {
 
     if (value !== "") {
-      axios
-        .post(baseUrl + "users/" + "Marcelo" + "/activate", {
-          //Variable bekommen
-          token: value,
-        })
-        .then(function (response) {
-          if (response.status == 200) {
-            setServerError("");
-            navigation.navigate("Register");
-          }
-        })
-        .catch(function (error) {
-          switch (error.response.status) {
-            case 400: {
-              setServerError("Der User wurde nicht gefunden");
-              break;
-            }
 
-            case 409: {
-              console.log("401");
-              setServerError("Du bist nicht authorisiert das zu machen");
-              break;
-            }
-          }
-        });
-    } else {
+    let response;
+    try {
+      const user = await AsyncStorage.getItem("user")
+      response = await fetch(`${baseUrl}users/${user}/activate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body:{
+          token: value
+        }
+      })
+      switch (response.status) {
+        case 200:
+          setServerError("");
+          navigation.navigate("Register");
+          break;
+        case 400:
+          setServerError("Der User wurde nicht gefunden");
+          break;
+        case 409:
+          setServerError("Du bist nicht authorisiert das zu machen");
+          break;
+        default:
+          console.error(response.status);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+
+  }
+    else {
       return;
     }
   };
 
-  const newCode = () => {
-    axios
-      .post(baseUrl + "users/" + "Marcelo" + "/activate", {
-        //Variable bekommen
+  const newCode = async () => {
+
+    let response;
+    try {
+      const user = await AsyncStorage.getItem("user")
+      response = await fetch(`${baseUrl}users/${user}/activate`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .then(function (response) {
-        if (response.status == 200) {
+      switch (response.status) {
+        case 200:
           setServerError("");
           setConfirmationMessage(
             "Ihnen wurde ein neuer Code zugesendet. Schauen Sie in ihrem E-Mail-Postfach nach.",
           );
-          navigation.navigate("CodePage");
-        }
-      })
-      .catch(function (error) {
-        switch (error.response.status) {
-          case 400: {
-            setServerError("Der User wurde nicht gefunden.");
-            setConfirmationMessage("");
-            break;
-          }
+          navigation.navigate("ConfirmCode");
+          break;
+        case 400:
+          setServerError("Der User wurde nicht gefunden.");
+          setConfirmationMessage("");
+          break;
+        case 409:
+          setServerError("Unauthorized. Please login again");setServerError("Du bist nicht authorisiert das zu machen.");
+          setConfirmationMessage("");
+          break;
+        default:
+          console.error(response.status);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
 
-          case 409: {
-            console.log("401");
-            setServerError("Du bist nicht authorisiert das zu machen.");
-            setConfirmationMessage("");
-            break;
-          }
-        }
-      });
   };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.container}>
-        <Text style={styles.normal}>
+    <SafeAreaView /*className="flex-1 p-5 align-center justify-center"*/>
+      <View className="flex-1 bg-white align-center justify-center">
+        <Text className="text-center text-md">
           Es wurde ein Code an ihre Mail gesendet
         </Text>
-        <Text style={styles.mediumTitle}>Bitte hier den Code Bestätigen:</Text>
+        <Text className="text-center text-lg">Bitte hier den Code Bestätigen:</Text>
         <CodeField
           ref={ref}
           {...props}
           value={value}
           onChangeText={setValue}
           cellCount={CELL_COUNT}
-          rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
           renderCell={({ index, symbol, isFocused }) => (
             <Text
               key={index}
-              style={[styles.cell, isFocused && styles.focusCell]}
+              className="w-10 h-10 leading-10 text-md border-0.5 border-black text-center"
+              style={[isFocused && styles.focusCell]}
               onLayout={getCellOnLayoutHandler(index)}
             >
               {symbol || (isFocused ? <Cursor /> : null)}
@@ -158,41 +141,29 @@ const ConfirmCode = () => {
 
         <View>
           <TouchableOpacity
+          className="flex-1 m-2.5 p-3 items-center rounded-md"
             style={{
-              flex: 1,
               backgroundColor: value.length < 6 ? COLORS.white : COLORS.primary,
-              margin: 10,
-              padding: 12,
-              alignItems: "center",
-              borderRadius: 18,
               ...SHADOWS.medium,
             }}
             onPress={() => confirm()}
             disabled={value.length < 6}
           >
             <Text
-              style={{
-                color: COLORS.black,
-                fontSize: SIZES.large,
-                alignItems: "center",
-              }}
+            className="text-black text-lg text-center"
             >
               Bestätigen
             </Text>
           </TouchableOpacity>
         </View>
         <View
-          style={{
-            borderBottomColor: "black",
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            paddingTop: 15,
-          }}
+        className="border-b-black border-b-4 pt-3"
         ></View>
-        <View style={{ paddingTop: 10 }}>
-          <Text style={{ textAlign: "center" }}>
+        <View className="pt-2">
+          <Text className="text-center">
             Haben Sie keinen Code erhalten?
             <TouchableOpacity onPress={() => newCode()}>
-              <Text style={{ fontWeight: "bold" }}>
+              <Text className="font-bold">
                 {" "}
                 Erhalten Sie einen neuen Code
               </Text>
@@ -201,14 +172,14 @@ const ConfirmCode = () => {
         </View>
         {!!serverError && (
           <Text
-            style={{ color: COLORS.red, paddingTop: 20, textAlign: "center" }}
+          className="text-red pt-5 text-center"
           >
             {serverError}
           </Text>
         )}
         {!!confirmationMessage && (
           <Text
-            style={{ color: COLORS.green, paddingTop: 20, textAlign: "center" }}
+          className="text-green pt-5 text-center"
           >
             {confirmationMessage}
           </Text>
