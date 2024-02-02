@@ -304,7 +304,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         <Text className="font-bold text-xl ml-6">Beiträge</Text>
       </View>
     );
-  }
+  };
 
   if (error !== "") {
     return (

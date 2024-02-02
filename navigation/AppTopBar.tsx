@@ -12,8 +12,6 @@ import {
   Image,
 } from "react-native";
 
-
-
 type RootStackParamList = {
   Home: undefined;
   Impressum: undefined;
@@ -71,7 +69,10 @@ const AppTopBar = () => {
           {headerTitle !== "" ? (
             <Text className="text-xl font-bold">{headerTitle}</Text>
           ) : (
-            <Image source={require("../assets/images/Breta_Logo.png")} className="w-20 h-full" />
+            <Image
+              source={require("../assets/images/Breta_Logo.png")}
+              className="w-20 h-full"
+            />
           )}
         </View>
 

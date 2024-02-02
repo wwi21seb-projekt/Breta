@@ -22,8 +22,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-
-
   const checkUsername = () => {
     if (/^[a-zA-Z0-9]+$/.test(username)) {
       // Überprüfung auf maximale Länge (20 Zeichen)
@@ -156,24 +154,22 @@ const Register = () => {
   };
 
   const register = async () => {
-    
     if (checkInputFields()) {
-
       let response;
       try {
-        await AsyncStorage.setItem("user", username)
+        await AsyncStorage.setItem("user", username);
         response = await fetch(`${baseUrl}users`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body:{
+          body: {
             username: username,
             password: password,
             nickname: nickname,
-            email: email
-          }
-        })
+            email: email,
+          },
+        });
         switch (response.status) {
           case 200:
             setServerError("");
@@ -188,7 +184,7 @@ const Register = () => {
           case 422: {
             setServerError("Bitte geben Sie eine valide E-Mail ein");
             break;
-            }
+          }
           default:
             console.error(response.status);
         }
