@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
 const CELL_COUNT = 6;
 
 const ConfirmCode = ({ navigation }) => {
-
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -37,56 +36,51 @@ const ConfirmCode = ({ navigation }) => {
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
   const confirm = async () => {
-
     if (value !== "") {
-
-    let response;
-    try {
-      const user = await AsyncStorage.getItem("user")
-      response = await fetch(`${baseUrl}users/${user}/activate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body:{
-          token: value
+      let response;
+      try {
+        const user = await AsyncStorage.getItem("user");
+        response = await fetch(`${baseUrl}users/${user}/activate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: {
+            token: value,
+          },
+        });
+        switch (response.status) {
+          case 200:
+            setServerError("");
+            navigation.navigate("Register");
+            break;
+          case 400:
+            setServerError("Der User wurde nicht gefunden");
+            break;
+          case 409:
+            setServerError("Du bist nicht authorisiert das zu machen");
+            break;
+          default:
+            console.error(response.status);
         }
-      })
-      switch (response.status) {
-        case 200:
-          setServerError("");
-          navigation.navigate("Register");
-          break;
-        case 400:
-          setServerError("Der User wurde nicht gefunden");
-          break;
-        case 409:
-          setServerError("Du bist nicht authorisiert das zu machen");
-          break;
-        default:
-          console.error(response.status);
+      } catch (error) {
+        console.error("Network error:", error);
       }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-
-  }
-    else {
+    } else {
       return;
     }
   };
 
   const newCode = async () => {
-
     let response;
     try {
-      const user = await AsyncStorage.getItem("user")
+      const user = await AsyncStorage.getItem("user");
       response = await fetch(`${baseUrl}users/${user}/activate`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
       switch (response.status) {
         case 200:
           setServerError("");
@@ -100,7 +94,8 @@ const ConfirmCode = ({ navigation }) => {
           setConfirmationMessage("");
           break;
         case 409:
-          setServerError("Unauthorized. Please login again");setServerError("Du bist nicht authorisiert das zu machen.");
+          setServerError("Unauthorized. Please login again");
+          setServerError("Du bist nicht authorisiert das zu machen.");
           setConfirmationMessage("");
           break;
         default:
@@ -109,7 +104,6 @@ const ConfirmCode = ({ navigation }) => {
     } catch (error) {
       console.error("Network error:", error);
     }
-
   };
 
   return (
@@ -118,7 +112,9 @@ const ConfirmCode = ({ navigation }) => {
         <Text className="text-center text-md">
           Es wurde ein Code an ihre Mail gesendet
         </Text>
-        <Text className="text-center text-lg">Bitte hier den Code Bestätigen:</Text>
+        <Text className="text-center text-lg">
+          Bitte hier den Code Bestätigen:
+        </Text>
         <CodeField
           ref={ref}
           {...props}
@@ -141,7 +137,7 @@ const ConfirmCode = ({ navigation }) => {
 
         <View>
           <TouchableOpacity
-          className="flex-1 m-2.5 p-3 items-center rounded-md"
+            className="flex-1 m-2.5 p-3 items-center rounded-md"
             style={{
               backgroundColor: value.length < 6 ? COLORS.white : COLORS.primary,
               ...SHADOWS.medium,
@@ -149,38 +145,23 @@ const ConfirmCode = ({ navigation }) => {
             onPress={() => confirm()}
             disabled={value.length < 6}
           >
-            <Text
-            className="text-black text-lg text-center"
-            >
-              Bestätigen
-            </Text>
+            <Text className="text-black text-lg text-center">Bestätigen</Text>
           </TouchableOpacity>
         </View>
-        <View
-        className="border-b-black border-b-4 pt-3"
-        ></View>
+        <View className="border-b-black border-b-4 pt-3"></View>
         <View className="pt-2">
           <Text className="text-center">
             Haben Sie keinen Code erhalten?
             <TouchableOpacity onPress={() => newCode()}>
-              <Text className="font-bold">
-                {" "}
-                Erhalten Sie einen neuen Code
-              </Text>
+              <Text className="font-bold"> Erhalten Sie einen neuen Code</Text>
             </TouchableOpacity>
           </Text>
         </View>
         {!!serverError && (
-          <Text
-          className="text-red pt-5 text-center"
-          >
-            {serverError}
-          </Text>
+          <Text className="text-red pt-5 text-center">{serverError}</Text>
         )}
         {!!confirmationMessage && (
-          <Text
-          className="text-green pt-5 text-center"
-          >
+          <Text className="text-green pt-5 text-center">
             {confirmationMessage}
           </Text>
         )}
