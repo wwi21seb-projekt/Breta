@@ -138,5 +138,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+}
 
 export default PostScreen;
