@@ -45,14 +45,14 @@ const ConfirmCode = ({ navigation }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: {
-            token: value,
-          },
+          body: 
+            JSON.stringify({value})
+          
         });
         switch (response.status) {
           case 200:
             setServerError("");
-            navigation.navigate("Register");
+            navigation.navigate("Feed");
             break;
           case 400:
             setServerError("Der User wurde nicht gefunden");
@@ -108,7 +108,7 @@ const ConfirmCode = ({ navigation }) => {
 
   return (
     <SafeAreaView /*className="flex-1 p-5 align-center justify-center"*/>
-      <View className="flex-1 bg-white align-center justify-center">
+      <View className="bg-white align-center justify-center">
         <Text className="text-center text-md">
           Es wurde ein Code an ihre Mail gesendet
         </Text>
@@ -126,7 +126,7 @@ const ConfirmCode = ({ navigation }) => {
           renderCell={({ index, symbol, isFocused }) => (
             <Text
               key={index}
-              className="w-10 h-10 leading-10 text-md border-0.5 border-black text-center"
+              className="w-10 h-10 leading-10 text-md border-0.5 border-black text-center bg-primary"
               style={[isFocused && styles.focusCell]}
               onLayout={getCellOnLayoutHandler(index)}
             >
@@ -137,7 +137,7 @@ const ConfirmCode = ({ navigation }) => {
 
         <View>
           <TouchableOpacity
-            className="flex-1 m-2.5 p-3 items-center rounded-md"
+            className="m-2.5 p-3 items-center rounded-md"
             style={{
               backgroundColor: value.length < 6 ? COLORS.white : COLORS.primary,
               ...SHADOWS.medium,
