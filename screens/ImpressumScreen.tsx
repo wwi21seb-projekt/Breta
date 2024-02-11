@@ -21,8 +21,8 @@ const Impressum = () => {
           },
         });
         if (response.status) {
-            data = await response.json();
-            setImpressumText(data.text);
+          data = await response.json();
+          setImpressumText(data.text);
         } else {
           setErrorText("Something went wrong. Please try again.");
         }
