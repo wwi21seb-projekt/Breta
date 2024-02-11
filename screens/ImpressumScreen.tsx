@@ -29,9 +29,7 @@ const Impressum = () => {
             setErrorText("Something went wrong. Please try again.");
         }
       } catch (error) {
-        setErrorText(
-          "Connection error. Please try again.",
-        );
+        setErrorText("Connection error. Please try again.");
       }
     })().finally(() => {
       setLoading(false);
@@ -53,9 +51,7 @@ const Impressum = () => {
       </View>
     );
   } else {
-    return (
-      <Error errorText={errorText}/>
-    );
+    return <Error errorText={errorText} />;
   }
 };
 

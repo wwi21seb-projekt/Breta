@@ -42,32 +42,31 @@ const FeedScreen = () => {
       const data = await response.json();
       switch (response.status) {
         case 200:
-        const updatedRecords = await Promise.all(
-        data.records.map(async (record: any) => ({
-          ...record,
-          username: record.author?.username || "Unbekannter Nutzer",
-          profilePic: record.author?.profilePictureUrl || "standard_pic_url",
-          date: record.creationDate
-            ? new Date(record.creationDate).toLocaleDateString()
-            : "Unbekanntes Datum",
-          postContent: record.content || "Kein Inhalt",
-          city: await getPlaceName(
-            record.location.latitude,
-            record.location.longitude,
-          ),
-        })),
-      );
-
-      if (type === "personal") {
-        setPostsPersonal(updatedRecords);
-      } else {
-        setPostsGlobal(updatedRecords);
-      }
-        break;
-        case 401:
-          setErrorText(
-            data.error.message
+          const updatedRecords = await Promise.all(
+            data.records.map(async (record: any) => ({
+              ...record,
+              username: record.author?.username || "Unbekannter Nutzer",
+              profilePic:
+                record.author?.profilePictureUrl || "standard_pic_url",
+              date: record.creationDate
+                ? new Date(record.creationDate).toLocaleDateString()
+                : "Unbekanntes Datum",
+              postContent: record.content || "Kein Inhalt",
+              city: await getPlaceName(
+                record.location.latitude,
+                record.location.longitude,
+              ),
+            })),
           );
+
+          if (type === "personal") {
+            setPostsPersonal(updatedRecords);
+          } else {
+            setPostsGlobal(updatedRecords);
+          }
+          break;
+        case 401:
+          setErrorText(data.error.message);
           break;
         default:
           setErrorText("Something went wrong. Please try again.");
@@ -90,38 +89,36 @@ const FeedScreen = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  }else if (postsPersonal.length !== 0 || postsGlobal.length !== 0) {
+  } else if (postsPersonal.length !== 0 || postsGlobal.length !== 0) {
     return (
       <ScrollView className="p-4 bg-white">
-      <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
-      {postsPersonal.map((post, index) => (
-        <TextPostCard
-          key={`personal-${index}`}
-          username={post.author.username}
-          profilePic={post.author.profilePictureUrl}
-          date={post.creationDate}
-          postContent={post.content}
-          city={post.city}
-        />
-      ))}
+        <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
+        {postsPersonal.map((post, index) => (
+          <TextPostCard
+            key={`personal-${index}`}
+            username={post.author.username}
+            profilePic={post.author.profilePictureUrl}
+            date={post.creationDate}
+            postContent={post.content}
+            city={post.city}
+          />
+        ))}
 
-      <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
-      {postsGlobal.map((post, index) => (
-        <TextPostCard
-          key={`global-${index}`}
-          username={post.author.username}
-          profilePic={post.author.profilePictureUrl}
-          date={post.creationDate}
-          postContent={post.content}
-          city={post.city}
-        />
-      ))}
-    </ScrollView>
+        <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
+        {postsGlobal.map((post, index) => (
+          <TextPostCard
+            key={`global-${index}`}
+            username={post.author.username}
+            profilePic={post.author.profilePictureUrl}
+            date={post.creationDate}
+            postContent={post.content}
+            city={post.city}
+          />
+        ))}
+      </ScrollView>
     );
   } else {
-    return (
-      <Error errorText={errorText}/>
-    );
+    return <Error errorText={errorText} />;
   }
 };
 

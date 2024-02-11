@@ -42,10 +42,8 @@ const UserListItem: React.FC<Props> = ({
 
   if (error !== "") {
     <View>
-      <Text>
-        Maaaan!
-      </Text>
-    </View>
+      <Text>Maaaan!</Text>
+    </View>;
   } else {
     return (
       <View
