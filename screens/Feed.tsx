@@ -3,7 +3,7 @@ import { ScrollView, Text, View, ActivityIndicator } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
-import Error from "../components/Error";
+import Error from "../components/ErrorComp";
 
 const FeedScreen = () => {
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);

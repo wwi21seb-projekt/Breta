@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Text, View, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
-import Error from "../components/Error";
+import Error from "../components/ErrorComp";
 
 const Impressum = () => {
   const [impressumText, setImpressumText] = useState("");
