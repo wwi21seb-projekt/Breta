@@ -20,13 +20,11 @@ const Impressum = () => {
             "Content-Type": "application/json",
           },
         });
-        switch (response.status) {
-          case 200:
+        if (response.status) {
             data = await response.json();
             setImpressumText(data.text);
-            break;
-          default:
-            setErrorText("Something went wrong. Please try again.");
+        } else {
+          setErrorText("Something went wrong. Please try again.");
         }
       } catch (error) {
         setErrorText("Connection error. Please try again.");

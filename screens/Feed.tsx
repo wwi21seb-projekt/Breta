@@ -41,7 +41,7 @@ const FeedScreen = () => {
       });
       const data = await response.json();
       switch (response.status) {
-        case 200:
+        case 200: {
           const updatedRecords = await Promise.all(
             data.records.map(async (record: any) => ({
               ...record,
@@ -65,6 +65,7 @@ const FeedScreen = () => {
             setPostsGlobal(updatedRecords);
           }
           break;
+        }
         case 401:
           setErrorText(data.error.message);
           break;
