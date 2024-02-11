@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, View, ActivityIndicator } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
+import Error from "../components/Error";
 
 const FeedScreen = () => {
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const getPlaceName = async (latitude: number, longitude: number) => {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
@@ -38,13 +39,10 @@ const FeedScreen = () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-
-      if (!response.ok) {
-        setError("Daten konnten nicht geladen werden");
-      }
-
       const data = await response.json();
-      const updatedRecords = await Promise.all(
+      switch (response.status) {
+        case 200:
+        const updatedRecords = await Promise.all(
         data.records.map(async (record: any) => ({
           ...record,
           username: record.author?.username || "Unbekannter Nutzer",
@@ -65,8 +63,17 @@ const FeedScreen = () => {
       } else {
         setPostsGlobal(updatedRecords);
       }
+        break;
+        case 401:
+          setErrorText(
+            data.error.message
+          );
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
+      }
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Connection error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -77,8 +84,15 @@ const FeedScreen = () => {
     fetchPosts("global");
   }, []);
 
-  return (
-    <ScrollView className="p-4 bg-white">
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }else if (postsPersonal.length !== 0 || postsGlobal.length !== 0) {
+    return (
+      <ScrollView className="p-4 bg-white">
       <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
       {postsPersonal.map((post, index) => (
         <TextPostCard
@@ -102,10 +116,13 @@ const FeedScreen = () => {
           city={post.city}
         />
       ))}
-
-      {error && <Text className="text-red text-center">{error}</Text>}
     </ScrollView>
-  );
+    );
+  } else {
+    return (
+      <Error errorText={errorText}/>
+    );
+  }
 };
 
 export default FeedScreen;
