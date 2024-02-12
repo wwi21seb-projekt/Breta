@@ -113,7 +113,7 @@ const FeedScreen = () => {
 
         <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
         <TouchableOpacity onPress={logout}>
-        <Text>Logout</Text>
+          <Text>Logout</Text>
         </TouchableOpacity>
         {postsGlobal.map((post, index) => (
           <TextPostCard

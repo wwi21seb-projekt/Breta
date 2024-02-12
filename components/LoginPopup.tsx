@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { COLORS, SHADOWS, SIZES } from '../theme';
+import { COLORS, SHADOWS, SIZES } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 type RootStackParamList = {
-    Authentification: undefined;
-    Feed: undefined;
+  Authentification: undefined;
+  Feed: undefined;
 };
 
-type NavigationType = StackNavigationProp<RootStackParamList, "Authentification">;
+type NavigationType = StackNavigationProp<
+  RootStackParamList,
+  "Authentification"
+>;
 
 const LoginPopup = () => {
   const [modalVisible, setModalVisible] = useState(true);
@@ -19,11 +22,11 @@ const LoginPopup = () => {
   useFocusEffect(
     React.useCallback(() => {
       setModalVisible(true);
-      
+
       return () => {
         setModalVisible(false);
       };
-    }, [])
+    }, []),
   );
 
   return (
@@ -31,17 +34,27 @@ const LoginPopup = () => {
       transparent={true}
       visible={modalVisible}
       animationType="none"
-      onRequestClose={()=>{ setModalVisible(false); navigation.navigate("Feed"); }}
+      onRequestClose={() => {
+        setModalVisible(false);
+        navigation.navigate("Feed");
+      }}
     >
       <View style={styles.overlayStyle}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TouchableOpacity onPress={()=>navigation.navigate("Feed")}>
-            <Ionicons name="arrow-back" size={SIZES.large} />
+            <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
+              <Ionicons name="arrow-back" size={SIZES.large} />
             </TouchableOpacity>
-          <View style={styles.textView}>
-            <Text style={styles.modalText}>Für diese Funktion musst du dich einloggen.</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Authentification")}><Text>einloggen</Text></TouchableOpacity>
+            <View style={styles.textView}>
+              <Text style={styles.modalText}>
+                Für diese Funktion musst du dich einloggen.
+              </Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("Authentification")}
+              >
+                <Text>einloggen</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -53,22 +66,22 @@ const LoginPopup = () => {
 const styles = StyleSheet.create({
   overlayStyle: {
     flex: 1,
-    backgroundColor: 'rgba(200, 200, 200, 0.8)', 
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(200, 200, 200, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -80,10 +93,10 @@ const styles = StyleSheet.create({
   textView: {
     paddingTop: 2,
     paddingBottom: 12,
-    paddingHorizontal: 10, 
-    alignItems: 'center',
+    paddingHorizontal: 10,
+    alignItems: "center",
   },
-  button :{
+  button: {
     backgroundColor: COLORS.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -92,7 +105,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ErrorComp from '../components/ErrorComp';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ErrorComp from "../components/ErrorComp";
 
 interface AuthContextType {
   token: string | null;
@@ -15,7 +21,6 @@ const defaultContextValue: AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
-
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -34,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const bootstrapAsync = async () => {
       let userToken: string | null = null;
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+        userToken = await AsyncStorage.getItem("userToken");
       } catch (error) {
         setErrorText("Restoring token failed.");
       }
@@ -47,25 +52,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const authContext: AuthContextType = {
     login: async () => {
-      setToken('tedauba');
-      await AsyncStorage.setItem('userToken', 'tedauba');
+      setToken("tedauba");
+      await AsyncStorage.setItem("userToken", "tedauba");
     },
     logout: async () => {
       setToken(null);
-      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem("userToken");
     },
     token,
   };
 
-  if(errorText !== ""){
-    return (
-      <ErrorComp errorText={errorText} />
-    );
+  if (errorText !== "") {
+    return <ErrorComp errorText={errorText} />;
   } else {
-  return (
-    <AuthContext.Provider value={authContext}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+    return (
+      <AuthContext.Provider value={authContext}>
+        {!loading && children}
+      </AuthContext.Provider>
+    );
   }
 };

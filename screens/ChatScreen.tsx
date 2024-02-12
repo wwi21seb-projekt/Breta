@@ -7,7 +7,7 @@ export default function Chat() {
   const isAuthenticated = checkAuthentification();
 
   if (!isAuthenticated) {
-    return <LoginPopup isVisible={true}/>;
+    return <LoginPopup isVisible={true} />;
   }
 
   return (
@@ -16,7 +16,6 @@ export default function Chat() {
       <StatusBar style="auto" />
     </View>
   );
-
 }
 
 const styles = StyleSheet.create({

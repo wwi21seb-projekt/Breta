@@ -7,7 +7,6 @@ const App = () => {
       <AppNavigator />
     </AuthProvider>
   );
-}
+};
 
 export default App;
-
