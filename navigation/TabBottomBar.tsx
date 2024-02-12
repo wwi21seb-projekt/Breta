@@ -5,10 +5,10 @@ import stylePlusIcon from "../stylesheets/stylePlusIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
 
-import Feed from "../screens/Feed";
-import Chat from "../screens/Chat";
-import Post from "../screens/Post";
-import Search from "../screens/Search";
+import Feed from "../screens/FeedScreen";
+import Chat from "../screens/ChatScreen";
+import Post from "../screens/PostScreen";
+import Search from "../screens/SearchScreen";
 import Profile from "../screens/ProfileScreen";
 
 const Tabs = createBottomTabNavigator();

@@ -7,7 +7,7 @@ import TabBottomBar from "./TabBottomBar";
 
 import Impressum from "../screens/ImpressumScreen";
 import Authentification from "../screens/AuthScreen";
-import ConfirmCode from "../screens/ConfirmCode";
+import ConfirmCode from "../screens/ConfirmCodeScreen";
 import FollowerList from "../screens/FollowerListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
