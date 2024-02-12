@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, SHADOWS, SIZES } from '../theme';
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 type RootStackParamList = {
-    Auth: undefined;
+    Authentification: undefined;
     Feed: undefined;
 };
 
-type LoginPopupProps = {
-  isVisible: boolean,
-  //navigation: StackNavigationProp<RootStackParamList, "Auth">;
-}
+type NavigationType = StackNavigationProp<RootStackParamList, "Authentification">;
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible }) => {
-  const [modalVisible, setModalVisible] = useState(isVisible);
-  const navigation = useNavigation();
+const LoginPopup = () => {
+  const [modalVisible, setModalVisible] = useState(true);
+  const navigation = useNavigation<NavigationType>();
 
   useFocusEffect(
     React.useCallback(() => {
-      setModalVisible(isVisible);
+      setModalVisible(true);
       
       return () => {
         setModalVisible(false);
