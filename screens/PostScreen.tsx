@@ -32,7 +32,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   const [latitude, setLatitude] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
 
-
   const createPost = async () => {
     let response;
     try {

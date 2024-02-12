@@ -22,7 +22,6 @@ import { checkAuthentification } from "../authentification/CheckAuthentification
 import LoginPopup from "../components/LoginPopup";
 
 const SearchScreen = () => {
-
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
   const [users, setUsers] = useState<ListUser[]>([]);

@@ -23,8 +23,7 @@ const ProfileScreen = () => {
 
   if (!isAuthenticated) {
     return <LoginPopup />;
-  }
-  else if (loading) {
+  } else if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
