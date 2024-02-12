@@ -1,5 +1,4 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { checkAuthentification } from "../authentification/CheckAuthentification";
 import LoginPopup from "../components/LoginPopup";
 
@@ -11,18 +10,8 @@ export default function Chat() {
   }
 
   return (
-    <View style={styles.container}>
+    <View className="bg-white items-center justify-center">
       <Text>Chat</Text>
-      <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

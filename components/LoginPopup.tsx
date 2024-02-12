@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Icon } from "native-base";
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Modal, View, Text, TouchableOpacity } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { COLORS, SHADOWS, SIZES } from "../theme";
+import { COLORS, SHADOWS } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
