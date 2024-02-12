@@ -13,10 +13,10 @@ import {
 } from "react-native";
 
 type RootStackParamList = {
-  Home: undefined;
+  Feed: undefined;
   Impressum: undefined;
 };
-type NavigationType = StackNavigationProp<RootStackParamList, "Home">;
+type NavigationType = StackNavigationProp<RootStackParamList, "Feed">;
 
 const AppTopBar = () => {
   const navigation = useNavigation<NavigationType>();
@@ -41,6 +41,14 @@ const AppTopBar = () => {
     headerTitle = "";
   }
 
+  const handleBack = () => {
+    if (route.name === "Authentification") {
+      navigation.navigate("Feed");
+    } else {
+      navigation.goBack();
+    }
+  };
+
   return (
     <SafeAreaView
       className="bg-white"
@@ -53,7 +61,7 @@ const AppTopBar = () => {
           {canGoBack && (
             <TouchableOpacity
               className="self-start"
-              onPress={() => navigation.goBack()}
+              onPress={() => handleBack()}
             >
               <Icon
                 as={Ionicons}

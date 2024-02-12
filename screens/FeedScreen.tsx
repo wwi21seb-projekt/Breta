@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ScrollView, Text, View, ActivityIndicator } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
-import Error from "../components/ErrorComp";
+import ErrorComp from "../components/ErrorComp";
+import { useAuth } from "../authentification/AuthContext";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const FeedScreen = () => {
+  const { login, logout } = useAuth();
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
@@ -94,6 +97,9 @@ const FeedScreen = () => {
     return (
       <ScrollView className="p-4 bg-white">
         <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
+        <TouchableOpacity onPress={login}>
+          <Text>Login</Text>
+        </TouchableOpacity>
         {postsPersonal.map((post, index) => (
           <TextPostCard
             key={`personal-${index}`}
@@ -106,6 +112,9 @@ const FeedScreen = () => {
         ))}
 
         <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
+        <TouchableOpacity onPress={logout}>
+        <Text>Logout</Text>
+        </TouchableOpacity>
         {postsGlobal.map((post, index) => (
           <TextPostCard
             key={`global-${index}`}
@@ -119,7 +128,7 @@ const FeedScreen = () => {
       </ScrollView>
     );
   } else {
-    return <Error errorText={errorText} />;
+    return <ErrorComp errorText={errorText} />;
   }
 };
 

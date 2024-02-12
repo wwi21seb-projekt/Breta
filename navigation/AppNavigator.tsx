@@ -19,7 +19,7 @@ const AppNavigator: React.FC = () => {
     <NavigationContainer>
       <NativeBaseProvider>
         <Stack.Navigator
-          screenOptions={({ navigation }) => ({
+          screenOptions={() => ({
             headerShown: true,
             header: () => <AppTopBar />,
           })}

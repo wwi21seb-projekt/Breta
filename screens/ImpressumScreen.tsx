@@ -20,7 +20,7 @@ const Impressum = () => {
             "Content-Type": "application/json",
           },
         });
-        if (response.status == 200) {
+        if (response.status === 200) {
           data = await response.json();
           setImpressumText(data.text);
         } else {
