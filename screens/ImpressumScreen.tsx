@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Text, View, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
+import Error from "../components/ErrorComp";
 
 const Impressum = () => {
   const [impressumText, setImpressumText] = useState("");
-  const [error, setError] = useState("");
+  const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,18 +20,14 @@ const Impressum = () => {
             "Content-Type": "application/json",
           },
         });
-        if (response.ok) {
+        if (response.status == 200) {
           data = await response.json();
           setImpressumText(data.text);
         } else {
-          setError(
-            "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
-          );
+          setErrorText("Something went wrong. Please try again.");
         }
       } catch (error) {
-        setError(
-          "Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.",
-        );
+        setErrorText("Connection error. Please try again.");
       }
     })().finally(() => {
       setLoading(false);
@@ -43,12 +40,6 @@ const Impressum = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  } else if (error !== "") {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
-      </View>
-    );
   } else if (impressumText !== "") {
     return (
       <View className="pb-10 px-5 bg-white h-full">
@@ -58,13 +49,7 @@ const Impressum = () => {
       </View>
     );
   } else {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">
-          Das Impressum konnte nicht gelanden. Versuchen sie es später erneut.
-        </Text>
-      </View>
-    );
+    return <Error errorText={errorText} />;
   }
 };
 

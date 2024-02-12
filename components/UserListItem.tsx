@@ -7,7 +7,6 @@ import { handleSubscription } from "./functions/HandleSubscription";
 
 type RootStackParamList = {
   GeneralProfile: { username: string };
-  Error: { error: string };
 };
 
 type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
@@ -42,7 +41,11 @@ const UserListItem: React.FC<Props> = ({
   // };
 
   if (error !== "") {
-    navigation.navigate("Error", { error: error });
+    return (
+      <View>
+        <Text>Maaaan!</Text>
+      </View>
+    );
   } else {
     return (
       <View
