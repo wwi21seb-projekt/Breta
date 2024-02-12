@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { COLORS, SHADOWS } from "../theme";
-import FloatingTextInput from "../components/FloatingTextInput";
+import FloatingTextInput from "../components/FloatingLabelInput";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
