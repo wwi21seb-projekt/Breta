@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
-import { SIZES, COLORS, SHADOWS } from "../theme";
+import { COLORS, SHADOWS } from "../theme";
 import Register from "../components/Register";
 import Login from "../components/Login";
 
 const AuthScreen = () => {
-  const [showRegistration, setShowRegistration] = useState(true);
+  const [showRegistration, setShowRegistration] = useState(false);
 
   const handleButtonPress = () => {
     setShowRegistration(!showRegistration);
@@ -13,37 +13,31 @@ const AuthScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white ">
-      <View className="flex-row my-10">
+      <View className="flex-row my-6 mx-10 rounded-xl">
         <TouchableOpacity
           style={{
-            backgroundColor: showRegistration ? COLORS.primary : COLORS.white,
-            ...SHADOWS.small,
+            backgroundColor: showRegistration ? COLORS.white : COLORS.primary
           }}
-          onPress={() => !showRegistration && handleButtonPress()}
-          className="flex-1 items-center p-3 rounded-xl ml-10"
+          className="flex-1 items-center px-3 py-1 rounded-l-xl border border-primary"
+          onPress={() => showRegistration && handleButtonPress()}
         >
-          <Text className="text-black text-xl">Registrierung</Text>
+          <Text className="text-black text-lg">Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
-            backgroundColor: showRegistration ? COLORS.white : COLORS.primary,
-            ...SHADOWS.small,
+            backgroundColor: showRegistration ? COLORS.primary : COLORS.white
           }}
-          className="flex-1 items-center p-3 rounded-xl mr-10"
-          onPress={() => showRegistration && handleButtonPress()}
+          onPress={() => !showRegistration && handleButtonPress()}
+          className="flex-1 items-center px-3 py-1 rounded-r-xl border border-primary"
         >
-          <Text className="text-black text-xl">Login</Text>
+          <Text className="text-black text-lg">Register</Text>
         </TouchableOpacity>
       </View>
 
       {showRegistration ? (
-        <View>
-          <Register></Register>
-        </View>
+        <Register/>
       ) : (
-        <View>
-          <Login />
-        </View>
+        <Login />
       )}
     </SafeAreaView>
   );

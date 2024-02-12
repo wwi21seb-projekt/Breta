@@ -26,15 +26,15 @@ const AppTopBar = () => {
   let headerTitle: string;
 
   if (route.name === "Impressum") {
-    headerTitle = "Impressum";
+    headerTitle = "Imprint";
   } else if (route.name === "Authentification") {
-    headerTitle = "Authentifikation";
+    headerTitle = "Authentification";
   } else if (route.name === "FollowerList") {
     headerTitle = "Follower";
   } else if (route.name === "FollowedList") {
-    headerTitle = "Gefolgt";
+    headerTitle = "Followed";
   } else if (route.name === "FriendRequest") {
-    headerTitle = "Freundschaftsanfragen";
+    headerTitle = "Friend requests";
   } else if (route.name === "ConfirmCode") {
     headerTitle = "Login";
   } else {
