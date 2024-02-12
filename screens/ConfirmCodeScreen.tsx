@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 
 const CELL_COUNT = 6;
 
-const ConfirmCode = ({ navigation }) => {
+const ConfirmCodeScreen = ({ navigation }) => {
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -168,4 +168,4 @@ const ConfirmCode = ({ navigation }) => {
   );
 };
 
-export default ConfirmCode;
+export default ConfirmCodeScreen;

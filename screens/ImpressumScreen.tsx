@@ -4,7 +4,7 @@ import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
 import Error from "../components/ErrorComp";
 
-const Impressum = () => {
+const ImpressumScreen = () => {
   const [impressumText, setImpressumText] = useState("");
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(true);
@@ -53,4 +53,4 @@ const Impressum = () => {
   }
 };
 
-export default Impressum;
+export default ImpressumScreen;

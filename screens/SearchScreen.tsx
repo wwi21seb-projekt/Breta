@@ -18,8 +18,11 @@ import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
 import React from "react";
+import { checkAuthentification } from "../authentification/CheckAuthentification";
+import LoginPopup from "../components/LoginPopup";
 
-const Search = () => {
+const SearchScreen = () => {
+
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
   const [users, setUsers] = useState<ListUser[]>([]);
@@ -293,4 +296,4 @@ const Search = () => {
     </View>
   );
 };
-export default Search;
+export default SearchScreen;

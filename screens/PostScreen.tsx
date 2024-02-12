@@ -11,6 +11,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
+import { checkAuthentification } from "../authentification/CheckAuthentification";
+import LoginPopup from "../components/LoginPopup";
 
 type RootStackParamList = {
   Feed: undefined;
@@ -21,6 +23,8 @@ type PostScreenprops = {
 };
 
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
+  const isAuthenticated = checkAuthentification();
+
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
   const [token, setToken] = useState("");
@@ -28,13 +32,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   const [latitude, setLatitude] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
 
-  useEffect(() => {
-    async function getData() {
-      let t = await AsyncStorage.getItem("token");
-      setToken(t);
-    }
-    getData();
-  });
 
   const createPost = async () => {
     let response;
@@ -70,8 +67,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     }
   };
 
-  if (token === null) {
-    navigation.navigate("Authentification");
+  if (!isAuthenticated) {
+    return <LoginPopup />;
   } else {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
