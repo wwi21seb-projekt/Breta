@@ -6,7 +6,7 @@ export default function Chat() {
   const isAuthenticated = checkAuthentification();
 
   if (!isAuthenticated) {
-    return <LoginPopup/>;
+    return <LoginPopup />;
   }
 
   return (
