@@ -1,21 +1,32 @@
-import { ScrollView, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import FloatingTextInput from "../components/FloatingTextInput";
+import FloatingLabelInput from "./FloatingLabelInput";
 import { baseUrl } from "../env";
-import styles from "../stylesheets/styleFloatingInput";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { COLORS } from "../theme";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { Dispatch, SetStateAction } from "react";
 
-const Login = () => {
-  const navigation = useNavigation();
+interface Props {
+  setServerError: Dispatch<SetStateAction<string>>;
+}
+
+type RootStackParamList = {
+  ConfirmCode: undefined;
+  Feed: undefined;
+};
+type NavigationType = StackNavigationProp<RootStackParamList, "ConfirmCode">;
+
+const Login: React.FC<Props> = ({ setServerError }) => {
+  const navigation = useNavigation<NavigationType>();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [errorUsername, setErrorUsername] = useState("");
+  const [errorText, setErrorText] = useState("");
+  const [errorTextUsername, setErrorTextUsername] = useState("");
+  const [confirmCodeText, setConfirmCodeText] = useState("");
   const [isUsernameFilled, setIsUsernameFilled] = useState(false);
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const [isPasswordFilled, setIsPasswordFilled] = useState(false);
 
   const handleLogin = async () => {
     let response;
@@ -34,74 +45,80 @@ const Login = () => {
       data = await response.json();
       switch (response.status) {
         case 200:
-          setError("");
           try {
             await AsyncStorage.setItem("token", data.token);
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
           } catch (error) {
-            console.log("Error: ", error);
+            setServerError("Something went wrong. Please try again.");
           }
-          navigation.navigate("Feed" as never);
+          navigation.navigate("Feed");
           break;
-
         case 401:
-          setError("Bitte bestätige erst deinen Code");
-          //weiterleiten auf code eingeben page
+          setErrorTextUsername("error");
+          setErrorText(data.error.message);
           break;
         case 403:
-          setError("Die Email-Adresse oder das Passwort ist falsch");
-          // hier eventuell Email und Passwort Input leeren
+          setConfirmCodeText(data.error.message);
           break;
         case 404:
-          setError("Die Email-Adresse oder das Passwort ist falsch");
-          // hier eventuell Email und Passwort Input leeren
+          setErrorTextUsername("error");
+          setErrorText(data.error.message);
           break;
         default:
-          console.error(response.status);
+          setServerError("Something went wrong. Please try again.");
       }
     } catch (error) {
-      console.error("Network error:", error);
+      setServerError("Connection error. Please try again.");
     }
   };
 
   return (
     <ScrollView
-      className="bg-white"
-      automaticallyAdjustKeyboardInsets={true}
+      className="bg-white px-10"
+      alwaysBounceVertical={false}
       showsVerticalScrollIndicator={false}
     >
-      <FloatingTextInput
+      <FloatingLabelInput
+        errorText={errorTextUsername}
+        noErrorText={true}
         label="Username"
         value={username}
-        onChangeText={(text: any) => {
+        onChangeText={(text) => {
           setUsername(text);
           setIsUsernameFilled(!!text);
-          setErrorUsername("");
         }}
       />
-      {errorUsername && <Text style={styles.error}>{errorUsername}</Text>}
-      <FloatingTextInput
+      <FloatingLabelInput
+        errorText={errorText}
         textContentType="oneTimeCode"
         secureTextEntry={true}
-        label="Passwort"
+        label="Password"
         value={password}
-        onChangeText={(text: any) => {
+        onChangeText={(text) => {
           setPassword(text);
+          setIsPasswordFilled(!!text);
         }}
       />
-      {error && <Text style={styles.error}>{error}</Text>}
+      {!!confirmCodeText && 
+      <View className="flex-row">
+        <Text className="text-sm text-red my-1 ml-4">{confirmCodeText} Confirm code </Text>
+          <TouchableOpacity onPress={()=>navigation.navigate("ConfirmCode")}>
+            <Text className="text-primary underline text-sm my-1">here</Text>
+          </TouchableOpacity>
+        </View>
+      }
       <TouchableOpacity
         style={{
           backgroundColor:
-            isUsernameFilled && password.length >= 8
+            isUsernameFilled && isPasswordFilled
               ? COLORS.primary
               : COLORS.lightgray,
         }}
-        className="p-4 mx-20 mt-10 items-center rounded-2xl"
+        className="p-3 mt-12 items-center rounded-xl mx-24"
         onPress={handleLogin}
-        disabled={!isUsernameFilled || password.length < 8}
+        disabled={!isUsernameFilled || !isPasswordFilled}
       >
-        <Text className="text-lg">Einloggen</Text>
+        <Text className="text-base">Login</Text>
       </TouchableOpacity>
     </ScrollView>
   );

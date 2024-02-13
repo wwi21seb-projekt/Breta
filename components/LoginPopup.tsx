@@ -61,7 +61,7 @@ const LoginPopup = () => {
               className="bg-primary py-2 px-8 rounded-full"
               onPress={() => navigation.navigate("Authentification")}
             >
-              <Text className="text-base">login</Text>
+              <Text className="text-base">Login</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -12,6 +12,7 @@ import {
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
+  noErrorText?: boolean | false;
   onChangeText: (text: string) => void;
   value: string;
 };
@@ -20,6 +21,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
   const {
     label,
     errorText,
+    noErrorText,
     onChangeText,
     value,
     onBlur,
@@ -48,7 +50,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
   return (
     <View className="my-2">
       <TextInput
-      className="border p-4 rounded-xl mx-10"
+      className="border pb-4 pt-2 px-4 rounded-xl text-base"
         style={[
           {
             borderColor: color,
@@ -69,7 +71,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
       />
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
         <Animated.View
-          className="absolute mx-10 bg-white px-2"
+          className="absolute bg-white px-2"
           style={[
             {
               transform: [
@@ -108,7 +110,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
-      {!!errorText && <Text className="text-sm text-red my-6">{errorText}</Text>}
+      {(!!errorText && !noErrorText) && <Text className="text-sm text-red my-1 mx-2">{errorText}</Text>}
     </View>
   );
 };

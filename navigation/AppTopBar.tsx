@@ -1,4 +1,4 @@
-import { Icon, HStack, Text } from "native-base";
+import { Icon, Text } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -36,7 +36,7 @@ const AppTopBar = () => {
   } else if (route.name === "FriendRequest") {
     headerTitle = "Friend requests";
   } else if (route.name === "ConfirmCode") {
-    headerTitle = "Login";
+    headerTitle = "Activate account";
   } else {
     headerTitle = "";
   }
@@ -51,56 +51,49 @@ const AppTopBar = () => {
 
   return (
     <SafeAreaView
-      className="bg-white"
       style={{
         paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
+        backgroundColor: 'white',
       }}
     >
-      <HStack className="px-3 h-12 mb-2">
-        <View className="flex-1 justify-center">
-          {canGoBack && (
-            <TouchableOpacity
-              className="self-start"
-              onPress={() => handleBack()}
-            >
-              <Icon
-                as={Ionicons}
-                name="arrow-back"
-                size="xl"
-                color={COLORS.black}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+      <View className="flex-row px-3 h-12 items-center mb-2">
+      {canGoBack ? (
+        <TouchableOpacity onPress={() => handleBack()}>
+          <Icon
+            as={Ionicons}
+            name="arrow-back"
+            size="xl"
+            color={COLORS.black}
+          />
+        </TouchableOpacity>
+      ) : (
+        <View className="w-6" /> 
+      )}
 
-        <View className="flex-2 justify-center">
+        <View className="flex-1 justify-center items-center">
           {headerTitle !== "" ? (
             <Text className="text-xl font-bold">{headerTitle}</Text>
           ) : (
-            <Image
-              source={require("../assets/images/Breta_Logo.png")}
-              className="w-20 h-full"
-            />
+            <TouchableOpacity onPress={() => navigation.navigate("Impressum")} 
+            className="flex-row h-9">
+              <Image
+                source={require("../assets/images/Breta_Logo.png")}
+                className="w-20 h-full"
+              />
+                <Icon
+                  as={Ionicons}
+                  name="information-circle-outline"
+                  size="sm"
+                  color={COLORS.black}
+                />
+            </TouchableOpacity>
           )}
         </View>
-
-        <View className="flex-1 justify-center">
-          <TouchableOpacity
-            className="self-end"
-            onPress={() => navigation.navigate("Impressum")}
-          >
-            {headerTitle !== "Impressum" && (
-              <Icon
-                as={Ionicons}
-                name="information-circle-outline"
-                size="lg"
-                color={COLORS.black}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-      </HStack>
+  
+        <View className="w-6" /> 
+      </View>
     </SafeAreaView>
   );
+  
 };
 export default AppTopBar;
