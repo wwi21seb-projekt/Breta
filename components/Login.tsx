@@ -99,14 +99,16 @@ const Login: React.FC<Props> = ({ setServerError }) => {
           setIsPasswordFilled(!!text);
         }}
       />
-      {!!confirmCodeText && 
-      <View className="flex-row">
-        <Text className="text-sm text-red my-1 ml-4">{confirmCodeText} Confirm code </Text>
-          <TouchableOpacity onPress={()=>navigation.navigate("ConfirmCode")}>
+      {!!confirmCodeText && (
+        <View className="flex-row">
+          <Text className="text-sm text-red my-1 ml-4">
+            {confirmCodeText} Confirm code{" "}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("ConfirmCode")}>
             <Text className="text-primary underline text-sm my-1">here</Text>
           </TouchableOpacity>
         </View>
-      }
+      )}
       <TouchableOpacity
         style={{
           backgroundColor:

@@ -50,7 +50,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
   return (
     <View className="my-2">
       <TextInput
-      className="border pb-4 pt-2 px-4 rounded-xl text-base"
+        className="border pb-4 pt-2 px-4 rounded-xl text-base"
         style={[
           {
             borderColor: color,
@@ -98,10 +98,10 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
           ]}
         >
           <Text
-          className="text-base"
+            className="text-base"
             style={[
               {
-                color
+                color,
               },
             ]}
           >
@@ -110,7 +110,9 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
-      {(!!errorText && !noErrorText) && <Text className="text-sm text-red my-1 mx-2">{errorText}</Text>}
+      {!!errorText && !noErrorText && (
+        <Text className="text-sm text-red my-1 mx-2">{errorText}</Text>
+      )}
     </View>
   );
 };

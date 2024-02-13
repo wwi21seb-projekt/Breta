@@ -34,25 +34,27 @@ const Register: React.FC<Props> = ({ setServerError }) => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-
   const updateFormValidity = () => {
-    const isValid = checkEmail() && checkUsername() && checkPassword() && checkRepeatPassword();
+    const isValid =
+      checkEmail() &&
+      checkUsername() &&
+      checkPassword() &&
+      checkRepeatPassword();
     setIsFormValid(isValid);
   };
 
   const checkEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (email.length === 0) {
-        setEmailErrorText("");
-        return false;
-      }
-      else if (emailRegex.test(email)) {
-        setEmailErrorText("");
-        return true;
-      } else {
-        setEmailErrorText("The email address is invalid.");
-        return false;
-      }
+    if (email.length === 0) {
+      setEmailErrorText("");
+      return false;
+    } else if (emailRegex.test(email)) {
+      setEmailErrorText("");
+      return true;
+    } else {
+      setEmailErrorText("The email address is invalid.");
+      return false;
+    }
   };
 
   const handleEmailChange = (text: string) => {
@@ -144,44 +146,44 @@ const Register: React.FC<Props> = ({ setServerError }) => {
   };
 
   const register = async () => {
-      let response;
-      let data;
-      try {
-        // await AsyncStorage.setItem("user", username);
-        response = await fetch(`${baseUrl}users`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password, nickname, email }),
-        });
-        data = await response.json();
-        switch (response.status) {
-          case 201:
-            navigation.navigate("ConfirmCode");
-            break;
-          case 400:
-            setServerError(data.error.message);
-            break;
-          case 409:
-            if (data.error.code === "ERR-002"){
-              setUsernameErrorText(data.error.message);
-            } else if (data.error.code === "ERR-003"){
-              setEmailErrorText(data.error.message);
-            } else {
-              setServerError("Something went wrong. Please try again.");
-            }
-            break;
-          case 422: {
+    let response;
+    let data;
+    try {
+      // await AsyncStorage.setItem("user", username);
+      response = await fetch(`${baseUrl}users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password, nickname, email }),
+      });
+      data = await response.json();
+      switch (response.status) {
+        case 201:
+          navigation.navigate("ConfirmCode");
+          break;
+        case 400:
+          setServerError(data.error.message);
+          break;
+        case 409:
+          if (data.error.code === "ERR-002") {
+            setUsernameErrorText(data.error.message);
+          } else if (data.error.code === "ERR-003") {
             setEmailErrorText(data.error.message);
-            break;
-          }
-          default:
+          } else {
             setServerError("Something went wrong. Please try again.");
+          }
+          break;
+        case 422: {
+          setEmailErrorText(data.error.message);
+          break;
         }
-      } catch (error) {
-        setServerError("Connection error. Please try again.");
+        default:
+          setServerError("Something went wrong. Please try again.");
       }
+    } catch (error) {
+      setServerError("Connection error. Please try again.");
+    }
   };
 
   return (
@@ -196,14 +198,20 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         errorText={emailErrorText}
         value={email}
         onChangeText={handleEmailChange}
-        onBlur={() => { checkEmail(); updateFormValidity()}}
+        onBlur={() => {
+          checkEmail();
+          updateFormValidity();
+        }}
       />
       <FloatingLabelInput
         label="Username"
         errorText={usernameErrorText}
         value={username}
         onChangeText={handleUsernameChange}
-        onBlur={() => { checkUsername(); updateFormValidity()}}
+        onBlur={() => {
+          checkUsername();
+          updateFormValidity();
+        }}
       />
       <FloatingLabelInput
         label="Nickname (optional)"
@@ -211,7 +219,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         value={nickname}
         onChangeText={handleNicknameChange}
       />
-      <View className="mb-14"/>
+      <View className="mb-14" />
       <FloatingLabelInput
         textContentType="oneTimeCode"
         errorText={passwordErrorText}
@@ -219,7 +227,10 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         label="Password"
         value={password}
         onChangeText={handlePasswordChange}
-        onBlur={() => { checkPassword(); updateFormValidity()}}
+        onBlur={() => {
+          checkPassword();
+          updateFormValidity();
+        }}
       />
       <FloatingLabelInput
         textContentType="oneTimeCode"
@@ -228,11 +239,14 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         label="Repeat password"
         value={repeatPassword}
         onChangeText={handleRepeatPasswordChange}
-        onBlur={() => { checkRepeatPassword(); updateFormValidity()}}
+        onBlur={() => {
+          checkRepeatPassword();
+          updateFormValidity();
+        }}
       />
       <TouchableOpacity
         style={{
-          backgroundColor: isFormValid ? COLORS.primary : COLORS.lightgray
+          backgroundColor: isFormValid ? COLORS.primary : COLORS.lightgray,
         }}
         className="p-3 mt-12 items-center rounded-xl mx-24"
         disabled={!isFormValid}

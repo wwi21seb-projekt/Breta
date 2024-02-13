@@ -53,47 +53,48 @@ const AppTopBar = () => {
     <SafeAreaView
       style={{
         paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
-        backgroundColor: 'white',
+        backgroundColor: "white",
       }}
     >
       <View className="flex-row px-3 h-12 items-center mb-2">
-      {canGoBack ? (
-        <TouchableOpacity onPress={() => handleBack()}>
-          <Icon
-            as={Ionicons}
-            name="arrow-back"
-            size="xl"
-            color={COLORS.black}
-          />
-        </TouchableOpacity>
-      ) : (
-        <View className="w-6" /> 
-      )}
+        {canGoBack ? (
+          <TouchableOpacity onPress={() => handleBack()}>
+            <Icon
+              as={Ionicons}
+              name="arrow-back"
+              size="xl"
+              color={COLORS.black}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View className="w-6" />
+        )}
 
         <View className="flex-1 justify-center items-center">
           {headerTitle !== "" ? (
             <Text className="text-xl font-bold">{headerTitle}</Text>
           ) : (
-            <TouchableOpacity onPress={() => navigation.navigate("Impressum")} 
-            className="flex-row h-9">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Impressum")}
+              className="flex-row h-9"
+            >
               <Image
                 source={require("../assets/images/Breta_Logo.png")}
                 className="w-20 h-full"
               />
-                <Icon
-                  as={Ionicons}
-                  name="information-circle-outline"
-                  size="sm"
-                  color={COLORS.black}
-                />
+              <Icon
+                as={Ionicons}
+                name="information-circle-outline"
+                size="sm"
+                color={COLORS.black}
+              />
             </TouchableOpacity>
           )}
         </View>
-  
-        <View className="w-6" /> 
+
+        <View className="w-6" />
       </View>
     </SafeAreaView>
   );
-  
 };
 export default AppTopBar;
