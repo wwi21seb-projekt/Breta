@@ -2,24 +2,16 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
-import { useNavigation } from "@react-navigation/native";
-import { baseUrl } from "../env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "native-base";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { Dispatch, SetStateAction } from "react";
+import { useAuth } from "../authentification/AuthContext";
 
 interface Props {
   setServerError: Dispatch<SetStateAction<string>>;
 }
 
-type RootStackParamList = {
-  ConfirmCode: undefined;
-};
-type NavigationType = StackNavigationProp<RootStackParamList, "ConfirmCode">;
-
 const Register: React.FC<Props> = ({ setServerError }) => {
-  const navigation = useNavigation<NavigationType>();
+  const { register } = useAuth();
   const [isFormValid, setIsFormValid] = useState(false);
 
   const [emailErrorText, setEmailErrorText] = useState("");
@@ -145,51 +137,10 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
-  const register = async () => {
-    let response;
-    let data;
-    try {
-      // await AsyncStorage.setItem("user", username);
-      response = await fetch(`${baseUrl}users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, nickname, email }),
-      });
-      data = await response.json();
-      switch (response.status) {
-        case 201:
-          navigation.navigate("ConfirmCode");
-          break;
-        case 400:
-          setServerError(data.error.message);
-          break;
-        case 409:
-          if (data.error.code === "ERR-002") {
-            setUsernameErrorText(data.error.message);
-          } else if (data.error.code === "ERR-003") {
-            setEmailErrorText(data.error.message);
-          } else {
-            setServerError("Something went wrong. Please try again.");
-          }
-          break;
-        case 422: {
-          setEmailErrorText(data.error.message);
-          break;
-        }
-        default:
-          setServerError("Something went wrong. Please try again.");
-      }
-    } catch (error) {
-      setServerError("Connection error. Please try again.");
-    }
-  };
-
   return (
     <ScrollView
       className="bg-white px-10"
-      // automaticallyAdjustKeyboardInsets={true}
+      automaticallyAdjustKeyboardInsets={true}
       alwaysBounceVertical={false}
       showsVerticalScrollIndicator={false}
     >
@@ -250,7 +201,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         }}
         className="p-3 mt-12 items-center rounded-xl mx-24"
         disabled={!isFormValid}
-        onPress={() => register()}
+        onPress={() => register(username, password, nickname, email, setServerError, setUsernameErrorText, setEmailErrorText)}
       >
         <Text className="text-base">Register</Text>
       </TouchableOpacity>

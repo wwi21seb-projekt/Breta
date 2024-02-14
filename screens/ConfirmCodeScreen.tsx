@@ -9,23 +9,15 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import { baseUrl } from "../env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import Error from "../components/ErrorComp";
-
-type RootStackParamList = {
-  Authentification: undefined;
-};
-type NavigationType = StackNavigationProp<
-  RootStackParamList,
-  "Authentification"
->;
+import { useAuth } from "../authentification/AuthContext";
+import { navigate } from "../navigation/NavigationService";
 
 const CELL_COUNT = 6;
 
 const ConfirmCodeScreen = () => {
-  const navigation = useNavigation<NavigationType>();
+
+  const { user, activateUser } = useAuth();
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -38,52 +30,17 @@ const ConfirmCodeScreen = () => {
   const [serverError, setServerError] = useState("");
   const [hasResent, setHasResent] = useState(false);
 
-  const confirm = async () => {
-    let response;
-    let data;
-    try {
-      const user = await AsyncStorage.getItem("user");
-      response = await fetch(`${baseUrl}users/${user}/activate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: value }),
-      });
-      data = await response.json();
-      switch (response.status) {
-        case 200:
-          setIsConfirmed(true);
-          break;
-        case 208:
-          setAlreadyActivated(true);
-          break;
-        case 401:
-          setConfirmErrorText(data.error.message);
-          break;
-        case 404:
-          setConfirmErrorText(data.error.message);
-          break;
-        default:
-          setServerError("Something went wrong. Please try again.");
-      }
-    } catch (error) {
-      setServerError("Connection error. Please try again.");
-    }
-  };
 
-  const newCode = async () => {
+  const sendNewCode = async () => {
     let response;
     let data;
     try {
-      const user = await AsyncStorage.getItem("user");
       response = await fetch(`${baseUrl}users/${user}/activate`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      data = await response.json();
       switch (response.status) {
         case 204:
           setHasResent(true);
@@ -92,6 +49,7 @@ const ConfirmCodeScreen = () => {
           setAlreadyActivated(true);
           break;
         case 404:
+          data = await response.json();
           setConfirmErrorText(data.error.message);
           break;
         default:
@@ -113,7 +71,7 @@ const ConfirmCodeScreen = () => {
         <View className="flex-row bg-white">
           <Text className="text-base">You can now</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Authentification")}
+            onPress={() => navigate("Authentification")}
           >
             <Text className="text-primary text-base underline font-semibold">
               {" "}
@@ -132,7 +90,7 @@ const ConfirmCodeScreen = () => {
         <View className="flex-row bg-white">
           <Text className="text-base">Please</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Authentification")}
+            onPress={() => navigate("Authentification")}
           >
             <Text className="text-primary text-base underline font-semibold">
               {" "}
@@ -191,7 +149,7 @@ const ConfirmCodeScreen = () => {
             backgroundColor:
               value.length < 6 ? COLORS.lightgray : COLORS.primary,
           }}
-          onPress={() => confirm()}
+          onPress={() => activateUser(value, setIsConfirmed, setAlreadyActivated, setConfirmErrorText, setServerError)}
           disabled={value.length < 6}
         >
           <Text className="text-black text-lg text-center">Confirm</Text>
@@ -201,7 +159,7 @@ const ConfirmCodeScreen = () => {
         <Text className="text-sm">Didn't receive a code?</Text>
         <View className="flex-row">
           <Text className="text-sm">Click</Text>
-          <TouchableOpacity onPress={() => newCode()}>
+          <TouchableOpacity onPress={() => sendNewCode()}>
             <Text className="text-primary text-sm underline font-semibold">
               {" "}
               here{" "}
@@ -209,14 +167,6 @@ const ConfirmCodeScreen = () => {
           </TouchableOpacity>
           <Text className="text-sm">to get a new one.</Text>
         </View>
-        {/* {!!serverError && (
-          <Text className="text-red pt-5 text-center">{serverError}</Text>
-        )}
-        {!!confirmationMessage && (
-          <Text className="text-green pt-5 text-center">
-            {confirmationMessage}
-          </Text>
-        )} */}
       </View>
     );
   }

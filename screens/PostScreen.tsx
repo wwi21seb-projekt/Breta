@@ -7,7 +7,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";

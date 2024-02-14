@@ -2,7 +2,8 @@ import { Icon, Text } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { useAuth } from "../authentification/AuthContext";
+import { checkAuthentification } from "../authentification/CheckAuthentification";
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -11,21 +12,19 @@ import {
   StatusBar,
   Image,
 } from "react-native";
+import { navigate } from '../navigation/NavigationService';
 
-type RootStackParamList = {
-  Feed: undefined;
-  Impressum: undefined;
-};
-type NavigationType = StackNavigationProp<RootStackParamList, "Feed">;
 
 const AppTopBar = () => {
-  const navigation = useNavigation<NavigationType>();
+  const navigation = useNavigation();
   const route = useRoute();
   const canGoBack = navigation.canGoBack();
+  const { logout } = useAuth();
+  const isAuthenticated = checkAuthentification();
 
   let headerTitle: string;
 
-  if (route.name === "Impressum") {
+  if (route.name === "Imprint") {
     headerTitle = "Imprint";
   } else if (route.name === "Authentification") {
     headerTitle = "Authentification";
@@ -43,7 +42,7 @@ const AppTopBar = () => {
 
   const handleBack = () => {
     if (route.name === "Authentification") {
-      navigation.navigate("Feed");
+      navigate("Feed");
     } else {
       navigation.goBack();
     }
@@ -75,7 +74,7 @@ const AppTopBar = () => {
             <Text className="text-xl font-bold">{headerTitle}</Text>
           ) : (
             <TouchableOpacity
-              onPress={() => navigation.navigate("Impressum")}
+              onPress={() => navigate("Imprint")}
               className="flex-row h-9"
             >
               <Image
@@ -91,8 +90,9 @@ const AppTopBar = () => {
             </TouchableOpacity>
           )}
         </View>
-
-        <View className="w-6" />
+        {isAuthenticated ? (<TouchableOpacity onPress={logout}>
+          <Text>Logout</Text>
+        </TouchableOpacity>) : (<View className="w-6" />)}
       </View>
     </SafeAreaView>
   );

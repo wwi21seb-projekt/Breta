@@ -4,11 +4,8 @@ import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 import ErrorComp from "../components/ErrorComp";
-import { useAuth } from "../authentification/AuthContext";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const FeedScreen = () => {
-  const { login, logout } = useAuth();
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
@@ -82,10 +79,10 @@ const FeedScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts("personal");
-    fetchPosts("global");
-  }, []);
+  // useEffect(() => {
+  //   fetchPosts("personal");
+  //   fetchPosts("global");
+  // }, []);
 
   if (loading) {
     return (
@@ -97,9 +94,6 @@ const FeedScreen = () => {
     return (
       <ScrollView className="p-4 bg-white">
         <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
-        <TouchableOpacity onPress={login}>
-          <Text>Login</Text>
-        </TouchableOpacity>
         {postsPersonal.map((post, index) => (
           <TextPostCard
             key={`personal-${index}`}
@@ -112,9 +106,6 @@ const FeedScreen = () => {
         ))}
 
         <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
-        <TouchableOpacity onPress={logout}>
-          <Text>Logout</Text>
-        </TouchableOpacity>
         {postsGlobal.map((post, index) => (
           <TextPostCard
             key={`global-${index}`}
