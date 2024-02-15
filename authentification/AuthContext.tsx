@@ -11,12 +11,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ErrorComp from "../components/ErrorComp";
 import { baseUrl } from "../env";
 import { navigate } from '../navigation/NavigationService';
+import {jwtDecode} from 'jwt-decode';
+import "core-js/stable/atob";
+
 
 
 interface AuthContextType {
   token: string | null,
   refreshToken: string | null;
-  user: string,
+  user: string | null,
   login: (username: string, password: string, setServerError: Dispatch<SetStateAction<string>>, setErrorTextUsername: Dispatch<SetStateAction<string>>, setErrorTextLogin: Dispatch<SetStateAction<string>>, setConfirmCodeText: Dispatch<SetStateAction<string>>) => Promise<void>;
   register: (username: string, password: string, nickname: string, email: string, setServerError: Dispatch<SetStateAction<string>>, setUsernameErrorText: Dispatch<SetStateAction<string>>, setEmailErrorText: Dispatch<SetStateAction<string>>) => Promise<void>;
   activateUser: (value: string, setIsConfirmed: Dispatch<SetStateAction<boolean>>, setAlreadyActivated: Dispatch<SetStateAction<boolean>>, setConfirmErrorText: Dispatch<SetStateAction<string>>, setServerError: Dispatch<SetStateAction<string>>) => Promise<void>;
@@ -48,11 +51,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const [token, setToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<string | null>(null);
   const [errorText, setErrorText] = useState("");
 
   const isLoggedIn = async () => {
     let userToken: string | null = null;
+    let userRefreshToken: string | null = null;
     let username: string | null = null;
     try {
       userToken = await AsyncStorage.getItem("token");
@@ -60,15 +64,63 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     } catch (error) {
       setErrorText("Restoring token failed.");
     }
-    setToken(userToken);
-    if(username !== null)
-    {
-      setUser(username);
-    } else {
-    setUser("");
-  }
+
+    if (userToken !== null && userRefreshToken !== null && await checkTokenExpiry(userToken, userRefreshToken)) {
+      setToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("user");
+    } 
   };
 
+  const checkTokenExpiry = async (token: string , refreshToken: string) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; 
+  
+      if (decodedToken.exp && currentTime  >= decodedToken.exp) {
+        const decodedRefreshToken = jwtDecode(refreshToken);
+        if (decodedRefreshToken.exp && currentTime >= decodedRefreshToken.exp) {
+          let response;
+      let data;
+      try {
+        response = await fetch(`${baseUrl}users/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            refreshToken: refreshToken
+          }),
+        });
+        data = await response.json();
+        switch (response.status) {
+          case 200:
+            setToken(data.token);
+            setRefreshToken(data.refreshToken);
+            await AsyncStorage.setItem("token", data.token);
+            await AsyncStorage.setItem("refreshToken", data.refreshToken);
+            return false;
+          case 401:
+            return true;
+          case 404:
+            return true;
+          default:
+            return true;
+        }
+      } catch (error) {
+        return true;
+      }
+        } else return true;
+      }
+      return false; 
+    } catch (error) {
+      return true; 
+    }
+  };
+ 
 
   const authContext: AuthContextType = {
     login: async (username, password, setServerError, setErrorTextUsername, setErrorTextLogin, setConfirmCodeText) => {
@@ -93,7 +145,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             setUser(username);
             await AsyncStorage.setItem("token", data.token);
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
-            await AsyncStorage.setItem("user", user);
+            await AsyncStorage.setItem("user", username);
             navigate("Feed");
             break;
           case 401:
@@ -123,13 +175,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, nickname, email}),
+        body: JSON.stringify({ username: username, password: password, nickname: nickname, email: email}),
       });
       data = await response.json();
       switch (response.status) {
         case 201:
           setUser(username);
-          await AsyncStorage.setItem("user", user);
+          await AsyncStorage.setItem("user", username);
           navigate("ConfirmCode");
           break;
         case 400:
@@ -165,8 +217,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        // token: value
-        body: JSON.stringify({ value }),
+        body: JSON.stringify({ token: value }),
       });
       data = await response.json();
       switch (response.status) {
