@@ -60,6 +60,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     let username: string | null = null;
     try {
       userToken = await AsyncStorage.getItem("token");
+      userRefreshToken = await AsyncStorage.getItem("refreshToken");
       username = await AsyncStorage.getItem("user");
     } catch (error) {
       setErrorText("Restoring token failed.");
@@ -72,7 +73,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("refreshToken");
       await AsyncStorage.removeItem("user");
-    } 
+    } else {
+      setToken(userToken);
+      setRefreshToken(userRefreshToken);
+      setUser(username);
+    }
   };
 
   const checkTokenExpiry = async (token: string , refreshToken: string) => {
