@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       setErrorText("Restoring token failed.");
     }
 
-    if (userToken !== null && userRefreshToken !== null && await checkTokenExpiry(userToken, userRefreshToken)) {
+    if (userToken !== null && userRefreshToken !== null && username !==null && await checkTokenExpiry(userToken, userRefreshToken)) {
       setToken(null);
       setRefreshToken(null);
       setUser(null);
