@@ -3,13 +3,10 @@ import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { User } from "../components/types/User";
 import { loadUser } from "../components/functions/LoadUser";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
-import LoginPopup from "../components/LoginPopup";
 
 const personalUserUsername = "aleks_069";
 
 const ProfileScreen = () => {
-  const isAuthenticated = checkAuthentification();
 
   const [user, setUser] = useState<User>();
   const [error, setError] = useState("");
@@ -21,9 +18,7 @@ const ProfileScreen = () => {
     });
   }, []);
 
-  if (!isAuthenticated) {
-    return <LoginPopup />;
-  } else if (loading) {
+  if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />

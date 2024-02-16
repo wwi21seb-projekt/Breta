@@ -4,8 +4,10 @@ import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
 import ErrorComp from "../components/ErrorComp";
+import { useAuth } from "../authentification/AuthContext";
 
 const FeedScreen = () => {
+  const {token} = useAuth();
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
@@ -79,10 +81,13 @@ const FeedScreen = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchPosts("personal");
-  //   fetchPosts("global");
-  // }, []);
+  useEffect(() => {
+    // hier musst du nochmal checken warum nach dem logout immer noch der private feed da ist -> aber Prinzip stimmt, du checkst einfach ob der token da ist, wenn ja dann auch PrivateFeed
+    if(!!token){
+      fetchPosts("personal");
+    }
+    fetchPosts("global");
+  }, [token]);
 
   if (loading) {
     return (

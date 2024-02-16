@@ -22,7 +22,6 @@ type PostScreenprops = {
 };
 
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
-  const isAuthenticated = checkAuthentification();
 
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
@@ -65,9 +64,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
     }
   };
 
-  if (!isAuthenticated) {
-    return <LoginPopup />;
-  } else {
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View className="bg-white flex-1">
@@ -111,7 +108,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         </View>
       </TouchableWithoutFeedback>
     );
-  }
 };
 
 export default PostScreen;

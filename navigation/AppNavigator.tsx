@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NativeBaseProvider } from "native-base";
 import { navigationRef } from './NavigationService';
+import { checkAuthentification } from "../authentification/CheckAuthentification";
 
 import AppTopBar from "./AppTopBar";
 import TabBottomBar from "./TabBottomBar";
@@ -16,6 +17,7 @@ import EditProfile from "../screens/EditProfileScreen";
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
+  const isAuthenticated = checkAuthentification();
 
   return (
   <NavigationContainer ref={navigationRef}>
@@ -28,11 +30,15 @@ const AppNavigator: React.FC = () => {
         >
           <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
           <Stack.Screen name="Imprint" component={Imprint} />
-          <Stack.Screen name="FollowerList" component={FollowerList} />
-          <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
-          <Stack.Screen name="EditProfile" component={EditProfile} />
+          {isAuthenticated && (
+            <>
+              <Stack.Screen name="FollowerList" component={FollowerList} />
+              <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+            </>
+          )}
         </Stack.Navigator>
       </NativeBaseProvider>
     </NavigationContainer>
