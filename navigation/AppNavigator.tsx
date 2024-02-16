@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NativeBaseProvider } from "native-base";
-import { navigationRef } from './NavigationService';
+import { navigationRef } from "./NavigationService";
 import { checkAuthentification } from "../authentification/CheckAuthentification";
 
 import AppTopBar from "./AppTopBar";
@@ -20,7 +20,7 @@ const AppNavigator: React.FC = () => {
   const isAuthenticated = checkAuthentification();
 
   return (
-  <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef}>
       <NativeBaseProvider>
         <Stack.Navigator
           screenOptions={() => ({

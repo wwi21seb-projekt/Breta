@@ -12,8 +12,7 @@ import {
   StatusBar,
   Image,
 } from "react-native";
-import { navigate } from '../navigation/NavigationService';
-
+import { navigate } from "../navigation/NavigationService";
 
 const AppTopBar = () => {
   const navigation = useNavigation();
@@ -90,9 +89,13 @@ const AppTopBar = () => {
             </TouchableOpacity>
           )}
         </View>
-        {isAuthenticated ? (<TouchableOpacity onPress={logout}>
-          <Text>Logout</Text>
-        </TouchableOpacity>) : (<View className="w-6" />)}
+        {isAuthenticated ? (
+          <TouchableOpacity onPress={logout}>
+            <Text>Logout</Text>
+          </TouchableOpacity>
+        ) : (
+          <View className="w-6" />
+        )}
       </View>
     </SafeAreaView>
   );

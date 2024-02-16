@@ -7,7 +7,6 @@ import { loadUser } from "../components/functions/LoadUser";
 const personalUserUsername = "aleks_069";
 
 const ProfileScreen = () => {
-
   const [user, setUser] = useState<User>();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);

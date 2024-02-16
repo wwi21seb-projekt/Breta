@@ -16,7 +16,6 @@ import { navigate } from "../navigation/NavigationService";
 const CELL_COUNT = 6;
 
 const ConfirmCodeScreen = () => {
-
   const { user, activateUser } = useAuth();
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -29,7 +28,6 @@ const ConfirmCodeScreen = () => {
   const [confirmErrorText, setConfirmErrorText] = useState("");
   const [serverError, setServerError] = useState("");
   const [hasResent, setHasResent] = useState(false);
-
 
   const sendNewCode = async () => {
     let response;
@@ -70,9 +68,7 @@ const ConfirmCodeScreen = () => {
         </Text>
         <View className="flex-row bg-white">
           <Text className="text-base">You can now</Text>
-          <TouchableOpacity
-            onPress={() => navigate("Authentification")}
-          >
+          <TouchableOpacity onPress={() => navigate("Authentification")}>
             <Text className="text-primary text-base underline font-semibold">
               {" "}
               login.{" "}
@@ -89,9 +85,7 @@ const ConfirmCodeScreen = () => {
         </Text>
         <View className="flex-row bg-white">
           <Text className="text-base">Please</Text>
-          <TouchableOpacity
-            onPress={() => navigate("Authentification")}
-          >
+          <TouchableOpacity onPress={() => navigate("Authentification")}>
             <Text className="text-primary text-base underline font-semibold">
               {" "}
               login.{" "}
@@ -149,7 +143,15 @@ const ConfirmCodeScreen = () => {
             backgroundColor:
               value.length < 6 ? COLORS.lightgray : COLORS.primary,
           }}
-          onPress={() => activateUser(value, setIsConfirmed, setAlreadyActivated, setConfirmErrorText, setServerError)}
+          onPress={() =>
+            activateUser(
+              value,
+              setIsConfirmed,
+              setAlreadyActivated,
+              setConfirmErrorText,
+              setServerError,
+            )
+          }
           disabled={value.length < 6}
         >
           <Text className="text-black text-lg text-center">Confirm</Text>

@@ -15,7 +15,6 @@ import LoginPopup from "../components/LoginPopup";
 
 const Tabs = createBottomTabNavigator();
 
-
 const TabBottomBar: React.FC = () => {
   const isAuthenticated = checkAuthentification();
 

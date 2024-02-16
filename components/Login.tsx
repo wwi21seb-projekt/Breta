@@ -66,7 +66,16 @@ const Login: React.FC<Props> = ({ setServerError }) => {
               : COLORS.lightgray,
         }}
         className="p-3 mt-12 items-center rounded-xl mx-24"
-        onPress={()=>login(username, password, setServerError, setErrorTextUsername, setErrorTextLogin, setConfirmCodeText)}
+        onPress={() =>
+          login(
+            username,
+            password,
+            setServerError,
+            setErrorTextUsername,
+            setErrorTextLogin,
+            setConfirmCodeText,
+          )
+        }
         disabled={!isUsernameFilled || !isPasswordFilled}
       >
         <Text className="text-base">Login</Text>

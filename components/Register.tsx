@@ -201,7 +201,17 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         }}
         className="p-3 mt-12 items-center rounded-xl mx-24"
         disabled={!isFormValid}
-        onPress={() => register(username, password, nickname, email, setServerError, setUsernameErrorText, setEmailErrorText)}
+        onPress={() =>
+          register(
+            username,
+            password,
+            nickname,
+            email,
+            setServerError,
+            setUsernameErrorText,
+            setEmailErrorText,
+          )
+        }
       >
         <Text className="text-base">Register</Text>
       </TouchableOpacity>
