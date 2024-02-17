@@ -49,18 +49,14 @@ const Login: React.FC<Props> = ({ setServerError }) => {
         }}
       />
       {!!confirmCodeText && (
-          <>
-        <Text className="text-sm text-red my-1 mx-2">
-        {confirmCodeText}
-        </Text> 
-        <View className="flex-row">
-          <Text className="text-sm text-red ml-2">
-            Confirm code{" "}
-          </Text>
-          <TouchableOpacity onPress={() => navigate("ConfirmCode")}>
-            <Text className="text-primary underline text-sm mr-2">here</Text>
-          </TouchableOpacity>
-        </View>
+        <>
+          <Text className="text-sm text-red my-1 mx-2">{confirmCodeText}</Text>
+          <View className="flex-row">
+            <Text className="text-sm text-red ml-2">Confirm code </Text>
+            <TouchableOpacity onPress={() => navigate("ConfirmCode")}>
+              <Text className="text-primary underline text-sm mr-2">here</Text>
+            </TouchableOpacity>
+          </View>
         </>
       )}
       <TouchableOpacity
