@@ -82,7 +82,7 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    // hier musst du nochmal checken warum nach dem logout immer noch der private feed da ist -> aber Prinzip stimmt, du checkst einfach ob der token da ist, wenn ja dann auch PrivateFeed
+    setPostsPersonal([]);
     if (!!token) {
       fetchPosts("personal");
     }

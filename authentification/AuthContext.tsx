@@ -186,6 +186,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             setErrorTextLogin(data.error.message);
             break;
           case 403:
+            setErrorTextUsername("");
+            setErrorTextLogin("");
             setConfirmCodeText(data.error.message);
             break;
           case 404:
@@ -235,10 +237,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             break;
           case 409:
             if (data.error.code === "ERR-002") {
+              setEmailErrorText("");
               setUsernameErrorText(data.error.message);
             } else if (data.error.code === "ERR-003") {
+              setUsernameErrorText("");
               setEmailErrorText(data.error.message);
             } else {
+              console.log(data.error.code);
               setServerError("Something went wrong. Please try again.");
             }
             break;
@@ -262,7 +267,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     ) => {
       let response;
       let data;
-      console.log(user);
       try {
         response = await fetch(`${baseUrl}users/${user}/activate`, {
           method: "POST",
