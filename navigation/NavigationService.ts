@@ -24,3 +24,14 @@ export function navigate<RouteName extends keyof RootStackParamList>(
     navigationRef.navigate(screen, params);
   }
 }
+
+export function reset<RouteName extends keyof RootStackParamList>(
+  screen: RouteName,
+) {
+  if (navigationRef.isReady()) {
+    navigationRef.reset({
+      index: 0,
+      routes: [{ name: screen }],
+    });
+  }
+}

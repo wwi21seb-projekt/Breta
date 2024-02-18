@@ -10,7 +10,7 @@ import React, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ErrorComp from "../components/ErrorComp";
 import { baseUrl } from "../env";
-import { navigate } from "../navigation/NavigationService";
+import { navigate, reset } from "../navigation/NavigationService";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
 
@@ -18,6 +18,7 @@ interface AuthContextType {
   token: string | null;
   refreshToken: string | null;
   user: string | null;
+  loading: boolean;
   login: (
     username: string,
     password: string,
@@ -49,6 +50,7 @@ const defaultContextValue: AuthContextType = {
   token: null,
   refreshToken: null,
   user: null,
+  loading: false,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
@@ -70,6 +72,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
   const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const isLoggedIn = async () => {
     let userToken: string | null = null;
@@ -292,16 +295,20 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       }
     },
     logout: async () => {
+      setLoading(true);
       setToken(null);
       setRefreshToken(null);
       setUser(null);
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("refreshToken");
       await AsyncStorage.removeItem("user");
+      reset('Feed');
+      setLoading(false);
     },
     token,
     refreshToken,
     user,
+    loading,
   };
 
   useEffect(() => {

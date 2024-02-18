@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NativeBaseProvider } from "native-base";
 import { navigationRef } from "./NavigationService";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
+import { View, ActivityIndicator } from "react-native";
 
 import AppTopBar from "./AppTopBar";
 import TabBottomBar from "./TabBottomBar";
@@ -13,13 +14,20 @@ import ConfirmCode from "../screens/ConfirmCodeScreen";
 import FollowerList from "../screens/FollowerListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
+import { useAuth } from "../authentification/AuthContext";
 
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   const isAuthenticated = useCheckAuthentication();
-
-  return (
+  const {loading} = useAuth();
+  if(loading){
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  } else return (
     <NavigationContainer ref={navigationRef}>
       <NativeBaseProvider>
         <Stack.Navigator

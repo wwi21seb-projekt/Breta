@@ -1,24 +1,13 @@
 import React, { useState } from "react";
 import { Icon } from "native-base";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, SHADOWS } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-
-type RootStackParamList = {
-  Authentification: undefined;
-  Feed: undefined;
-};
-
-type NavigationType = StackNavigationProp<
-  RootStackParamList,
-  "Authentification"
->;
+import { useFocusEffect } from "@react-navigation/native";
+import { navigate } from "../navigation/NavigationService";
 
 const LoginPopup = () => {
   const [modalVisible, setModalVisible] = useState(true);
-  const navigation = useNavigation<NavigationType>();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -35,17 +24,13 @@ const LoginPopup = () => {
       transparent={true}
       visible={modalVisible}
       animationType="none"
-      onRequestClose={() => {
-        setModalVisible(false);
-        navigation.navigate("Feed");
-      }}
     >
       <View
         className="flex-1 items-center justify-center"
         style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
       >
         <View className="bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
-          <TouchableOpacity onPress={() => navigation.navigate("Feed")}>
+          <TouchableOpacity onPress={() => navigate("Feed")}>
             <Icon
               as={Ionicons}
               name="arrow-back"
@@ -59,7 +44,7 @@ const LoginPopup = () => {
             </Text>
             <TouchableOpacity
               className="bg-primary py-2 px-8 rounded-full"
-              onPress={() => navigation.navigate("Authentification")}
+              onPress={() => navigate("Authentification")}
             >
               <Text className="text-base">Login</Text>
             </TouchableOpacity>

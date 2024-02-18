@@ -1,9 +1,10 @@
 import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
-import { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface Props {
   setServerError: Dispatch<SetStateAction<string>>;
@@ -18,6 +19,22 @@ const Login: React.FC<Props> = ({ setServerError }) => {
   const [confirmCodeText, setConfirmCodeText] = useState("");
   const [isUsernameFilled, setIsUsernameFilled] = useState(false);
   const [isPasswordFilled, setIsPasswordFilled] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      resetStates();
+    }, []),
+  );
+
+  const resetStates = () => {
+    setUsername("");
+    setPassword("");
+    setErrorTextLogin("");
+    setErrorTextUsername("");
+    setConfirmCodeText("");
+    setIsUsernameFilled(false);
+    setIsPasswordFilled(false);
+  };
 
   return (
     <ScrollView
