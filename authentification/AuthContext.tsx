@@ -182,6 +182,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             navigate("Feed");
             break;
           case 401:
+          case 404:
+            setConfirmCodeText("");
             setErrorTextUsername("error");
             setErrorTextLogin(data.error.message);
             break;
@@ -189,10 +191,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             setErrorTextUsername("");
             setErrorTextLogin("");
             setConfirmCodeText(data.error.message);
-            break;
-          case 404:
-            setErrorTextUsername("error");
-            setErrorTextLogin(data.error.message);
             break;
           default:
             setServerError("Something went wrong. Please try again.");

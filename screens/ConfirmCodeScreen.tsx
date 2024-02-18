@@ -58,7 +58,7 @@ const ConfirmCodeScreen = () => {
     }
   };
 
-  if (!!serverError) {
+  if (serverError) {
     return <Error errorText={serverError} />;
   } else if (isConfirmed) {
     return (

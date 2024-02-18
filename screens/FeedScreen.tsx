@@ -83,7 +83,7 @@ const FeedScreen = () => {
 
   useEffect(() => {
     setPostsPersonal([]);
-    if (!!token) {
+    if (token) {
       fetchPosts("personal");
     }
     fetchPosts("global");
