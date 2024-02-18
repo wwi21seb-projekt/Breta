@@ -10,6 +10,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
+import { useAuth } from "../authentification/AuthContext";
 
 type RootStackParamList = {
   Feed: undefined;
@@ -20,9 +21,9 @@ type PostScreenprops = {
 };
 
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
+  const {token} = useAuth();
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
-  const [token, setToken] = useState("");
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
@@ -34,7 +35,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           content: postText,

@@ -48,7 +48,7 @@ interface AuthContextType {
 const defaultContextValue: AuthContextType = {
   token: null,
   refreshToken: null,
-  user: "",
+  user: null,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
@@ -239,7 +239,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
               setUsernameErrorText("");
               setEmailErrorText(data.error.message);
             } else {
-              console.log(data.error.code);
               setServerError("Something went wrong. Please try again.");
             }
             break;
@@ -294,7 +293,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     },
     logout: async () => {
       setToken(null);
+      setRefreshToken(null);
+      setUser(null);
       await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("user");
     },
     token,
     refreshToken,
