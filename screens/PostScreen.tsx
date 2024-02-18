@@ -21,7 +21,7 @@ type PostScreenprops = {
 };
 
 const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
-  const {token} = useAuth();
+  const { token } = useAuth();
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
   const [longitude, setLongitude] = useState(0);
@@ -35,7 +35,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           content: postText,

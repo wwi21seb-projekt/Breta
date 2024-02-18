@@ -141,7 +141,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           } catch (error) {
             return true;
           }
-        } 
+        }
       }
       return false;
     } catch (error) {
@@ -302,7 +302,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("refreshToken");
       await AsyncStorage.removeItem("user");
-      reset('Feed');
+      reset("Feed");
       setLoading(false);
     },
     token,

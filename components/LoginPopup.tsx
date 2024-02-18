@@ -20,11 +20,7 @@ const LoginPopup = () => {
   );
 
   return (
-    <Modal
-      transparent={true}
-      visible={modalVisible}
-      animationType="none"
-    >
+    <Modal transparent={true} visible={modalVisible} animationType="none">
       <View
         className="flex-1 items-center justify-center"
         style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}

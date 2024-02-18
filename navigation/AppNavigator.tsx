@@ -20,36 +20,43 @@ const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
   const isAuthenticated = useCheckAuthentication();
-  const {loading} = useAuth();
-  if(loading){
+  const { loading } = useAuth();
+  if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
-  } else return (
-    <NavigationContainer ref={navigationRef}>
-      <NativeBaseProvider>
-        <Stack.Navigator
-          screenOptions={() => ({
-            headerShown: true,
-            header: () => <AppTopBar />,
-          })}
-        >
-          <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
-          <Stack.Screen name="Imprint" component={Imprint} />
-          <Stack.Screen name="Authentification" component={Authentification} />
-          <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
-          {isAuthenticated && (
-            <>
-              <Stack.Screen name="FollowerList" component={FollowerList} />
-              <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
-              <Stack.Screen name="EditProfile" component={EditProfile} />
-            </>
-          )}
-        </Stack.Navigator>
-      </NativeBaseProvider>
-    </NavigationContainer>
-  );
+  } else
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <NativeBaseProvider>
+          <Stack.Navigator
+            screenOptions={() => ({
+              headerShown: true,
+              header: () => <AppTopBar />,
+            })}
+          >
+            <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
+            <Stack.Screen name="Imprint" component={Imprint} />
+            <Stack.Screen
+              name="Authentification"
+              component={Authentification}
+            />
+            <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+            {isAuthenticated && (
+              <>
+                <Stack.Screen name="FollowerList" component={FollowerList} />
+                <Stack.Screen
+                  name="GeneralProfile"
+                  component={GeneralProfile}
+                />
+                <Stack.Screen name="EditProfile" component={EditProfile} />
+              </>
+            )}
+          </Stack.Navigator>
+        </NativeBaseProvider>
+      </NavigationContainer>
+    );
 };
 export default AppNavigator;
