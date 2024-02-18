@@ -86,7 +86,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     if (
       userToken !== null &&
       userRefreshToken !== null &&
-      username !== null &&
       (await checkTokenExpiry(userToken, userRefreshToken))
     ) {
       setToken(null);
@@ -106,10 +105,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     try {
       const decodedToken = jwtDecode(token);
       const currentTime = Date.now() / 1000;
-
       if (decodedToken.exp && currentTime >= decodedToken.exp) {
         const decodedRefreshToken = jwtDecode(refreshToken);
-        if (decodedRefreshToken.exp && currentTime >= decodedRefreshToken.exp) {
+        if (decodedRefreshToken.exp && currentTime < decodedRefreshToken.exp) {
           let response;
           let data;
           try {
@@ -140,7 +138,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           } catch (error) {
             return true;
           }
-        } else return true;
+        } 
       }
       return false;
     } catch (error) {
