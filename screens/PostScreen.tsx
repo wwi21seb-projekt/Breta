@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   TextInput,
   TouchableOpacity,
@@ -10,8 +10,6 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
-import LoginPopup from "../components/LoginPopup";
 
 type RootStackParamList = {
   Feed: undefined;

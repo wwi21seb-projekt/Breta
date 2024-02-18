@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextInput,
   View,
@@ -17,9 +17,7 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
-import React from "react";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
-import LoginPopup from "../components/LoginPopup";
+
 
 const SearchScreen = () => {
   const [searchInput, setSearchInput] = useState("");

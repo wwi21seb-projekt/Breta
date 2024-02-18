@@ -12,7 +12,7 @@ import {
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
-  noErrorText?: boolean | false;
+  noErrorText?: boolean;
   onChangeText: (text: string) => void;
   value: string;
 };

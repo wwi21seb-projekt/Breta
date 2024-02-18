@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { ScrollView, Text, View, ActivityIndicator } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
 import { View } from "native-base";
-import { Dispatch, SetStateAction } from "react";
 import { useAuth } from "../authentification/AuthContext";
 
 interface Props {
@@ -94,7 +93,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
         /[A-Z]/.test(password) &&
         /[a-z]/.test(password) &&
         /\d/.test(password) &&
-        /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/.test(password)
+        /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(password)
       ) {
         setPasswordErrorText("");
         return true;
