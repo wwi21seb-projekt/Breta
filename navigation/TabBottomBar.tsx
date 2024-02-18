@@ -4,7 +4,7 @@ import { View } from "react-native";
 import stylePlusIcon from "../stylesheets/stylePlusIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
+import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 
 import Feed from "../screens/FeedScreen";
 import Chat from "../screens/ChatScreen";
@@ -16,7 +16,7 @@ import LoginPopup from "../components/LoginPopup";
 const Tabs = createBottomTabNavigator();
 
 const TabBottomBar: React.FC = () => {
-  const isAuthenticated = checkAuthentification();
+  const isAuthenticated = useCheckAuthentication();
 
   const getScreenComponent = (Component: any) => {
     return isAuthenticated ? Component : LoginPopup;

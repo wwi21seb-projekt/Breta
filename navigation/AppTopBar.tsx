@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../theme";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAuth } from "../authentification/AuthContext";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
+import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -19,7 +19,7 @@ const AppTopBar = () => {
   const route = useRoute();
   const canGoBack = navigation.canGoBack();
   const { logout } = useAuth();
-  const isAuthenticated = checkAuthentification();
+  const isAuthenticated = useCheckAuthentication();
 
   let headerTitle: string;
 

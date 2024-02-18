@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NativeBaseProvider } from "native-base";
 import { navigationRef } from "./NavigationService";
-import { checkAuthentification } from "../authentification/CheckAuthentification";
+import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 
 import AppTopBar from "./AppTopBar";
 import TabBottomBar from "./TabBottomBar";
@@ -17,7 +17,7 @@ import EditProfile from "../screens/EditProfileScreen";
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
-  const isAuthenticated = checkAuthentification();
+  const isAuthenticated = useCheckAuthentication();
 
   return (
     <NavigationContainer ref={navigationRef}>
