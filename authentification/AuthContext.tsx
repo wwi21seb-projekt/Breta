@@ -44,6 +44,7 @@ interface AuthContextType {
     setServerError: Dispatch<SetStateAction<string>>,
   ) => Promise<void>;
   logout: () => Promise<void>;
+  checkTokenExpiry: (token: string, refreshToken: string) => Promise<boolean>;
 }
 
 const defaultContextValue: AuthContextType = {
@@ -55,6 +56,7 @@ const defaultContextValue: AuthContextType = {
   register: async () => {},
   logout: async () => {},
   activateUser: async () => {},
+  checkTokenExpiry: async () => {return false},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
@@ -309,6 +311,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     refreshToken,
     user,
     loading,
+    checkTokenExpiry,
   };
 
   useEffect(() => {

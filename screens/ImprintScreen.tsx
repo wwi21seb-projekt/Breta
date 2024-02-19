@@ -4,8 +4,8 @@ import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
 import Error from "../components/ErrorComp";
 
-const ImpressumScreen = () => {
-  const [impressumText, setImpressumText] = useState("");
+const ImprintScreen = () => {
+  const [imprintText, setImprintText] = useState("");
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +22,7 @@ const ImpressumScreen = () => {
         });
         if (response.status === 200) {
           data = await response.json();
-          setImpressumText(data.text);
+          setImprintText(data.text);
         } else {
           setErrorText("Something went wrong. Please try again.");
         }
@@ -40,11 +40,13 @@ const ImpressumScreen = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  } else if (impressumText !== "") {
+  } else if (imprintText !== "") {
     return (
       <View className="pb-10 px-5 bg-white h-full">
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text className="text-base">{impressumText}</Text>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={false}>
+          <Text className="text-base">{imprintText}</Text>
         </ScrollView>
       </View>
     );
@@ -53,4 +55,4 @@ const ImpressumScreen = () => {
   }
 };
 
-export default ImpressumScreen;
+export default ImprintScreen;
