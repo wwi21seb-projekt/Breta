@@ -1,98 +1,103 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import FloatingTextInput from "../components/FloatingTextInput";
-import axios from "axios";
-import { baseUrl } from "../env";
-import styles from "../stylesheets/styleFloatingInput";
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-// import { SIZES, COLORS } from "../constants/theme";
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
+import FloatingLabelInput from "./FloatingLabelInput";
+import { COLORS } from "../theme";
+import React, { useState, Dispatch, SetStateAction } from "react";
+import { useAuth } from "../authentification/AuthContext";
+import { navigate } from "../navigation/NavigationService";
+import { useFocusEffect } from "@react-navigation/native";
 
-const Login = () => {
-  const navigation = useNavigation();
-  const [email, setEmail] = useState("");
+interface Props {
+  setServerError: Dispatch<SetStateAction<string>>;
+}
+
+const Login: React.FC<Props> = ({ setServerError }) => {
+  const { login } = useAuth();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [isEmailFilled, setIsEmailFilled] = useState(false);
+  const [errorTextLogin, setErrorTextLogin] = useState("");
+  const [errorTextUsername, setErrorTextUsername] = useState("");
+  const [confirmCodeText, setConfirmCodeText] = useState("");
+  const [isUsernameFilled, setIsUsernameFilled] = useState(false);
+  const [isPasswordFilled, setIsPasswordFilled] = useState(false);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  useFocusEffect(
+    React.useCallback(() => {
+      resetStates();
+    }, []),
+  );
 
-  const handleLogin = () => {
-    axios
-      .post(`${baseUrl}users/login`, {
-        email: email,
-        password: password,
-      })
-      .then(function (response) {
-        if (response.status == 200) {
-          navigation.navigate("Feed" as never);
-        }
-      })
-      .catch(function (error) {
-        switch (error.response.status) {
-          case 401: {
-            console.log("Bitte bestätige erst deinen Code");
-            //weiterleiten auf code eingeben page
-            break;
-          }
-          case 403: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
-            // hier eventuell Email und Passwort Input leeren
-            break;
-          }
-          case 404: {
-            setError("Die Email-Adresse oder das Passwort ist falsch");
-            // hier eventuell Email und Passwort Input leeren
-            break;
-          }
-        }
-      });
+  const resetStates = () => {
+    setUsername("");
+    setPassword("");
+    setErrorTextLogin("");
+    setErrorTextUsername("");
+    setConfirmCodeText("");
+    setIsUsernameFilled(false);
+    setIsPasswordFilled(false);
   };
 
   return (
-    <View>
-      <FloatingTextInput
-        label="Email Adresse"
-        value={email}
-        onChangeText={(text: any) => {
-          setEmail(text);
-          setIsEmailFilled(!!text);
-          setErrorEmail("");
-        }}
-        onBlur={() => {
-          if (!emailRegex.test(email)) {
-            setErrorEmail("Die Email-Adresse hat keine korrekte Form!");
-          }
+    <ScrollView
+      className="bg-white px-10"
+      automaticallyAdjustKeyboardInsets={true}
+      alwaysBounceVertical={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <FloatingLabelInput
+        errorText={errorTextUsername}
+        noErrorText={true}
+        label="Username"
+        value={username}
+        onChangeText={(text) => {
+          setUsername(text);
+          setIsUsernameFilled(!!text);
         }}
       />
-      {errorEmail && <Text style={styles.error}>{errorEmail}</Text>}
-      <FloatingTextInput
+      <FloatingLabelInput
+        errorText={errorTextLogin}
+        textContentType="oneTimeCode"
         secureTextEntry={true}
-        label="Passwort"
+        label="Password"
         value={password}
-        onChangeText={(text: any) => {
+        onChangeText={(text) => {
           setPassword(text);
+          setIsPasswordFilled(!!text);
         }}
       />
-      {error && <Text style={styles.error}>{error}</Text>}
+      {!!confirmCodeText && (
+        <>
+          <Text className="text-sm text-red my-1 mx-2">{confirmCodeText}</Text>
+          <View className="flex-row">
+            <Text className="text-sm text-red ml-2">Confirm code </Text>
+            <TouchableOpacity onPress={() => navigate("ConfirmCode")}>
+              <Text className="text-primary underline text-sm mr-2">here</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
       <TouchableOpacity
-        style={[
-          styles.loginButton,
-          {
-            backgroundColor:
-              isEmailFilled && emailRegex.test(email) && password.length >= 8
-                ? "#00CED1"
-                : "#d3d3d3",
-          },
-        ]}
-        onPress={handleLogin}
-        disabled={
-          !isEmailFilled || !emailRegex.test(email) || password.length < 8
+        style={{
+          backgroundColor:
+            isUsernameFilled && isPasswordFilled
+              ? COLORS.primary
+              : COLORS.lightgray,
+        }}
+        className="p-3 mt-12 items-center rounded-xl mx-24"
+        onPress={() =>
+          login(
+            username,
+            password,
+            setServerError,
+            setErrorTextUsername,
+            setErrorTextLogin,
+            setConfirmCodeText,
+          )
         }
+        disabled={!isUsernameFilled || !isPasswordFilled}
       >
-        <Text style={{ color: "#000000", fontSize: 20 }}>Einloggen</Text>
+        <Text className="text-base">Login</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 

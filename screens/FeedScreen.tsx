@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ScrollView, Text, View, ActivityIndicator } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import Post from "../components/types/Post";
-import Error from "../components/ErrorComp";
+import ErrorComp from "../components/ErrorComp";
+import { useAuth } from "../authentification/AuthContext";
 
 const FeedScreen = () => {
+  const { token } = useAuth();
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
@@ -80,9 +82,12 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    fetchPosts("personal");
+    setPostsPersonal([]);
+    if (token) {
+      fetchPosts("personal");
+    }
     fetchPosts("global");
-  }, []);
+  }, [token]);
 
   if (loading) {
     return (
@@ -119,7 +124,7 @@ const FeedScreen = () => {
       </ScrollView>
     );
   } else {
-    return <Error errorText={errorText} />;
+    return <ErrorComp errorText={errorText} />;
   }
 };
 

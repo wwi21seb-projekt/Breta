@@ -1,18 +1,23 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import FloatingTextInput from "../components/FloatingTextInput";
-import { SIZES, SHADOWS, COLORS } from "../theme";
-import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, Dispatch, SetStateAction } from "react";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
+import FloatingLabelInput from "./FloatingLabelInput";
+import { COLORS } from "../theme";
+import { View } from "native-base";
+import { useAuth } from "../authentification/AuthContext";
 
-const Register = () => {
-  const navigation = useNavigation();
-  const [emailError, setEmailError] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [repeatPasswordError, setRepeatPasswordError] = useState("");
-  const [serverError, setServerError] = useState("");
+interface Props {
+  setServerError: Dispatch<SetStateAction<string>>;
+}
+
+const Register: React.FC<Props> = ({ setServerError }) => {
+  const { register } = useAuth();
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const [emailErrorText, setEmailErrorText] = useState("");
+  const [usernameErrorText, setUsernameErrorText] = useState("");
+  const [nicknameErrorText, setNicknameErrorText] = useState("");
+  const [passwordErrorText, setPasswordErrorText] = useState("");
+  const [repeatPasswordErrorText, setRepeatPasswordErrorText] = useState("");
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -20,276 +25,196 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
 
-  const baseUrl = "http://localhost:3000/api/v1/";
-
-  const checkUsername = () => {
-    if (/^[a-zA-Z0-9]+$/.test(username)) {
-      // Überprüfung auf maximale Länge (20 Zeichen)
-      if (username.length <= 20) {
-        // Der Wert entspricht den Anforderungen
-        setUsernameError("");
-        return true;
-      } else {
-        // Der Wert ist zu lang
-        setUsernameError(
-          "Der Nutzername darf nicht länger als 20 Zeichen sein.",
-        );
-        return false;
-      }
-    } else {
-      // Der Wert enthält Sonderzeichen oder Emojis
-      setUsernameError(
-        "Der Nutzername darf keine Sonderzeichen oder Emojis enthalten.",
-      );
-      return false;
-    }
+  const updateFormValidity = () => {
+    const isValid =
+      checkEmail() &&
+      checkUsername() &&
+      checkPassword() &&
+      checkRepeatPassword();
+    setIsFormValid(isValid);
   };
 
   const checkEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    // Überprüfung auf maximale Länge (128 Zeichen)
-    if (email.length <= 128) {
-      // Überprüfung der E-Mail-Adresse mit dem Regex
-      if (emailRegex.test(email)) {
-        // Der Wert entspricht den Anforderungen
-        setEmailError("");
-        return true;
-      } else {
-        // Der Wert entspricht nicht dem E-Mail-Format
-        setEmailError("Bitte gib eine gültige E-Mail-Adresse ein.");
-        return false;
-      }
+    if (email.length === 0) {
+      setEmailErrorText("");
+      return false;
+    } else if (emailRegex.test(email)) {
+      setEmailErrorText("");
+      return true;
     } else {
-      // Der Wert ist zu lang
-      setEmailError(
-        "Die E-Mail-Adresse darf nicht länger als 128 Zeichen sein.",
+      setEmailErrorText("The email address is invalid.");
+      return false;
+    }
+  };
+
+  const handleEmailChange = (text: string) => {
+    setEmailErrorText("");
+    if (text.length <= 128) {
+      setEmail(text);
+    }
+  };
+
+  const checkUsername = () => {
+    if (username.length === 0) {
+      setEmailErrorText("");
+      return false;
+    } else if (/^[a-zA-Z0-9]+$/.test(username)) {
+      setUsernameErrorText("");
+      return true;
+    } else {
+      setUsernameErrorText(
+        "The username cannot contain any special characters or emojis.",
       );
       return false;
     }
   };
 
-  const checkNickname = () => {
-    if (nickname.length <= 25) {
-      return true;
-    } else {
-      setNicknameError("Der Nickname darf nicht länger als 25 Zeichen sein.");
-      return false;
+  const handleUsernameChange = (text: string) => {
+    setUsernameErrorText("");
+    if (text.length <= 20) {
+      setUsername(text);
+    }
+  };
+
+  const handleNicknameChange = (text: string) => {
+    setNicknameErrorText("");
+    if (text.length <= 25) {
+      setNickname(text);
     }
   };
 
   const checkPassword = () => {
-    if (password.length >= 8) {
+    if (password.length === 0) {
+      setPasswordErrorText("");
+      return false;
+    } else if (password.length >= 8) {
       if (
         /[A-Z]/.test(password) &&
         /[a-z]/.test(password) &&
-        /\d/.test(password)
+        /\d/.test(password) &&
+        /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(password)
       ) {
-        setPasswordError(""); // Zurücksetzen des Fehlers
+        setPasswordErrorText("");
         return true;
       } else {
-        setPasswordError(
-          "Das Passwort muss mindestens einen Kleinbuchtsaben, einen Großbuchstaben und eine Zahl enthalten.",
+        setPasswordErrorText(
+          "The password must contain at least one lowercase letter, one uppercase letter, one number and one special character.",
         );
         return false;
       }
     } else {
-      setPasswordError("Das Passwort muss mindestens 8 Zeichen lang sein.");
+      setPasswordErrorText("The password must be at least 8 characters long.");
       return false;
+    }
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setPasswordErrorText("");
+    if (text.length <= 20) {
+      setPassword(text);
     }
   };
 
   const checkRepeatPassword = () => {
-    if (password === repeatPassword) {
-      setRepeatPasswordError("");
+    if (repeatPassword.length === 0) {
+      setRepeatPasswordErrorText("");
+      return false;
+    } else if (password === repeatPassword) {
+      setRepeatPasswordErrorText("");
       return true;
     } else {
-      setRepeatPasswordError("Die Passwörter stimmen nicht überein");
-      console.log("Ich bin doch hier");
+      setRepeatPasswordErrorText("The passwords do not match.");
       return false;
     }
   };
 
-  const clearInputFields = () => {
-    setEmail("");
-    setUsername("");
-    setNickname("");
-    setPassword("");
-    setRepeatPassword("");
-  };
-
-  const checkForInput = () => {
-    if (
-      username.length == 0 ||
-      email.length == 0 ||
-      password.length == 0 ||
-      repeatPassword.length == 0
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const checkInputFields = () => {
-    let alltrue = true;
-    let methods = [
-      checkEmail(),
-      checkUsername(),
-      checkNickname(),
-      checkPassword(),
-      checkRepeatPassword(),
-    ];
-
-    for (const method of methods) {
-      const ergebnis = method;
-      alltrue = alltrue && ergebnis;
-    }
-
-    if (alltrue) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const register = () => {
-    if (checkInputFields()) {
-      axios
-        .post(baseUrl + "users", {
-          username: username,
-          nickname: nickname,
-          email: email,
-        })
-        .then(function (response) {
-          console.log(response);
-          if (response.status == 201) {
-            setServerError("");
-            navigation.navigate("CodePage" as never);
-          }
-        })
-        .catch(function (error) {
-          switch (error.response.status) {
-            case 400: {
-              console.log("400");
-              setServerError("Irgendwas ist schief gelaufen");
-              break;
-            }
-
-            case 409: {
-              console.log("409");
-              setServerError("Der User existiert schon");
-              break;
-            }
-
-            case 422: {
-              console.log("422");
-              setServerError("Bitte geben Sie eine valide E-Mail ein");
-              break;
-            }
-          }
-        });
-
-      // auslagern?
-    } else {
-      return;
+  const handleRepeatPasswordChange = (text: string) => {
+    setRepeatPasswordErrorText("");
+    if (text.length <= 20) {
+      setRepeatPassword(text);
     }
   };
 
   return (
-    <View>
-      <FloatingTextInput
-        label="Email Adresse"
+    <ScrollView
+      className="bg-white px-10"
+      automaticallyAdjustKeyboardInsets={true}
+      alwaysBounceVertical={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <FloatingLabelInput
+        label="Email address"
+        errorText={emailErrorText}
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={handleEmailChange}
+        onBlur={() => {
+          checkEmail();
+          updateFormValidity();
+        }}
       />
-      {!!emailError && (
-        <Text
-          style={{ color: "#FF2D55", paddingBottom: 20, textAlign: "center" }}
-        >
-          {emailError}
-        </Text>
-      )}
-      <FloatingTextInput
-        label="Nutzername"
+      <FloatingLabelInput
+        label="Username"
+        errorText={usernameErrorText}
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={handleUsernameChange}
+        onBlur={() => {
+          checkUsername();
+          updateFormValidity();
+        }}
       />
-      {!!usernameError && (
-        <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
-        >
-          {usernameError}
-        </Text>
-      )}
-      <FloatingTextInput
-        label="Nickname(optional)"
+      <FloatingLabelInput
+        label="Nickname (optional)"
+        errorText={nicknameErrorText}
         value={nickname}
-        onChangeText={(text) => setNickname(text)}
+        onChangeText={handleNicknameChange}
       />
-      {!!nicknameError && (
-        <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
-        >
-          {nicknameError}
-        </Text>
-      )}
-      <TouchableOpacity
-        style={{
-          padding: 40,
-        }}
-      ></TouchableOpacity>
-      <FloatingTextInput
+      <View className="mb-14" />
+      <FloatingLabelInput
+        textContentType="oneTimeCode"
+        errorText={passwordErrorText}
         secureTextEntry={true}
-        label="Passwort"
+        label="Password"
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={handlePasswordChange}
+        onBlur={() => {
+          checkPassword();
+          updateFormValidity();
+        }}
       />
-      {!!passwordError && (
-        <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
-        >
-          {passwordError}
-        </Text>
-      )}
-      <FloatingTextInput
+      <FloatingLabelInput
+        textContentType="oneTimeCode"
+        errorText={repeatPasswordErrorText}
         secureTextEntry={true}
-        label="Passwort bestätigen"
+        label="Repeat password"
         value={repeatPassword}
-        onChangeText={(text) => setRepeatPassword(text)}
+        onChangeText={handleRepeatPasswordChange}
+        onBlur={() => {
+          checkRepeatPassword();
+          updateFormValidity();
+        }}
       />
-      {!!repeatPasswordError && (
-        <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
-        >
-          {repeatPasswordError}
-        </Text>
-      )}
-      {!!serverError && (
-        <Text
-          style={{ color: COLORS.red, paddingBottom: 20, textAlign: "center" }}
-        >
-          {serverError}
-        </Text>
-      )}
       <TouchableOpacity
         style={{
-          flex: 1,
-          backgroundColor: !checkForInput() ? COLORS.primary : COLORS.lightgray,
-          margin: 160,
-          padding: 12,
-          alignItems: "center",
-          borderRadius: 18,
-          ...SHADOWS.medium,
+          backgroundColor: isFormValid ? COLORS.primary : COLORS.lightgray,
         }}
-        disabled={checkForInput()}
-        onPress={() => register()}
+        className="p-3 mt-12 items-center rounded-xl mx-24"
+        disabled={!isFormValid}
+        onPress={() =>
+          register(
+            username,
+            password,
+            nickname,
+            email,
+            setServerError,
+            setUsernameErrorText,
+            setEmailErrorText,
+          )
+        }
       >
-        <Text style={{ color: COLORS.black, fontSize: SIZES.large }}>
-          Registrieren
-        </Text>
+        <Text className="text-base">Register</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 

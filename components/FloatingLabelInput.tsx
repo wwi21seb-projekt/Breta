@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { COLORS } from "../theme";
 import {
   Text,
   TextInput,
@@ -7,19 +8,20 @@ import {
   Easing,
   TouchableWithoutFeedback,
 } from "react-native";
-import styles from "../stylesheets/styleFloatingInput";
 
 type Props = React.ComponentProps<typeof TextInput> & {
   label: string;
   errorText?: string | null;
+  noErrorText?: boolean;
   onChangeText: (text: string) => void;
   value: string;
 };
 
-const FloatingTextInput: React.FC<Props> = (props) => {
+const FloatingLabelInput: React.FC<Props> = (props) => {
   const {
     label,
     errorText,
+    noErrorText,
     onChangeText,
     value,
     onBlur,
@@ -40,16 +42,16 @@ const FloatingTextInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? "#080F9C" : "#A9A9A9";
+  let color = isFocused ? COLORS.primary : COLORS.lightgray;
   if (errorText) {
-    color = "#FF2D55";
+    color = COLORS.red;
   }
 
   return (
-    <View style={{ marginVertical: 10 }}>
+    <View className="my-2">
       <TextInput
+        className="border pb-4 pt-2 px-4 rounded-xl text-base"
         style={[
-          styles.input,
           {
             borderColor: color,
           },
@@ -69,8 +71,8 @@ const FloatingTextInput: React.FC<Props> = (props) => {
       />
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
         <Animated.View
+          className="absolute bg-white px-2"
           style={[
-            styles.floatingLabelContainer,
             {
               transform: [
                 {
@@ -82,7 +84,7 @@ const FloatingTextInput: React.FC<Props> = (props) => {
                 {
                   translateY: focusAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [16, -12],
+                    outputRange: [11, -16],
                   }),
                 },
                 {
@@ -96,8 +98,8 @@ const FloatingTextInput: React.FC<Props> = (props) => {
           ]}
         >
           <Text
+            className="text-base"
             style={[
-              styles.label,
               {
                 color,
               },
@@ -108,9 +110,11 @@ const FloatingTextInput: React.FC<Props> = (props) => {
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
-      {!!errorText && <Text style={styles.error}>{errorText}</Text>}
+      {!!errorText && !noErrorText && (
+        <Text className="text-sm text-red my-1 mx-2">{errorText}</Text>
+      )}
     </View>
   );
 };
 
-export default FloatingTextInput;
+export default FloatingLabelInput;

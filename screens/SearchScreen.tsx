@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextInput,
   View,
@@ -17,9 +17,8 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
-import React from "react";
 
-const Search = () => {
+const SearchScreen = () => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
   const [users, setUsers] = useState<ListUser[]>([]);
@@ -293,4 +292,4 @@ const Search = () => {
     </View>
   );
 };
-export default Search;
+export default SearchScreen;
