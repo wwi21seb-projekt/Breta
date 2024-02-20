@@ -59,18 +59,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       data = await response.json();
         switch (response.status) {
           case 200: 
-            // const updatedRecords = await Promise.all(
-            //   data.records.map(async (record) => {
-            //    const cityName = await getPlaceName(
-            //       record.location.latitude,
-            //       record.location.longitude,
-            //     );
-            //     return {
-            //       ...record,
-            //       city: cityName,
-            //    };
-            //   }),
-            // );
             setPosts(loadMore ? [...posts, ...data.records] : data.records);
             setOffset(newOffset);
             setHasMoreData(data.pagination.records - data.pagination.offset > 0);
@@ -130,29 +118,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
-  // const getPlaceName = async (latitude: number, longitude: number) => {
-  //   let response;
-  //   let data;
-  //   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-
-  //   try {
-  //     response = await fetch(url, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       data = await response.json();
-  //       return data.address.city;
-  //     } else {
-  //       return "";
-  //     }
-  //   } catch (error) {
-  //     return "";
-  //   }
-  // };
 
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
@@ -294,10 +259,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                     console.log(
                       "Freundschaftsanfragen: Wird noch implementiert",
                     )
-                  // navigation.navigate("FollowerList", {
-                  //   type: "request"
-
-                  // })
                 }
               >
                 <Text className="font-bold text-base">0</Text>
@@ -338,7 +299,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             }}
           >
             <View className="flex-row">
-              <Text className="w-1/2 text-xs">Unknown city</Text>
+              {/* view is placeholder for location */}
+              <View className="w-1/2"/>
               <Text className="w-1/2 text-xs text-right">
                 {item.creationDate.split("T")[0]}
               </Text>
