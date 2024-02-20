@@ -17,6 +17,7 @@ const AuthScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       setShowRegistration(false);
+      setServerError("");
     }, []),
   );
 

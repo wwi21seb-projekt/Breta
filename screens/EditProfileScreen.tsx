@@ -295,6 +295,9 @@ const EditProfileScreen = () => {
               setOldPassword("");
               setNewPassword("");
               setConfirmNewPassword("");
+              setOldPasswordErrorText("");
+              setNewPasswordErrorText("");
+              setConfirmNewPasswordErrorText("");
             }}
           >
             {isPasswordFieldVisible && (
