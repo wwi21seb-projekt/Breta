@@ -41,9 +41,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
 
   const fetchPosts = async (loadMore: boolean) => {
     setLoading(true);
-    if (!hasMoreData) {
-      return;
-    }
     let response;
     let data!: ResponseOwnPost;
     let newOffset = loadMore ? offset + 3 : 0;
@@ -61,7 +58,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           case 200: 
             setPosts(loadMore ? [...posts, ...data.records] : data.records);
             setOffset(newOffset);
-            setHasMoreData(data.pagination.records - data.pagination.offset > 0);
+            setHasMoreData(data.pagination.records - data.pagination.offset > 3);
             break;
           case 401:
             setErrorText(data.error.message);
@@ -73,6 +70,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             setErrorText("Something went wrong. Please try again.");
         }
     } catch (error) {
+      console.log(error);
       setErrorText("Connection error. Please try again.");
     } finally {
       setLoading(false);
@@ -114,8 +112,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         }
       
     } catch (error) {
-      setErrorText("Connection error.Please try again.");
-    }
+      setErrorText("Connection error. Please try again.");
+    } 
   };
 
 
@@ -272,7 +270,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     );
   };
 
-  if (loading) {
+  if (loading && !loadingMore) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
@@ -311,7 +309,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
-        // onEndReached={loadMorePosts}
+        onEndReached={loadMorePosts}
         onEndReachedThreshold={0.2}
         ListFooterComponent={
           loadingMore ? <ActivityIndicator size={"small"} /> : null
