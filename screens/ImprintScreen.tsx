@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Text, View, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { ScrollView } from "native-base";
-import Error from "../components/ErrorComp";
+import ErrorComp from "../components/ErrorComp";
 
 const ImprintScreen = () => {
   const [imprintText, setImprintText] = useState("");
@@ -51,7 +51,7 @@ const ImprintScreen = () => {
       </View>
     );
   } else {
-    return <Error errorText={errorText} />;
+    return <ErrorComp errorText={errorText} />;
   }
 };
 

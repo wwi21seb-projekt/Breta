@@ -1,10 +1,11 @@
 import UserProfile from "../components/UserProfile";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { User } from "../components/types/User";
 import { loadUser } from "../components/functions/LoadUser";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileScreen = () => {
   const {user, token} = useAuth();
@@ -12,13 +13,15 @@ const ProfileScreen = () => {
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    if(user && token){
-      loadUser(user, setUserInfo, setErrorText, token);
-    }
-    setLoading(false);
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      if(user && token){
+        loadUser(user, setUserInfo, setErrorText, token);
+      }
+      setLoading(false);
+    }, []),
+  );
 
   if (loading) {
     return (

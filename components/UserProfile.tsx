@@ -40,7 +40,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [currentPostId, setCurrentPostId] = useState("");
 
   const fetchPosts = async (loadMore: boolean) => {
-    // setLoading(true);
+    setLoading(true);
     if (!hasMoreData) {
       return;
     }
