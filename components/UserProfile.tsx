@@ -9,149 +9,150 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SHADOWS } from "../theme";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
 import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
+import { navigate } from "../navigation/NavigationService";
+import { useAuth } from "../authentification/AuthContext";
+import { useFocusEffect } from '@react-navigation/native';
+import ErrorComp from "./ErrorComp";
 
-type RootStackParamList = {
-  FollowerList: { type: string; username: string };
-  Authentification: undefined;
-  EditProfile: { user: any };
-};
 
 type Props = {
   personal: boolean;
-  user: User;
+  userInfo: User;
 };
-type NavigationType = StackNavigationProp<RootStackParamList, "FollowerList">;
 
-const UserProfile: React.FC<Props> = ({ user, personal }) => {
-  const navigation = useNavigation<NavigationType>();
 
-  const following = user.username;
-  const [isFollowed, setIsFollowed] = useState(user.subscriptionId !== "");
-  const [error, setError] = useState("");
-  const [subscriptionId, setSubscriptionId] = useState(user.subscriptionId);
+const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
+  const {token} = useAuth();
+  const following = userInfo.username;
+  const [isFollowed, setIsFollowed] = useState(userInfo.subscriptionId !== "");
+  const [errorText, setErrorText] = useState("");
+  const [subscriptionId, setSubscriptionId] = useState(userInfo.subscriptionId);
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [currentPostId, setCurrentPostId] = useState("");
 
   const fetchPosts = async (loadMore: boolean) => {
+    // setLoading(true);
     if (!hasMoreData) {
       return;
     }
     let response;
     let data!: ResponseOwnPost;
     let newOffset = loadMore ? offset + 3 : 0;
-    const urlWithParams = `${baseUrl}users/${user.username}/feed?offset=${newOffset}&limit=3`;
+    const urlWithParams = `${baseUrl}users/${userInfo.username}/feed?offset=${newOffset}&limit=3`;
     try {
       response = await fetch(urlWithParams, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
       });
-
-      if (response.ok) {
-        data = await response.json();
-        const updatedRecords = await Promise.all(
-          data.records.map(async (record) => {
-            const cityName = await getPlaceName(
-              record.location.latitude,
-              record.location.longitude,
-            );
-            return {
-              ...record,
-              city: cityName,
-            };
-          }),
-        );
-        setPosts(loadMore ? [...posts, ...updatedRecords] : updatedRecords);
-        setOffset(newOffset);
-        setHasMoreData(data.pagination.records - data.pagination.offset > 0);
-      } else {
+      data = await response.json();
         switch (response.status) {
+          case 200: 
+            // const updatedRecords = await Promise.all(
+            //   data.records.map(async (record) => {
+            //    const cityName = await getPlaceName(
+            //       record.location.latitude,
+            //       record.location.longitude,
+            //     );
+            //     return {
+            //       ...record,
+            //       city: cityName,
+            //    };
+            //   }),
+            // );
+            setPosts(loadMore ? [...posts, ...data.records] : data.records);
+            setOffset(newOffset);
+            setHasMoreData(data.pagination.records - data.pagination.offset > 0);
+            break;
           case 401:
-            setError("Auf das Login Popup navigieren!");
+            setErrorText(data.error.message);
             break;
           case 404:
-            setError("Die Beiträge konnten nicht geladen werden.");
+            setErrorText(data.error.message);
             break;
           default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+            setErrorText("Something went wrong. Please try again.");
         }
-      }
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Connection error. Please try again.");
     } finally {
+      setLoading(false);
       setLoadingMore(false);
     }
   };
 
   const deletePost = async () => {
     let response;
+    let data;
     const urlWithParams = `${baseUrl}posts/${currentPostId}`;
     try {
       response = await fetch(urlWithParams, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
       });
-
-      if (response.ok) {
-        setModalVisible(false);
-      } else {
         switch (response.status) {
+          case 204:
+            setModalVisible(false);
+            fetchPosts(false);
+            break;
           case 401:
-            setError("Auf das Login Popup navigieren!");
+            data = await response.json();
+            setErrorText(data.error.message);
             break;
           case 403:
-            setError("Du kannst nur deine eigenen Beiträge löschen.");
+            data = await response.json();
+            setErrorText(data.error.message);
             break;
           case 404:
-            setError(
-              "Der Beitrag, den du löschen möchtest, konnte nicht gefunden werden. Versuche es später erneut.",
-            );
+            data = await response.json();
+            setErrorText(data.error.message);
             break;
           default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+            setErrorText("Something went wrong. Please try again.");
         }
-      }
+      
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Connection error.Please try again.");
     }
   };
 
-  const getPlaceName = async (latitude: number, longitude: number) => {
-    let response;
-    let data;
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+  // const getPlaceName = async (latitude: number, longitude: number) => {
+  //   let response;
+  //   let data;
+  //   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
 
-    try {
-      response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  //   try {
+  //     response = await fetch(url, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (response.ok) {
-        data = await response.json();
-        return data.address.city;
-      } else {
-        return "";
-      }
-    } catch (error) {
-      return "";
-    }
-  };
+  //     if (response.ok) {
+  //       data = await response.json();
+  //       return data.address.city;
+  //     } else {
+  //       return "";
+  //     }
+  //   } catch (error) {
+  //     return "";
+  //   }
+  // };
 
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
@@ -160,9 +161,11 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     }
   };
 
-  useEffect(() => {
-    fetchPosts(false);
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPosts(false);
+    }, []),
+  );
 
   const renderHeader = () => {
     return (
@@ -182,11 +185,11 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
           >
             <View className="bg-white rounded-3xl px-8 py-4">
               <Text className="text-lg mb-10">
-                Möchtest du diesen Beitrag wirklich löschen?
+                Do you really want to delete this post?
               </Text>
               <View className="flex-row">
                 <TouchableOpacity onPress={() => deletePost()}>
-                  <Text className="text-red text-base font-bold">Löschen</Text>
+                  <Text className="text-red text-base font-bold">Delete</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -197,7 +200,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                   }}
                 >
                   <Text className="text-black text-base font-bold">
-                    Abbrechen
+                    Cancel
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -211,18 +214,18 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
         />
         {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
         <View className="items-center p-6">
-          <Text className="text-2xl font-bold mb-2">{user.nickname}</Text>
+          {userInfo.nickname && <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>}
           <Text className="italic text-lg text-darkgray mb-6">
-            @{user.username}
+            @{userInfo.username}
           </Text>
-          <Text className="mb-8">{user.status}</Text>
-          {personal === true ? (
+          {userInfo.status && <Text className="mb-8">{userInfo.status}</Text>}
+          {personal ? (
             <TouchableOpacity
               style={{ ...SHADOWS.small }}
-              className="bg-white mb-10 px-12 py-4 rounded-full"
-              onPress={() => navigation.navigate("EditProfile", { user: user })}
+              className="bg-white mb-10 px-12 py-3 rounded-2xl"
+              onPress={() => navigate("EditProfile", {user: userInfo})}
             >
-              <Text>Profil bearbeiten</Text>
+              <Text>Edit profile</Text>
             </TouchableOpacity>
           ) : (
             <View className="w-full justify-center flex-row space-x-4">
@@ -231,7 +234,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 className="bg-white my-10 px-12 py-3 rounded-2xl"
                 onPress={() => console.log("Chat starten")}
               >
-                <Text>Chatten</Text>
+                <Text>Chat</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
@@ -243,7 +246,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                     following,
                     subscriptionId,
                     setSubscriptionId,
-                    setError,
+                    setErrorText,
                   )
                 }
               >
@@ -252,38 +255,40 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
             </View>
           )}
 
-          <View className="w-full justify-center flex-row space-around">
-            <View className="items-center justify-center p-3">
-              <Text className="font-bold text-base">{user.posts}</Text>
-              <Text>Beiträge</Text>
+          <View className="justify-center flex-row space-around">
+            <View className="items-center justify-center p-3 flex-1">
+              <Text className="font-bold text-base">{userInfo.posts}</Text>
+              <Text>Posts</Text>
             </View>
             <TouchableOpacity
-              className="items-center justify-center p-3"
+              className="items-center justify-center p-3 flex-1"
+              disabled={userInfo.follower === 0}
               onPress={() =>
-                navigation.navigate("FollowerList", {
-                  type: "followers",
-                  username: user.username,
-                })
+                navigate("FollowerList", 
+                  {type: "followers",
+                  username: userInfo.username}
+                )
               }
             >
-              <Text className="font-bold text-base">{user.follower}</Text>
+              <Text className="font-bold text-base">{userInfo.follower}</Text>
               <Text>Follower</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="items-center justify-center p-3"
+              className="items-center justify-center p-3 flex-1"
+              disabled={userInfo.following === 0}
               onPress={() =>
-                navigation.navigate("FollowerList", {
+                navigate("FollowerList", {
                   type: "following",
-                  username: user.username,
+                  username: userInfo.username,
                 })
               }
             >
-              <Text className="font-bold text-base">{user.following}</Text>
-              <Text>Gefolgt</Text>
+              <Text className="font-bold text-base">{userInfo.following}</Text>
+              <Text>Following</Text>
             </TouchableOpacity>
             {personal === true && (
               <TouchableOpacity
-                className="items-center justify-center p-3"
+                className="items-center justify-center p-3 flex-1"
                 onPress={
                   () =>
                     console.log(
@@ -296,21 +301,25 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
                 }
               >
                 <Text className="font-bold text-base">0</Text>
-                <Text>Anfragen</Text>
+                <Text>Requests</Text>
               </TouchableOpacity>
             )}
           </View>
         </View>
-        <Text className="font-bold text-xl ml-6">Beiträge</Text>
+        <Text className="font-bold text-xl ml-6">Posts</Text>
       </View>
     );
   };
 
-  if (error !== "") {
+  if (loading) {
     return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
       </View>
+    );
+  } else if (errorText) {
+    return (
+      <ErrorComp errorText={errorText}/>
     );
   } else if (posts !== undefined) {
     return (
@@ -329,7 +338,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
             }}
           >
             <View className="flex-row">
-              <Text className="w-1/2 text-xs">{item.city}</Text>
+              <Text className="w-1/2 text-xs">Unknown city</Text>
               <Text className="w-1/2 text-xs text-right">
                 {item.creationDate.split("T")[0]}
               </Text>
@@ -340,7 +349,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
-        onEndReached={loadMorePosts}
+        // onEndReached={loadMorePosts}
         onEndReachedThreshold={0.2}
         ListFooterComponent={
           loadingMore ? <ActivityIndicator size={"small"} /> : null
@@ -352,7 +361,7 @@ const UserProfile: React.FC<Props> = ({ user, personal }) => {
     return (
       <View className="p-6 bg-white h-full">
         <Text className="text-base">
-          Etwas ist schiefgelaufen. Versuche es später erneut.
+        <ErrorComp errorText="Something went wrong. Please try again."/>
         </Text>
       </View>
     );

@@ -17,4 +17,8 @@ export interface ResponseOwnPost {
     limit: number;
     records: number;
   };
+  error: {
+    message: string,
+    code: string,
+  }
 }

@@ -37,7 +37,7 @@ const EditProfileScreen = () => {
   const [nicknameHeight, setNicknameHeight] = useState();
   const [statusHeight, setStatusHeight] = useState();
 
-  const specialCharacter = /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/;
+  const specialCharacter = /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/;
 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;

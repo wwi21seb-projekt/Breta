@@ -8,10 +8,8 @@ export type RootStackParamList = {
   Authentification: undefined;
   Search: undefined;
   GeneralProfile: undefined;
-  FollowerList: undefined;
-  FollowedList: undefined;
-  FriendRequest: undefined;
-  EditProfile: undefined;
+  FollowerList: { type: string; username: string };
+  EditProfile: { user: any };
 };
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
@@ -21,7 +19,7 @@ export function navigate<RouteName extends keyof RootStackParamList>(
 ) {
   if (navigationRef.isReady()) {
     // @ts-ignore
-    navigationRef.navigate(screen, params);
+    navigationRef.navigate(screen, params as any);
   }
 }
 
