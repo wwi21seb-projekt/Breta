@@ -35,6 +35,8 @@ const AppTopBar = () => {
     headerTitle = "Friend requests";
   } else if (route.name === "ConfirmCode") {
     headerTitle = "Activate account";
+  } else if (route.name === "EditProfile") {
+    headerTitle = "Edit profile";
   } else {
     headerTitle = "";
   }
@@ -91,14 +93,14 @@ const AppTopBar = () => {
             </TouchableOpacity>
           )}
         </View>
-        {isAuthenticated ? (
+        {isAuthenticated && headerTitle === "" ? (
           <TouchableOpacity 
           className="w-6"
           onPress={logout}>
              <Icon
                 as={Ionicons}
                 name="log-out-outline"
-                size="xl"
+                size="lg"
                 color={COLORS.black}
               />
           </TouchableOpacity>
