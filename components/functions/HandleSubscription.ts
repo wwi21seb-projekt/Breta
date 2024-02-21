@@ -2,60 +2,48 @@ import { baseUrl } from "../../env";
 import { Dispatch, SetStateAction } from "react";
 
 export const handleSubscription = async (
+  token: string | null,
   isFollowed: boolean,
   setIsFollowed: Dispatch<SetStateAction<boolean>>,
   following: string,
   subscriptionId: string,
-  setSubscriptionId: Dispatch<SetStateAction<string>>,
-  setError: Dispatch<SetStateAction<string>>,
+  setSubscriptionId: Dispatch<SetStateAction<string | null>>,
+  setErrorText: Dispatch<SetStateAction<string>>,
 ) => {
-  const handleErrorResponse = (status: number) => {
-    const errorMessages: { [key: number]: string } = {
-      401: "Auf das Login Popup navigieren!",
-      403: "Du kannst nur deine eigenen Abbonements löschen.",
-      404: `Der Nutzer, den du ${
-        isFollowed ? "deabbonieren" : "abbonieren"
-      } möchtest, wurde nicht gefunden. Versuche es später erneut.`,
-      406: "Du kannst dir nicht selbst folgen.",
-      409: "Du folgst diesem Nutzer bereits.",
-    };
-
-    setError(
-      errorMessages[status] ||
-        "Etwas ist schiefgelaufen. Versuche es später erneut.",
-    );
-  };
 
   const makeRequest = async (url: string, options: RequestInit) => {
+    let data;
+    let response;
     try {
-      const response = await fetch(url, options);
+      response = await fetch(url, options);
+      data = await response.json();
       if (response.ok) {
         setIsFollowed(!isFollowed);
         if (!isFollowed) {
-          const data = await response.json();
           setSubscriptionId(data.subscriptionId);
         } else {
-          setSubscriptionId("");
+          setSubscriptionId(null);
         }
       } else {
-        handleErrorResponse(response.status);
+        setErrorText(data.error.message);
       }
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Something went wrong. Please try again.");
     }
   };
 
   const requestOptions: RequestInit = {
     method: isFollowed ? "DELETE" : "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
   };
 
   if (!isFollowed) {
-    requestOptions.body = JSON.stringify({ following });
+    requestOptions.body = JSON.stringify({ following: following });
   }
 
   const url = isFollowed
     ? `${baseUrl}subscriptions/${subscriptionId}`
     : `${baseUrl}subscriptions`;
+
   await makeRequest(url, requestOptions);
 };

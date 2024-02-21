@@ -31,9 +31,7 @@ const ProfileScreen = () => {
     );
   } else if (errorText !== "") {
     return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{errorText}</Text>
-      </View>
+      <ErrorComp errorText={errorText}/>
     );
   } else if (userInfo !== undefined) {
     return <UserProfile personal={true} userInfo={userInfo} />;

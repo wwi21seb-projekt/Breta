@@ -28,7 +28,7 @@ type Props = {
 const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const {token} = useAuth();
   const following = userInfo.username;
-  const [isFollowed, setIsFollowed] = useState(userInfo.subscriptionId !== "");
+  const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
   const [subscriptionId, setSubscriptionId] = useState(userInfo.subscriptionId);
   const [posts, setPosts] = useState<OwnPost[]>([]);
@@ -61,8 +61,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             setHasMoreData(data.pagination.records - data.pagination.offset > 3);
             break;
           case 401:
-            setErrorText(data.error.message);
-            break;
           case 404:
             setErrorText(data.error.message);
             break;
@@ -70,7 +68,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             setErrorText("Something went wrong. Please try again.");
         }
     } catch (error) {
-      console.log(error);
       setErrorText("Connection error. Please try again.");
     } finally {
       setLoading(false);
@@ -126,6 +123,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      setErrorText("");
       fetchPosts(false);
     }, []),
   );
@@ -173,7 +171,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         <Image
           source={require("../assets/images/Max.jpeg")}
           className="w-full h-48"
-          alt="Profilbild"
+          alt="Picture"
         />
         {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
         <View className="items-center p-6">
@@ -191,19 +189,20 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <Text>Edit profile</Text>
             </TouchableOpacity>
           ) : (
-            <View className="w-full justify-center flex-row space-x-4">
+            <View className="w-full justify-center flex-row space-x-4 mb-6">
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
-                className="bg-white my-10 px-12 py-3 rounded-2xl"
-                onPress={() => console.log("Chat starten")}
+                className="bg-white py-3 rounded-2xl flex-1"
+                onPress={() => console.log(userInfo)}
               >
-                <Text>Chat</Text>
+                <Text className="text-center">Chat</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
-                className="bg-white my-10 px-12 py-3 rounded-2xl"
+                className="bg-white py-3 rounded-2xl flex-1"
                 onPress={() =>
                   handleSubscription(
+                    token,
                     isFollowed,
                     setIsFollowed,
                     following,
@@ -213,7 +212,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                   )
                 }
               >
-                <Text>{isFollowed ? "Entfolgen" : "Folgen"}</Text>
+                <Text className="text-center">{isFollowed ? "Unfollow" : "Follow"}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -252,6 +251,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             {personal === true && (
               <TouchableOpacity
                 className="items-center justify-center p-3 flex-1"
+                disabled={true}
                 onPress={
                   () =>
                     console.log(
@@ -319,11 +319,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     );
   } else {
     return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">
-        <ErrorComp errorText="Something went wrong. Please try again."/>
-        </Text>
-      </View>
+      <ErrorComp errorText="Something went wrong. Please try again." />
     );
   }
 };

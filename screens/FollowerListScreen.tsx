@@ -1,10 +1,12 @@
 import UserListItem from "../components/UserListItem";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
 import { AboRecords, UserRecords } from "../components/types/UserListTypes";
-import React from "react";
+import { useAuth } from "../authentification/AuthContext";
+import { useFocusEffect } from '@react-navigation/native';
+import ErrorComp from "../components/ErrorComp";
 
 interface RouteParams {
   type: string;
@@ -12,22 +14,21 @@ interface RouteParams {
 }
 
 const FollowerListScreen = () => {
+  const {token} = useAuth();
   const route = useRoute();
   const params = route.params as RouteParams;
   const type = params.type ? params.type : "";
   const username = params.username ? params.username : "";
 
   const [records, setRecords] = useState<AboRecords[]>([]);
-  const [error, setError] = useState("");
+  const [errorText, setErrorText] = useState("");
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
 
   const fetchUsers = async (loadMore: boolean) => {
-    if (!hasMoreData) {
-      return;
-    }
+    setLoading(true);
     let data!: UserRecords;
     let response;
     let newOffset = loadMore ? offset + 10 : 0;
@@ -38,31 +39,27 @@ const FollowerListScreen = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
       });
-
-      if (response.ok) {
-        data = await response.json();
-        setRecords(loadMore ? [...records, ...data.records] : data.records);
-        setOffset(newOffset);
-        setHasMoreData(data.records.length === 10);
-      } else {
-        switch (response.status) {
-          case 401:
-            setError("Auf das Login Popup navigieren!");
-            break;
-          case 404:
-            setError(
-              "Die Nutzer konnten nicht geladen werden. Versuche es später erneut.",
-            );
-            break;
-          default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-        }
+      data = await response.json();
+      switch (response.status) {
+        case 200:
+          setRecords(loadMore ? [...records, ...data.records] : data.records);
+          setOffset(newOffset);
+          setHasMoreData(data.pagination.records - data.pagination.offset > 10);
+          break;
+        case 401:
+        case 404:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
       }
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Connection error. Please try again.");
     } finally {
+      setLoading(false);
       setLoadingMore(false);
     }
   };
@@ -74,23 +71,21 @@ const FollowerListScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers(false).finally(() => {
-      setLoading(false);
-    });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUsers(false);
+    }, []),
+  );
 
-  if (loading) {
+  if (loading && !loadingMore) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
-  } else if (error !== "") {
+  } else if (errorText) {
     return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
-      </View>
+      <ErrorComp errorText={errorText}/>
     );
   } else if (records.length > 0) {
     return (
@@ -118,11 +113,7 @@ const FollowerListScreen = () => {
     );
   } else {
     return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">
-          Etwas ist schiefgelaufen. Versuche es später erneut.
-        </Text>
-      </View>
+      <ErrorComp errorText="Something went wrong. Please try again." />
     );
   }
 };

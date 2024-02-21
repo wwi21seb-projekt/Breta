@@ -1,15 +1,11 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SHADOWS } from "../theme";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import { handleSubscription } from "./functions/HandleSubscription";
+import { navigate } from "../navigation/NavigationService";
+import ErrorComp from "./ErrorComp";
+import { useAuth } from "../authentification/AuthContext";
 
-type RootStackParamList = {
-  GeneralProfile: { username: string };
-};
-
-type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
 
 type Props = {
   username: string;
@@ -24,12 +20,12 @@ const UserListItem: React.FC<Props> = ({
   enableFollowHandling,
   followingId,
 }) => {
-  const navigation = useNavigation<NavigationType>();
+  const {token} = useAuth();
   const [isFollowed, setIsFollowed] = useState(followingId !== "");
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : "",
   );
-  const [error, setError] = useState("");
+  const [errorText, setErrorText] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
   // const handleAccept = () => {
@@ -40,11 +36,9 @@ const UserListItem: React.FC<Props> = ({
   //   console.log("Nutzer abgelehnt.");
   // };
 
-  if (error !== "") {
+  if (errorText !== "") {
     return (
-      <View>
-        <Text>Maaaan!</Text>
-      </View>
+      <ErrorComp errorText={errorText} />
     );
   } else {
     return (
@@ -54,7 +48,7 @@ const UserListItem: React.FC<Props> = ({
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("GeneralProfile", { username: username });
+            navigate("GeneralProfile", { username: username });
           }}
           className="flex-1 flex-row items-center"
         >
@@ -62,7 +56,7 @@ const UserListItem: React.FC<Props> = ({
             source={require("../assets/images/Max.jpeg")}
             // source={profilePictureUrl} sobald Bilder da sind
             className="aspect-square rounded-full w-10"
-            alt="Profilbild"
+            alt="Picture"
           />
           <Text className="text-base ml-3">{username}</Text>
         </TouchableOpacity>
@@ -92,17 +86,18 @@ const UserListItem: React.FC<Props> = ({
             className="py-1 px-2 rounded-3xl border"
             onPress={() =>
               handleSubscription(
+                token,
                 isFollowed,
                 setIsFollowed,
                 username,
                 subscriptionId,
                 setSubscriptionId,
-                setError,
+                setErrorText,
               )
             }
           >
             <Text className="text-xs">
-              {isFollowed ? "Entfolgen" : "Folgen"}
+              {isFollowed ? "Unfollow" : "Follow"}
             </Text>
           </TouchableOpacity>
         )}

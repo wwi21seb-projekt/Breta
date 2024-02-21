@@ -7,7 +7,7 @@ export type RootStackParamList = {
   Imprint: undefined;
   Authentification: undefined;
   Search: undefined;
-  GeneralProfile: undefined;
+  GeneralProfile: { username: string };
   FollowerList: { type: string; username: string };
   EditProfile: { user: any };
 };
