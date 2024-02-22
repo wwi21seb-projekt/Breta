@@ -12,7 +12,7 @@ import Imprint from "../screens/ImprintScreen";
 import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCodeScreen";
 import FollowerList from "../screens/FollowerListScreen";
-import FollowingList from "../screens/FollowerListScreen";
+import FollowingList from "../screens/FollowingListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
 import { useAuth } from "../authentification/AuthContext";

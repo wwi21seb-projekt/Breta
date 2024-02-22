@@ -30,7 +30,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const following = userInfo.username;
   const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
-  const [subscriptionId, setSubscriptionId] = useState(userInfo.subscriptionId);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(userInfo.subscriptionId);
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -227,7 +227,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               disabled={userInfo.follower === 0}
               onPress={() =>
                 navigate("FollowerList", 
-                  {type: "followers",
+                  {
                   username: userInfo.username}
                 )
               }
@@ -240,7 +240,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               disabled={userInfo.following === 0}
               onPress={() =>
                 navigate("FollowingList", {
-                  type: "following",
                   username: userInfo.username,
                 })
               }

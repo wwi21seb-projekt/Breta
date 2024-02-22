@@ -6,7 +6,7 @@ export const handleSubscription = async (
   isFollowed: boolean,
   setIsFollowed: Dispatch<SetStateAction<boolean>>,
   following: string,
-  subscriptionId: string,
+  subscriptionId: string | null,
   setSubscriptionId: Dispatch<SetStateAction<string | null>>,
   setErrorText: Dispatch<SetStateAction<string>>,
 ) => {
@@ -16,18 +16,23 @@ export const handleSubscription = async (
     let response;
     try {
       response = await fetch(url, options);
-      data = await response.json();
       if (response.ok) {
         setIsFollowed(!isFollowed);
         if (!isFollowed) {
-          setSubscriptionId(data.subscriptionId);
+          console.log("Follow")
+          // data = await response.json();
+          // setSubscriptionId(data.subscriptionId);
         } else {
-          setSubscriptionId(null);
+          console.log("unfollow")
+          // data = await response.json();
+          // setSubscriptionId(null);
         }
       } else {
-        setErrorText(data.error.message);
+        // data = await response.json();
+        // setErrorText(data.error.message);
       }
     } catch (error) {
+      console.log(error);
       setErrorText("Something went wrong. Please try again.");
     }
   };

@@ -10,20 +10,18 @@ import { useAuth } from "../authentification/AuthContext";
 type Props = {
   username: string;
   profilePictureUrl: string;
-  enableFollowHandling: boolean;
-  followingId?: string;
+  followingId?: string | null;
 };
 
 const UserListItem: React.FC<Props> = ({
   username,
   profilePictureUrl,
-  enableFollowHandling,
   followingId,
 }) => {
   const {token} = useAuth();
   const [isFollowed, setIsFollowed] = useState(followingId !== "");
   const [subscriptionId, setSubscriptionId] = useState(
-    followingId !== undefined ? followingId : "",
+    followingId !== undefined ? followingId : null,
   );
   const [errorText, setErrorText] = useState("");
 
@@ -81,7 +79,7 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-        {enableFollowHandling === true && (
+      
           <TouchableOpacity
             className="py-1 px-2 rounded-3xl border"
             onPress={() =>
@@ -100,7 +98,6 @@ const UserListItem: React.FC<Props> = ({
               {isFollowed ? "Unfollow" : "Follow"}
             </Text>
           </TouchableOpacity>
-        )}
       </View>
     );
   }

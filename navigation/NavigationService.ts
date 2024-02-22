@@ -8,8 +8,8 @@ export type RootStackParamList = {
   Authentification: undefined;
   Search: undefined;
   GeneralProfile: { username: string };
-  FollowerList: { type: string; username: string };
-  FollowingList: { type: string; username: string };
+  FollowerList: { username: string };
+  FollowingList: { username: string };
   EditProfile: { user: any };
 };
 

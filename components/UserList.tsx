@@ -1,25 +1,26 @@
 import UserListItem from "../components/UserListItem";
 import React, { useState } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
 import { AboRecords, UserRecords } from "../components/types/UserListTypes";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
 import ErrorComp from "../components/ErrorComp";
+import { useRoute } from "@react-navigation/native";
+
+type Props = {
+  type: string;
+};
 
 interface RouteParams {
-  type: string;
   username: string;
 }
 
-const UserList = () => {
+const UserList: React.FC<Props> = ({ type }) => {
   const {token} = useAuth();
   const route = useRoute();
   const params = route.params as RouteParams;
-  const type = params.type ? params.type : "";
   const username = params.username ? params.username : "";
-
   const [records, setRecords] = useState<AboRecords[]>([]);
   const [errorText, setErrorText] = useState("");
   const [offset, setOffset] = useState(0);
@@ -98,7 +99,6 @@ const UserList = () => {
             <UserListItem
               username={item.username}
               profilePictureUrl={item.profilePictureUrl}
-              enableFollowHandling={true}
               followingId={item.followingId}
             />
           )}

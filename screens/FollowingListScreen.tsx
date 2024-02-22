@@ -1,7 +1,7 @@
 import UserList from "../components/UserList";
 
 const FollowingListScreen = () => {
-  return <UserList/>
+  return <UserList type="following"/>
 };
 
 export default FollowingListScreen;
