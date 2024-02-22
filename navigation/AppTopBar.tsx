@@ -29,10 +29,8 @@ const AppTopBar = () => {
     headerTitle = "Authentification";
   } else if (route.name === "FollowerList") {
     headerTitle = "Follower";
-  } else if (route.name === "FollowedList") {
-    headerTitle = "Followed";
-  } else if (route.name === "FriendRequest") {
-    headerTitle = "Friend requests";
+  } else if (route.name === "FollowingList") {
+    headerTitle = "Following";
   } else if (route.name === "ConfirmCode") {
     headerTitle = "Activate account";
   } else if (route.name === "EditProfile") {

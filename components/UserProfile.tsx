@@ -193,7 +193,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
                 className="bg-white py-3 rounded-2xl flex-1"
-                onPress={() => console.log(userInfo)}
+                onPress={() => console.log("Start chat!")}
               >
                 <Text className="text-center">Chat</Text>
               </TouchableOpacity>
@@ -239,7 +239,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               className="items-center justify-center p-3 flex-1"
               disabled={userInfo.following === 0}
               onPress={() =>
-                navigate("FollowerList", {
+                navigate("FollowingList", {
                   type: "following",
                   username: userInfo.username,
                 })

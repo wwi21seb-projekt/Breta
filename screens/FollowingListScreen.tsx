@@ -1,7 +1,7 @@
 import UserList from "../components/UserList";
 
-const FollowerListScreen = () => {
+const FollowingListScreen = () => {
   return <UserList/>
 };
 
-export default FollowerListScreen;
+export default FollowingListScreen;
