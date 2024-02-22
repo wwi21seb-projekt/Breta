@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Modal,
@@ -13,7 +13,7 @@ import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
 import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
-import { navigate } from "../navigation/NavigationService";
+import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from '@react-navigation/native';
 import ErrorComp from "./ErrorComp";
@@ -26,7 +26,7 @@ type Props = {
 
 
 const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
-  const {token} = useAuth();
+  const {token, user} = useAuth();
   const following = userInfo.username;
   const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
@@ -180,7 +180,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             @{userInfo.username}
           </Text>
           {userInfo.status && <Text className="mb-8">{userInfo.status}</Text>}
-          {personal ? (
+          {personal && (
             <TouchableOpacity
               style={{ ...SHADOWS.small }}
               className="bg-white mb-10 px-12 py-3 rounded-2xl"
@@ -188,7 +188,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             >
               <Text>Edit profile</Text>
             </TouchableOpacity>
-          ) : (
+          )}
+           {(!personal && user !== following) && (
             <View className="w-full justify-center flex-row space-x-4 mb-6">
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
@@ -226,7 +227,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               className="items-center justify-center p-3 flex-1"
               disabled={userInfo.follower === 0}
               onPress={() =>
-                navigate("FollowerList", 
+                push("FollowerList", 
                   {
                   username: userInfo.username}
                 )
@@ -239,7 +240,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               className="items-center justify-center p-3 flex-1"
               disabled={userInfo.following === 0}
               onPress={() =>
-                navigate("FollowingList", {
+                push("FollowingList", {
                   username: userInfo.username,
                 })
               }

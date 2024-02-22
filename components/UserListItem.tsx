@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SHADOWS } from "../theme";
 import { handleSubscription } from "./functions/HandleSubscription";
-import { navigate } from "../navigation/NavigationService";
+import { push } from "../navigation/NavigationService";
 import ErrorComp from "./ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 
@@ -18,8 +18,8 @@ const UserListItem: React.FC<Props> = ({
   profilePictureUrl,
   followingId,
 }) => {
-  const {token} = useAuth();
-  const [isFollowed, setIsFollowed] = useState(followingId !== "");
+  const {token, user} = useAuth();
+  const [isFollowed, setIsFollowed] = useState(followingId !== null);
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : null,
   );
@@ -46,7 +46,7 @@ const UserListItem: React.FC<Props> = ({
       >
         <TouchableOpacity
           onPress={() => {
-            navigate("GeneralProfile", { username: username });
+            push("GeneralProfile", { username: username });
           }}
           className="flex-1 flex-row items-center"
         >
@@ -79,7 +79,7 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-      
+          {user !== username && (
           <TouchableOpacity
             className="py-1 px-2 rounded-3xl border"
             onPress={() =>
@@ -98,6 +98,7 @@ const UserListItem: React.FC<Props> = ({
               {isFollowed ? "Unfollow" : "Follow"}
             </Text>
           </TouchableOpacity>
+          )}
       </View>
     );
   }
