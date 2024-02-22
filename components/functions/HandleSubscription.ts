@@ -18,15 +18,12 @@ export const handleSubscription = async (
       response = await fetch(url, options);
       if (response.ok) {
         setIsFollowed(!isFollowed);
-        // if (!isFollowed) {
-        //   console.log("Follow")
-        //   data = await response.json();
-        //   setSubscriptionId(data.subscriptionId);
-        // } else {
-        //   console.log("unfollow")
-        //   data = await response.json();
-        //   setSubscriptionId(null);
-        // }
+        if (!isFollowed) {
+          data = await response.json();
+          setSubscriptionId(data.subscriptionId);
+        } else {
+          setSubscriptionId(null);
+        }
       } else {
         data = await response.json();
         setErrorText(data.error.message);
