@@ -35,12 +35,12 @@ export function reset<RouteName extends keyof RootStackParamList>(
   }
 }
 
-export function replace<RouteName extends keyof RootStackParamList>(
+export function push<RouteName extends keyof RootStackParamList>(
   screen: RouteName,
   params?: RootStackParamList[RouteName],
 ) {
   if (navigationRef.isReady()) {
     // @ts-ignore
-    navigationRef.dispatch(StackActions.replace(screen, params as any));
+    navigationRef.dispatch(StackActions.push(screen, params as any));
   }
 }
