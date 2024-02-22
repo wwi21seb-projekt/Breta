@@ -3,27 +3,28 @@ import React, { useState } from "react";
 import { SHADOWS } from "../theme";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { push } from "../navigation/NavigationService";
-import ErrorComp from "./ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
+import { Dispatch, SetStateAction } from "react";
 
 
 type Props = {
   username: string;
   profilePictureUrl: string;
   followingId?: string | null;
+  setErrorText: Dispatch<SetStateAction<string>>;
 };
 
 const UserListItem: React.FC<Props> = ({
   username,
   profilePictureUrl,
   followingId,
+  setErrorText
 }) => {
   const {token, user} = useAuth();
   const [isFollowed, setIsFollowed] = useState(followingId !== null);
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : null,
   );
-  const [errorText, setErrorText] = useState("");
 
   // Nur relevant für Freundschaftsanfragen
   // const handleAccept = () => {
@@ -34,11 +35,6 @@ const UserListItem: React.FC<Props> = ({
   //   console.log("Nutzer abgelehnt.");
   // };
 
-  if (errorText !== "") {
-    return (
-      <ErrorComp errorText={errorText} />
-    );
-  } else {
     return (
       <View
         className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
@@ -101,7 +97,6 @@ const UserListItem: React.FC<Props> = ({
           )}
       </View>
     );
-  }
 };
 
 export default UserListItem;

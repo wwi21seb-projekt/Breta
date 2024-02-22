@@ -100,6 +100,7 @@ const UserList: React.FC<Props> = ({ type }) => {
               username={item.username}
               profilePictureUrl={item.profilePictureUrl}
               followingId={item.followingId}
+              setErrorText={setErrorText}
             />
           )}
           showsVerticalScrollIndicator={false}
