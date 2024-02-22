@@ -1,4 +1,4 @@
-import { createNavigationContainerRef } from "@react-navigation/native";
+import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 
 export type RootStackParamList = {
   Feed: undefined;
@@ -32,5 +32,15 @@ export function reset<RouteName extends keyof RootStackParamList>(
       index: 0,
       routes: [{ name: screen }],
     });
+  }
+}
+
+export function replace<RouteName extends keyof RootStackParamList>(
+  screen: RouteName,
+  params?: RootStackParamList[RouteName],
+) {
+  if (navigationRef.isReady()) {
+    // @ts-ignore
+    navigationRef.dispatch(StackActions.replace(screen, params as any));
   }
 }
