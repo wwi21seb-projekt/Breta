@@ -25,5 +25,5 @@ export interface UserRecords {
   error: {
     message: string;
     code: string;
-  }
+  };
 }

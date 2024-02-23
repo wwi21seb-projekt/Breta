@@ -8,7 +8,7 @@ import ErrorComp from "../components/ErrorComp";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileScreen = () => {
-  const {user, token} = useAuth();
+  const { user, token } = useAuth();
   const [userInfo, setUserInfo] = useState<User>();
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const ProfileScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
-      if(user && token){
+      if (user && token) {
         loadUser(user, setUserInfo, setErrorText, token);
       }
       setLoading(false);
@@ -30,15 +30,11 @@ const ProfileScreen = () => {
       </View>
     );
   } else if (errorText !== "") {
-    return (
-      <ErrorComp errorText={errorText}/>
-    );
+    return <ErrorComp errorText={errorText} />;
   } else if (userInfo !== undefined) {
     return <UserProfile personal={true} userInfo={userInfo} />;
   } else {
-    return (
-      <ErrorComp errorText="Something went wrong. Please try again."/>
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 

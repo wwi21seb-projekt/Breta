@@ -15,22 +15,22 @@ import { baseUrl } from "../env";
 import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
 import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
-
 
 type Props = {
   personal: boolean;
   userInfo: User;
 };
 
-
 const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
-  const {token, user} = useAuth();
+  const { token, user } = useAuth();
   const following = userInfo.username;
   const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
-  const [subscriptionId, setSubscriptionId] = useState<string | null>(userInfo.subscriptionId);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(
+    userInfo.subscriptionId,
+  );
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -51,23 +51,23 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       data = await response.json();
-        switch (response.status) {
-          case 200: 
-            setPosts(loadMore ? [...posts, ...data.records] : data.records);
-            setOffset(newOffset);
-            setHasMoreData(data.pagination.records - data.pagination.offset > 3);
-            break;
-          case 401:
-          case 404:
-            setErrorText(data.error.message);
-            break;
-          default:
-            setErrorText("Something went wrong. Please try again.");
-        }
+      switch (response.status) {
+        case 200:
+          setPosts(loadMore ? [...posts, ...data.records] : data.records);
+          setOffset(newOffset);
+          setHasMoreData(data.pagination.records - data.pagination.offset > 3);
+          break;
+        case 401:
+        case 404:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
+      }
     } catch (error) {
       setErrorText("Connection error. Please try again.");
     } finally {
@@ -85,35 +85,33 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-        switch (response.status) {
-          case 204:
-            setModalVisible(false);
-            fetchPosts(false);
-            break;
-          case 401:
-            data = await response.json();
-            setErrorText(data.error.message);
-            break;
-          case 403:
-            data = await response.json();
-            setErrorText(data.error.message);
-            break;
-          case 404:
-            data = await response.json();
-            setErrorText(data.error.message);
-            break;
-          default:
-            setErrorText("Something went wrong. Please try again.");
-        }
-      
+      switch (response.status) {
+        case 204:
+          setModalVisible(false);
+          fetchPosts(false);
+          break;
+        case 401:
+          data = await response.json();
+          setErrorText(data.error.message);
+          break;
+        case 403:
+          data = await response.json();
+          setErrorText(data.error.message);
+          break;
+        case 404:
+          data = await response.json();
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
+      }
     } catch (error) {
       setErrorText("Connection error. Please try again.");
-    } 
+    }
   };
-
 
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
@@ -161,9 +159,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                     setModalVisible(false);
                   }}
                 >
-                  <Text className="text-black text-base font-bold">
-                    Cancel
-                  </Text>
+                  <Text className="text-black text-base font-bold">Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -176,7 +172,9 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         />
         {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
         <View className="items-center p-6">
-          {userInfo.nickname && <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>}
+          {userInfo.nickname && (
+            <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>
+          )}
           <Text className="italic text-lg text-darkgray mb-6">
             @{userInfo.username}
           </Text>
@@ -185,12 +183,12 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             <TouchableOpacity
               style={{ ...SHADOWS.small }}
               className="bg-white mb-10 px-12 py-3 rounded-2xl"
-              onPress={() => navigate("EditProfile", {user: userInfo})}
+              onPress={() => navigate("EditProfile", { user: userInfo })}
             >
               <Text>Edit profile</Text>
             </TouchableOpacity>
           )}
-           {(!personal && user !== following) && (
+          {!personal && user !== following && (
             <View className="w-full justify-center flex-row space-x-4 mb-6">
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
@@ -212,11 +210,13 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                     subscriptionId,
                     setSubscriptionId,
                     setErrorText,
-                    setIsHandlingSubscription
+                    setIsHandlingSubscription,
                   )
                 }
               >
-                <Text className="text-center">{isFollowed ? "Unfollow" : "Follow"}</Text>
+                <Text className="text-center">
+                  {isFollowed ? "Unfollow" : "Follow"}
+                </Text>
               </TouchableOpacity>
             </View>
           )}
@@ -230,10 +230,9 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               className="items-center justify-center p-3 flex-1"
               disabled={userInfo.follower === 0}
               onPress={() =>
-                push("FollowerList", 
-                  {
-                  username: userInfo.username}
-                )
+                push("FollowerList", {
+                  username: userInfo.username,
+                })
               }
             >
               <Text className="font-bold text-base">{userInfo.follower}</Text>
@@ -255,11 +254,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 className="items-center justify-center p-3 flex-1"
                 disabled={true}
-                onPress={
-                  () =>
-                    console.log(
-                      "Freundschaftsanfragen: Wird noch implementiert",
-                    )
+                onPress={() =>
+                  console.log("Freundschaftsanfragen: Wird noch implementiert")
                 }
               >
                 <Text className="font-bold text-base">0</Text>
@@ -269,7 +265,11 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           </View>
         </View>
         <Text className="font-bold text-xl ml-6">Posts</Text>
-        {posts === null && <Text className="ml-8 mt-2">This profile currently has no posts.</Text>}
+        {posts === null && (
+          <Text className="ml-8 mt-2">
+            This profile currently has no posts.
+          </Text>
+        )}
       </View>
     );
   };
@@ -281,9 +281,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       </View>
     );
   } else if (errorText) {
-    return (
-      <ErrorComp errorText={errorText}/>
-    );
+    return <ErrorComp errorText={errorText} />;
   } else if (posts !== undefined) {
     return (
       <FlatList
@@ -302,7 +300,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           >
             <View className="flex-row">
               {/* view is placeholder for location */}
-              <View className="w-1/2"/>
+              <View className="w-1/2" />
               <Text className="w-1/2 text-xs text-right">
                 {item.creationDate.split("T")[0]}
               </Text>
@@ -322,9 +320,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       />
     );
   } else {
-    return (
-      <ErrorComp errorText="Something went wrong. Please try again." />
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 export default UserProfile;

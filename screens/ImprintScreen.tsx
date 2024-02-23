@@ -43,9 +43,10 @@ const ImprintScreen = () => {
   } else if (imprintText !== "") {
     return (
       <View className="pb-10 px-5 bg-white h-full">
-        <ScrollView 
+        <ScrollView
           showsVerticalScrollIndicator={false}
-          alwaysBounceVertical={false}>
+          alwaysBounceVertical={false}
+        >
           <Text className="text-base">{imprintText}</Text>
         </ScrollView>
       </View>

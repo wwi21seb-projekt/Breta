@@ -26,8 +26,8 @@ const EditProfileScreen = () => {
   const route = useRoute();
   const params = route.params as RouteParams;
   const user = params.user;
-  
-  const {token} = useAuth();
+
+  const { token } = useAuth();
   const [errorText, setErrorText] = useState("");
   const [isInfoChangeSuccessful, setIsInfoChangeSuccessful] = useState(false);
   const [nickname, setNickname] = useState(user?.nickname);
@@ -39,19 +39,18 @@ const EditProfileScreen = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [newPasswordErrorText, setNewPasswordErrorText] = useState("");
   const [oldPasswordErrorText, setOldPasswordErrorText] = useState("");
-  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] = useState("");
+  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] =
+    useState("");
   const [isPasswordFieldVisible, setIsPasswordFieldVisible] = useState(false);
-  const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] = useState(false);
+  const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] =
+    useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
- 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
 
   const updateFormValidity = () => {
-    const isValid =
-      checkNewPassword() &&
-      checkConfirmNewPassword();
+    const isValid = checkNewPassword() && checkConfirmNewPassword();
     setIsFormValid(isValid);
   };
 
@@ -63,36 +62,34 @@ const EditProfileScreen = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           nickname: nickname,
-          status: status
+          status: status,
         }),
       });
       data = await response.json();
-        switch (response.status) {
-          case 200:
-            setIsInfoChangeSuccessful(true);
-            setTimeout(() => {
+      switch (response.status) {
+        case 200:
+          setIsInfoChangeSuccessful(true);
+          setTimeout(() => {
             setIsInfoChangeSuccessful(false);
-            }, 3000);
-            break;
-          case 400:
-            setErrorText(data.error.message);
-            break;
-          case 401:
-            setErrorText(data.error.message);
-            break;
-          default:
-            setErrorText("Something went wrong. Please try again.");
-        }
+          }, 3000);
+          break;
+        case 400:
+          setErrorText(data.error.message);
+          break;
+        case 401:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
+      }
     } catch (error) {
       setErrorText("Connection error. Please try again.");
     }
   };
-
- 
 
   const onNicknameContentSizeChange = (event: any) => {
     setNicknameHeight(event.nativeEvent.contentSize.height + 10);
@@ -134,7 +131,9 @@ const EditProfileScreen = () => {
         return false;
       }
     } else {
-      setNewPasswordErrorText("The password must be at least 8 characters long.");
+      setNewPasswordErrorText(
+        "The password must be at least 8 characters long.",
+      );
       return false;
     }
   };
@@ -170,46 +169,42 @@ const EditProfileScreen = () => {
     let response;
     let data;
     try {
-    response = await fetch(`${baseUrl}users`, {
+      response = await fetch(`${baseUrl}users`, {
         method: "PATCH",
         headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-        oldPassword: oldPassword,
-        newPassword: newPassword,
+          oldPassword: oldPassword,
+          newPassword: newPassword,
         }),
-    });
-    switch (response.status) {
-      case 204:
-        setIsPasswordChangeSuccessful(true);
-        setIsPasswordFieldVisible(false);
-        setTimeout(() => {
-          setIsPasswordChangeSuccessful(false);
-        }, 3000);
-        break;
-      case 400:
-      case 401:
-        data = await response.json();
-        setErrorText(data.error.message);
-        break;
-      case 403:
-        data = await response.json();
-        setOldPassword("");
-        setOldPasswordErrorText(data.error.message);
-        break;
-      default:
-        setErrorText(
-          "Something went wrong. Please try again."
-        );
-    }
+      });
+      switch (response.status) {
+        case 204:
+          setIsPasswordChangeSuccessful(true);
+          setIsPasswordFieldVisible(false);
+          setTimeout(() => {
+            setIsPasswordChangeSuccessful(false);
+          }, 3000);
+          break;
+        case 400:
+        case 401:
+          data = await response.json();
+          setErrorText(data.error.message);
+          break;
+        case 403:
+          data = await response.json();
+          setOldPassword("");
+          setOldPasswordErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
+      }
     } catch (error) {
-    setErrorText("Connection error. Please try again.");
+      setErrorText("Connection error. Please try again.");
     }
-};
-
-  
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -221,9 +216,7 @@ const EditProfileScreen = () => {
   );
 
   if (errorText !== "") {
-    return (
-      <ErrorComp errorText={errorText} />
-    );
+    return <ErrorComp errorText={errorText} />;
   } else if (user !== undefined) {
     return (
       <ScrollView
@@ -323,9 +316,9 @@ const EditProfileScreen = () => {
           </TouchableOpacity>
           {isPasswordChangeSuccessful && (
             <Text className="mt-1 mx-8 text-xs text-green">
-            Your password has been updated successfully!
+              Your password has been updated successfully!
             </Text>
-            )}
+          )}
         </View>
 
         {isPasswordFieldVisible && (
@@ -368,7 +361,9 @@ const EditProfileScreen = () => {
             <TouchableOpacity
               className="items-center mt-6 mb-20 py-3 mx-16 rounded-xl"
               style={{
-                backgroundColor: isFormValid ? COLORS.primary : COLORS.lightgray,
+                backgroundColor: isFormValid
+                  ? COLORS.primary
+                  : COLORS.lightgray,
               }}
               onPress={handlePasswordChange}
               disabled={!isFormValid}
@@ -380,9 +375,7 @@ const EditProfileScreen = () => {
       </ScrollView>
     );
   } else {
-    return (
-      <ErrorComp errorText="Something went wrong. Please try again." />
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 

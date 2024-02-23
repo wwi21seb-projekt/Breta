@@ -56,7 +56,9 @@ const defaultContextValue: AuthContextType = {
   register: async () => {},
   logout: async () => {},
   activateUser: async () => {},
-  checkTokenExpiry: async () => {return false},
+  checkTokenExpiry: async () => {
+    return false;
+  },
 };
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue);

@@ -9,9 +9,8 @@ export const handleSubscription = async (
   subscriptionId: string | null,
   setSubscriptionId: Dispatch<SetStateAction<string | null>>,
   setErrorText: Dispatch<SetStateAction<string>>,
-  setIsHandlingSubscription: Dispatch<SetStateAction<boolean>>
+  setIsHandlingSubscription: Dispatch<SetStateAction<boolean>>,
 ) => {
-
   const makeRequest = async (url: string, options: RequestInit) => {
     setIsHandlingSubscription(true);
     let data;
@@ -39,7 +38,10 @@ export const handleSubscription = async (
 
   const requestOptions: RequestInit = {
     method: isFollowed ? "DELETE" : "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   if (!isFollowed) {

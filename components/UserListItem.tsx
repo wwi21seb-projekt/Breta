@@ -6,7 +6,6 @@ import { push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { Dispatch, SetStateAction } from "react";
 
-
 type Props = {
   username: string;
   profilePictureUrl: string;
@@ -18,9 +17,9 @@ const UserListItem: React.FC<Props> = ({
   username,
   profilePictureUrl,
   followingId,
-  setErrorText
+  setErrorText,
 }) => {
-  const {token, user} = useAuth();
+  const { token, user } = useAuth();
   const [isFollowed, setIsFollowed] = useState(followingId !== null);
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : null,
@@ -36,27 +35,27 @@ const UserListItem: React.FC<Props> = ({
   //   console.log("Nutzer abgelehnt.");
   // };
 
-    return (
-      <View
-        className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
-        style={{ ...SHADOWS.small }}
+  return (
+    <View
+      className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
+      style={{ ...SHADOWS.small }}
+    >
+      <TouchableOpacity
+        onPress={() => {
+          push("GeneralProfile", { username: username });
+        }}
+        className="flex-1 flex-row items-center"
       >
-        <TouchableOpacity
-          onPress={() => {
-            push("GeneralProfile", { username: username });
-          }}
-          className="flex-1 flex-row items-center"
-        >
-          <Image
-            source={require("../assets/images/Max.jpeg")}
-            // source={profilePictureUrl} sobald Bilder da sind
-            className="aspect-square rounded-full w-10"
-            alt="Picture"
-          />
-          <Text className="text-base ml-3">{username}</Text>
-        </TouchableOpacity>
+        <Image
+          source={require("../assets/images/Max.jpeg")}
+          // source={profilePictureUrl} sobald Bilder da sind
+          className="aspect-square rounded-full w-10"
+          alt="Picture"
+        />
+        <Text className="text-base ml-3">{username}</Text>
+      </TouchableOpacity>
 
-        {/* Das wäre für eine Freundschaftsanfrage
+      {/* Das wäre für eine Freundschaftsanfrage
                 <TouchableOpacity
                   className="mr-2"
                   onPress={() => handleAccept()}
@@ -76,30 +75,28 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-          {user !== username && (
-          <TouchableOpacity
-            className="py-1 px-2 rounded-3xl border"
-            disabled={isHandlingSubscription}
-            onPress={() =>
-              handleSubscription(
-                token,
-                isFollowed,
-                setIsFollowed,
-                username,
-                subscriptionId,
-                setSubscriptionId,
-                setErrorText,
-                setIsHandlingSubscription
-              )
-            }
-          >
-            <Text className="text-xs">
-              {isFollowed ? "Unfollow" : "Follow"}
-            </Text>
-          </TouchableOpacity>
-          )}
-      </View>
-    );
+      {user !== username && (
+        <TouchableOpacity
+          className="py-1 px-2 rounded-3xl border"
+          disabled={isHandlingSubscription}
+          onPress={() =>
+            handleSubscription(
+              token,
+              isFollowed,
+              setIsFollowed,
+              username,
+              subscriptionId,
+              setSubscriptionId,
+              setErrorText,
+              setIsHandlingSubscription,
+            )
+          }
+        >
+          <Text className="text-xs">{isFollowed ? "Unfollow" : "Follow"}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 };
 
 export default UserListItem;

@@ -56,9 +56,7 @@ const AppTopBar = () => {
     >
       <View className="flex-row px-3 h-12 items-center mb-2">
         {canGoBack ? (
-          <TouchableOpacity 
-          className="w-6"
-          onPress={() => handleBack()}>
+          <TouchableOpacity className="w-6" onPress={() => handleBack()}>
             <Icon
               as={Ionicons}
               name="arrow-back"
@@ -92,15 +90,13 @@ const AppTopBar = () => {
           )}
         </View>
         {isAuthenticated && headerTitle === "" ? (
-          <TouchableOpacity 
-          className="w-6"
-          onPress={logout}>
-             <Icon
-                as={Ionicons}
-                name="log-out-outline"
-                size="lg"
-                color={COLORS.black}
-              />
+          <TouchableOpacity className="w-6" onPress={logout}>
+            <Icon
+              as={Ionicons}
+              name="log-out-outline"
+              size="lg"
+              color={COLORS.black}
+            />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />

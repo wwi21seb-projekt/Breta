@@ -13,7 +13,7 @@ type RouteParams = {
 };
 
 const GeneralProfileScreen = () => {
-  const {token} = useAuth();
+  const { token } = useAuth();
   const route = useRoute();
   const params = route.params as RouteParams;
   const username = params.username;
@@ -24,7 +24,7 @@ const GeneralProfileScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
-      if(username && token){
+      if (username && token) {
         loadUser(username, setUserInfo, setErrorText, token);
       }
       setLoading(false);
@@ -38,15 +38,11 @@ const GeneralProfileScreen = () => {
       </View>
     );
   } else if (errorText !== "") {
-    return (
-      <ErrorComp errorText={errorText}/>
-    );
+    return <ErrorComp errorText={errorText} />;
   } else if (userInfo !== undefined) {
     return <UserProfile personal={false} userInfo={userInfo} />;
   } else {
-    return (
-      <ErrorComp errorText="Something went wrong. Please try again."/>
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 

@@ -1,4 +1,7 @@
-import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
+import {
+  createNavigationContainerRef,
+  StackActions,
+} from "@react-navigation/native";
 
 export type RootStackParamList = {
   Feed: undefined;

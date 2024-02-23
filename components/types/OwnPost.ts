@@ -18,7 +18,7 @@ export interface ResponseOwnPost {
     records: number;
   };
   error: {
-    message: string,
-    code: string,
-  }
+    message: string;
+    code: string;
+  };
 }

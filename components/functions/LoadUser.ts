@@ -6,7 +6,7 @@ export const loadUser = async (
   user: string,
   setUserInfo: Dispatch<SetStateAction<User | undefined>>,
   setErrorText: Dispatch<SetStateAction<string>>,
-  token: string
+  token: string,
 ) => {
   let data;
   const urlWithParams = `${baseUrl}users/${user}`;
@@ -16,23 +16,23 @@ export const loadUser = async (
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     data = await response.json();
-      switch (response.status) {
-        case 200:
-          setUserInfo(data);
-          break;
-        case 401:
-          setErrorText(data.error.message);
-          break;
-        case 404:
-          setErrorText(data.error.message);
-          break;
-        default:
-          setErrorText("Something went wrong. Please try again.");
-      }
+    switch (response.status) {
+      case 200:
+        setUserInfo(data);
+        break;
+      case 401:
+        setErrorText(data.error.message);
+        break;
+      case 404:
+        setErrorText(data.error.message);
+        break;
+      default:
+        setErrorText("Something went wrong. Please try again.");
+    }
   } catch (error) {
     setErrorText("Connection error. Please try again.");
   }

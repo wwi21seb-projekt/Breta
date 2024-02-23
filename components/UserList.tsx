@@ -4,7 +4,7 @@ import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { AboRecords, UserRecords } from "../components/types/UserListTypes";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
 import { useRoute } from "@react-navigation/native";
 
@@ -17,7 +17,7 @@ interface RouteParams {
 }
 
 const UserList: React.FC<Props> = ({ type }) => {
-  const {token} = useAuth();
+  const { token } = useAuth();
   const route = useRoute();
   const params = route.params as RouteParams;
   const username = params.username ? params.username : "";
@@ -40,7 +40,7 @@ const UserList: React.FC<Props> = ({ type }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       data = await response.json();
@@ -85,9 +85,7 @@ const UserList: React.FC<Props> = ({ type }) => {
       </View>
     );
   } else if (errorText) {
-    return (
-      <ErrorComp errorText={errorText}/>
-    );
+    return <ErrorComp errorText={errorText} />;
   } else if (records.length > 0) {
     return (
       <View className="bg-white h-full">
@@ -113,9 +111,7 @@ const UserList: React.FC<Props> = ({ type }) => {
       </View>
     );
   } else {
-    return (
-      <ErrorComp errorText="Something went wrong. Please try again." />
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 
