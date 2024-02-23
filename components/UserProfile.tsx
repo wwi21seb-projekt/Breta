@@ -37,6 +37,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
   const [currentPostId, setCurrentPostId] = useState("");
 
   const fetchPosts = async (loadMore: boolean) => {
@@ -201,6 +202,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
                 className="bg-white py-3 rounded-2xl flex-1"
+                disabled={isHandlingSubscription}
                 onPress={() =>
                   handleSubscription(
                     token,
@@ -210,6 +212,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                     subscriptionId,
                     setSubscriptionId,
                     setErrorText,
+                    setIsHandlingSubscription
                   )
                 }
               >

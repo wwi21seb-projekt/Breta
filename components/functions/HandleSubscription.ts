@@ -9,9 +9,11 @@ export const handleSubscription = async (
   subscriptionId: string | null,
   setSubscriptionId: Dispatch<SetStateAction<string | null>>,
   setErrorText: Dispatch<SetStateAction<string>>,
+  setIsHandlingSubscription: Dispatch<SetStateAction<boolean>>
 ) => {
 
   const makeRequest = async (url: string, options: RequestInit) => {
+    setIsHandlingSubscription(true);
     let data;
     let response;
     try {
@@ -30,6 +32,8 @@ export const handleSubscription = async (
       }
     } catch (error) {
       setErrorText("Something went wrong. Please try again.");
+    } finally {
+      setIsHandlingSubscription(false);
     }
   };
 

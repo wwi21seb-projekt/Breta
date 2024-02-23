@@ -25,6 +25,7 @@ const UserListItem: React.FC<Props> = ({
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : null,
   );
+  const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
 
   // Nur relevant für Freundschaftsanfragen
   // const handleAccept = () => {
@@ -78,6 +79,7 @@ const UserListItem: React.FC<Props> = ({
           {user !== username && (
           <TouchableOpacity
             className="py-1 px-2 rounded-3xl border"
+            disabled={isHandlingSubscription}
             onPress={() =>
               handleSubscription(
                 token,
@@ -87,6 +89,7 @@ const UserListItem: React.FC<Props> = ({
                 subscriptionId,
                 setSubscriptionId,
                 setErrorText,
+                setIsHandlingSubscription
               )
             }
           >
