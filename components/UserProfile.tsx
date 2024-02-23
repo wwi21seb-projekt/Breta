@@ -269,6 +269,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           </View>
         </View>
         <Text className="font-bold text-xl ml-6">Posts</Text>
+        {posts === null && <Text className="ml-8 mt-2">This profile currently has no posts.</Text>}
       </View>
     );
   };
