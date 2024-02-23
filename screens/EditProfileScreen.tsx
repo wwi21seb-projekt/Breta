@@ -17,7 +17,6 @@ import FloatingLabelInput from "../components/FloatingLabelInput";
 import { Icon } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 
-
 type RouteParams = {
   user: User;
 };
