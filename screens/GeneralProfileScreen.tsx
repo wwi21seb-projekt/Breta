@@ -2,10 +2,9 @@ import UserProfile from "../components/UserProfile";
 import React, { useState } from "react";
 import { User } from "../components/types/User";
 import { View, ActivityIndicator } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { loadUser } from "../components/functions/LoadUser";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
 
 type RouteParams = {

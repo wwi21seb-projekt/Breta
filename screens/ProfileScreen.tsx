@@ -1,6 +1,6 @@
 import UserProfile from "../components/UserProfile";
 import React, { useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { User } from "../components/types/User";
 import { loadUser } from "../components/functions/LoadUser";
 import { useAuth } from "../authentification/AuthContext";

@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { SHADOWS } from "../theme";
+import { SHADOWS, COLORS } from "../theme";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
 import { User } from "../components/types/User";
@@ -16,7 +16,7 @@ import { useAuth } from "../authentification/AuthContext";
 import FloatingLabelInput from "../components/FloatingLabelInput";
 import { Icon } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../theme";
+
 
 type RouteParams = {
   user: User;

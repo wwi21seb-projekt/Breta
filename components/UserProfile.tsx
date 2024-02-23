@@ -94,13 +94,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           fetchPosts(false);
           break;
         case 401:
-          data = await response.json();
-          setErrorText(data.error.message);
-          break;
         case 403:
-          data = await response.json();
-          setErrorText(data.error.message);
-          break;
         case 404:
           data = await response.json();
           setErrorText(data.error.message);

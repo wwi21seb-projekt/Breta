@@ -1,12 +1,11 @@
 import UserListItem from "../components/UserListItem";
 import React, { useState } from "react";
-import { View, FlatList, Text, ActivityIndicator } from "react-native";
+import { View, FlatList, ActivityIndicator } from "react-native";
 import { baseUrl } from "../env";
 import { AboRecords, UserRecords } from "../components/types/UserListTypes";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
-import { useRoute } from "@react-navigation/native";
 
 type Props = {
   type: string;

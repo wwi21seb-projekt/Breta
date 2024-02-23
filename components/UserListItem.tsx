@@ -1,10 +1,10 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction  } from "react";
 import { SHADOWS } from "../theme";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
-import { Dispatch, SetStateAction } from "react";
+
 
 type Props = {
   username: string;
