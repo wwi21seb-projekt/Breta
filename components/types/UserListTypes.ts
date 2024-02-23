@@ -22,4 +22,8 @@ export interface UserRecords {
     limit: number;
     records: number;
   };
+  error: {
+    message: string;
+    code: string;
+  };
 }

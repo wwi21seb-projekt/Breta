@@ -12,6 +12,7 @@ import Imprint from "../screens/ImprintScreen";
 import Authentification from "../screens/AuthScreen";
 import ConfirmCode from "../screens/ConfirmCodeScreen";
 import FollowerList from "../screens/FollowerListScreen";
+import FollowingList from "../screens/FollowingListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
 import { useAuth } from "../authentification/AuthContext";
@@ -47,6 +48,7 @@ const AppNavigator: React.FC = () => {
             {isAuthenticated && (
               <>
                 <Stack.Screen name="FollowerList" component={FollowerList} />
+                <Stack.Screen name="FollowingList" component={FollowingList} />
                 <Stack.Screen
                   name="GeneralProfile"
                   component={GeneralProfile}

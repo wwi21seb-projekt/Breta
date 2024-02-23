@@ -3,40 +3,37 @@ import { Dispatch, SetStateAction } from "react";
 import { User } from "../types/User";
 
 export const loadUser = async (
-  username: string,
-  setUser: Dispatch<SetStateAction<User | undefined>>,
-  setError: Dispatch<SetStateAction<string>>,
+  user: string,
+  setUserInfo: Dispatch<SetStateAction<User | undefined>>,
+  setErrorText: Dispatch<SetStateAction<string>>,
+  token: string,
 ) => {
   let data;
-  const urlWithParams = `${baseUrl}users/:${username}`;
+  const urlWithParams = `${baseUrl}users/${user}`;
   let response;
-
   try {
     response = await fetch(urlWithParams, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
-
-    if (response.ok) {
-      data = await response.json();
-      setUser(data);
-    } else {
-      switch (response.status) {
-        case 401:
-          setError("Auf das Login Popup navigieren!");
-          break;
-        case 404:
-          setError(
-            "Dein Profil konnte nicht geladen werden. Versuche es später erneut.",
-          );
-          break;
-        default:
-          setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-      }
+    data = await response.json();
+    switch (response.status) {
+      case 200:
+        setUserInfo(data);
+        break;
+      case 401:
+        setErrorText(data.error.message);
+        break;
+      case 404:
+        setErrorText(data.error.message);
+        break;
+      default:
+        setErrorText("Something went wrong. Please try again.");
     }
   } catch (error) {
-    setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+    setErrorText("Connection error. Please try again.");
   }
 };

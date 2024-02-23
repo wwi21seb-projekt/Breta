@@ -29,12 +29,12 @@ const AppTopBar = () => {
     headerTitle = "Authentification";
   } else if (route.name === "FollowerList") {
     headerTitle = "Follower";
-  } else if (route.name === "FollowedList") {
-    headerTitle = "Followed";
-  } else if (route.name === "FriendRequest") {
-    headerTitle = "Friend requests";
+  } else if (route.name === "FollowingList") {
+    headerTitle = "Following";
   } else if (route.name === "ConfirmCode") {
     headerTitle = "Activate account";
+  } else if (route.name === "EditProfile") {
+    headerTitle = "Edit profile";
   } else {
     headerTitle = "";
   }
@@ -56,7 +56,7 @@ const AppTopBar = () => {
     >
       <View className="flex-row px-3 h-12 items-center mb-2">
         {canGoBack ? (
-          <TouchableOpacity onPress={() => handleBack()}>
+          <TouchableOpacity className="w-6" onPress={() => handleBack()}>
             <Icon
               as={Ionicons}
               name="arrow-back"
@@ -89,9 +89,14 @@ const AppTopBar = () => {
             </TouchableOpacity>
           )}
         </View>
-        {isAuthenticated ? (
-          <TouchableOpacity onPress={logout}>
-            <Text>Logout</Text>
+        {isAuthenticated && headerTitle === "" ? (
+          <TouchableOpacity className="w-6" onPress={logout}>
+            <Icon
+              as={Ionicons}
+              name="log-out-outline"
+              size="lg"
+              color={COLORS.black}
+            />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
