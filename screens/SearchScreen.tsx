@@ -17,8 +17,10 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
+import { useAuth } from "../authentification/AuthContext";
 
 const SearchScreen = () => {
+  const { token } = useAuth();
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput] = useDebounce(searchInput, 500);
   const [users, setUsers] = useState<ListUser[]>([]);
@@ -141,6 +143,7 @@ const SearchScreen = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -199,6 +202,7 @@ const SearchScreen = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
