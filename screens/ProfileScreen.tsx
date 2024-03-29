@@ -1,21 +1,27 @@
 import UserProfile from "../components/UserProfile";
-import { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import React, { useState } from "react";
+import { View, ActivityIndicator } from "react-native";
 import { User } from "../components/types/User";
 import { loadUser } from "../components/functions/LoadUser";
-
-const personalUserUsername = "aleks_069";
+import { useAuth } from "../authentification/AuthContext";
+import ErrorComp from "../components/ErrorComp";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileScreen = () => {
-  const [user, setUser] = useState<User>();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { user, token } = useAuth();
+  const [userInfo, setUserInfo] = useState<User>();
+  const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadUser(personalUserUsername, setUser, setError).finally(() => {
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      if (user && token) {
+        loadUser(user, setUserInfo, setErrorText, token);
+      }
       setLoading(false);
-    });
-  }, []);
+    }, []),
+  );
 
   if (loading) {
     return (
@@ -23,22 +29,12 @@ const ProfileScreen = () => {
         <ActivityIndicator size="large" />
       </View>
     );
-  } else if (error !== "") {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
-      </View>
-    );
-  } else if (user !== undefined) {
-    return <UserProfile personal={true} user={user} />;
+  } else if (errorText !== "") {
+    return <ErrorComp errorText={errorText} />;
+  } else if (userInfo !== undefined) {
+    return <UserProfile personal={true} userInfo={userInfo} />;
   } else {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">
-          Etwas ist schiefgelaufen. Versuche es später erneut.
-        </Text>
-      </View>
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 

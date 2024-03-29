@@ -7,13 +7,15 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { COLORS, SHADOWS } from "../theme";
-import FloatingTextInput from "../components/FloatingLabelInput";
-import { Ionicons } from "@expo/vector-icons";
+import { SHADOWS, COLORS } from "../theme";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { baseUrl } from "../env";
-import { Icon } from "native-base";
 import { User } from "../components/types/User";
+import ErrorComp from "../components/ErrorComp";
+import { useAuth } from "../authentification/AuthContext";
+import FloatingLabelInput from "../components/FloatingLabelInput";
+import { Icon } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
 
 type RouteParams = {
   user: User;
@@ -23,130 +25,68 @@ const EditProfileScreen = () => {
   const route = useRoute();
   const params = route.params as RouteParams;
   const user = params.user;
-  const [error, setError] = useState("");
+
+  const { token } = useAuth();
   const [errorText, setErrorText] = useState("");
-  const [confirmText, setConfirmText] = useState("");
   const [isInfoChangeSuccessful, setIsInfoChangeSuccessful] = useState(false);
   const [nickname, setNickname] = useState(user?.nickname);
   const [status, setStatus] = useState(user?.status);
+  const [nicknameHeight, setNicknameHeight] = useState();
+  const [statusHeight, setStatusHeight] = useState();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [containsSpecialChar, setContainsSpecialChar] = useState(false);
+  const [newPasswordErrorText, setNewPasswordErrorText] = useState("");
+  const [oldPasswordErrorText, setOldPasswordErrorText] = useState("");
+  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] =
+    useState("");
   const [isPasswordFieldVisible, setIsPasswordFieldVisible] = useState(false);
-  const [nicknameHeight, setNicknameHeight] = useState();
-  const [statusHeight, setStatusHeight] = useState();
-
-  const specialCharacter = /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/;
+  const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] =
+    useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
 
-  const checkSpecialChar = () => {
-    if (specialCharacter.test(newPassword)) {
-      setContainsSpecialChar(true);
-      setErrorText("");
-    } else {
-      setContainsSpecialChar(false);
-      setErrorText(
-        "Dein neues Passwort muss mindestens 1 Sonderzeichen enthalten!",
-      );
-    }
+  const updateFormValidity = () => {
+    const isValid = checkNewPassword() && checkConfirmNewPassword();
+    setIsFormValid(isValid);
   };
 
   const handleTrivialInfoChange = async () => {
     let response;
-
+    let data;
     try {
       response = await fetch(`${baseUrl}users`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          nickname,
-          status,
+          nickname: nickname,
+          status: status,
         }),
       });
-
-      if (response.ok) {
-        setIsInfoChangeSuccessful(true);
-        setTimeout(() => {
-          setIsInfoChangeSuccessful(false);
-        }, 3000);
-      } else {
-        switch (response.status) {
-          case 400:
-            setError(
-              "Deine Profildaten konnten nicht aktualisiert werden. Versuche es später erneut.",
-            );
-            break;
-          case 401:
-            setError("Auf das Login Popup navigieren!");
-            break;
-          default:
-            setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-        }
+      data = await response.json();
+      switch (response.status) {
+        case 200:
+          setIsInfoChangeSuccessful(true);
+          setTimeout(() => {
+            setIsInfoChangeSuccessful(false);
+          }, 3000);
+          break;
+        case 400:
+          setErrorText(data.error.message);
+          break;
+        case 401:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
       }
     } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
-    }
-  };
-
-  const handlePasswordChange = async () => {
-    let response;
-
-    try {
-      response = await fetch(`${baseUrl}users`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          oldPassword,
-          newPassword,
-        }),
-      });
-
-      if (response.ok) {
-        setIsPasswordFieldVisible(false);
-        setConfirmText("Dein Passwort wurde erfolgreich geändert.");
-        setTimeout(() => {
-          setConfirmText("");
-        }, 3000);
-      } else {
-        switch (response.status) {
-          case 400:
-            setIsPasswordFieldVisible(false);
-            setConfirmText(
-              "Dein Passwort konnte nicht geändert werden. Versuche es später erneut.",
-            );
-            setTimeout(() => {
-              setConfirmText("");
-            }, 3000);
-            break;
-          case 401:
-            setError("Auf das Login Popup navigieren!");
-            break;
-          case 403:
-            setOldPassword("");
-            setErrorText("Dein altes Passwort stimmt nicht!");
-            setTimeout(() => {
-              setErrorText("");
-            }, 3000);
-            break;
-          default:
-            setIsPasswordFieldVisible(false);
-            setConfirmText(
-              "Dein Passwort konnte nicht geändert werden. Versuche es später erneut.",
-            );
-            setTimeout(() => {
-              setConfirmText("");
-            }, 3000);
-        }
-      }
-    } catch (error) {
-      setError("Etwas ist schiefgelaufen. Versuche es später erneut.");
+      setErrorText("Connection error. Please try again.");
     }
   };
 
@@ -170,56 +110,118 @@ const EditProfileScreen = () => {
     }
   };
 
-  const handleNewPassword = () => {
-    setErrorText("");
-    if (newPassword !== "") {
-      if (newPassword.length < 8) {
-        setErrorText(
-          "Dein neues Passwort muss mindestens 8 Zeichen lang sein!",
-        );
+  const checkNewPassword = () => {
+    if (newPassword.length === 0) {
+      setNewPasswordErrorText("");
+      return false;
+    } else if (newPassword.length >= 8) {
+      if (
+        /[A-Z]/.test(newPassword) &&
+        /[a-z]/.test(newPassword) &&
+        /\d/.test(newPassword) &&
+        /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(newPassword)
+      ) {
+        setNewPasswordErrorText("");
+        return true;
       } else {
-        checkSpecialChar();
+        setNewPasswordErrorText(
+          "The password must contain at least one lowercase letter, one uppercase letter, one number and one special character.",
+        );
+        return false;
       }
-    }
-    if (confirmNewPassword !== "") {
-      if (newPassword !== confirmNewPassword) {
-        setErrorText("Die Passwörter stimmen nicht überein!");
-      }
+    } else {
+      setNewPasswordErrorText(
+        "The password must be at least 8 characters long.",
+      );
+      return false;
     }
   };
 
-  const handleConfirmNewPassword = () => {
-    setErrorText("");
-    if (newPassword !== "") {
-      if (newPassword !== confirmNewPassword) {
-        setErrorText("Die Passwörter stimmen nicht überein!");
+  const handleNewPasswordChange = (text: string) => {
+    setNewPasswordErrorText("");
+    if (text.length <= 20) {
+      setNewPassword(text);
+    }
+  };
+
+  const checkConfirmNewPassword = () => {
+    if (confirmNewPassword.length === 0) {
+      setConfirmNewPasswordErrorText("");
+      return false;
+    } else if (newPassword === confirmNewPassword) {
+      setConfirmNewPasswordErrorText("");
+      return true;
+    } else {
+      setConfirmNewPasswordErrorText("The passwords do not match.");
+      return false;
+    }
+  };
+
+  const handleConfirmNewPasswordChange = (text: string) => {
+    setConfirmNewPasswordErrorText("");
+    if (text.length <= 20) {
+      setConfirmNewPassword(text);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    let response;
+    let data;
+    try {
+      response = await fetch(`${baseUrl}users`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+        }),
+      });
+      switch (response.status) {
+        case 204:
+          setIsPasswordChangeSuccessful(true);
+          setIsPasswordFieldVisible(false);
+          setTimeout(() => {
+            setIsPasswordChangeSuccessful(false);
+          }, 3000);
+          break;
+        case 400:
+        case 401:
+          data = await response.json();
+          setErrorText(data.error.message);
+          break;
+        case 403:
+          data = await response.json();
+          setOldPassword("");
+          setOldPasswordErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong. Please try again.");
       }
+    } catch (error) {
+      setErrorText("Connection error. Please try again.");
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      setIsPasswordFieldVisible(false);
-      setConfirmText("");
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
       setIsInfoChangeSuccessful(false);
-      setContainsSpecialChar(false);
+      setIsPasswordChangeSuccessful(false);
+      setIsPasswordFieldVisible(false);
+      setErrorText("");
     }, []),
   );
 
-  if (error !== "") {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">{error}</Text>
-      </View>
-    );
+  if (errorText !== "") {
+    return <ErrorComp errorText={errorText} />;
   } else if (user !== undefined) {
     return (
       <ScrollView
         className="bg-white"
         automaticallyAdjustKeyboardInsets={true}
+        alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
       >
         <View className="items-center">
@@ -238,7 +240,7 @@ const EditProfileScreen = () => {
           style={{ ...SHADOWS.small }}
         >
           <TextInput
-            className="text-center text-2xl"
+            className="text-center text-xl"
             style={{ height: nicknameHeight }}
             value={nickname}
             onChangeText={handleNicknameChange}
@@ -273,21 +275,21 @@ const EditProfileScreen = () => {
           </Text>
         </View>
         {isInfoChangeSuccessful && (
-          <Text className="self-center mx-6 text-xs text-green">
-            Dein Nickname und Status wurden erfolgreich aktualisiert!
+          <Text className="self-center mx-10 mt-1 text-xs text-green">
+            Your nickname and status have been updated successfully!
           </Text>
         )}
-
         <View className="bg-white">
           <TouchableOpacity
             className="flex-row mt-6 ml-8 mb-3 items-center"
             onPress={() => {
               setIsPasswordFieldVisible(!isPasswordFieldVisible);
-              setConfirmText("");
-              setErrorText("");
               setOldPassword("");
               setNewPassword("");
               setConfirmNewPassword("");
+              setOldPasswordErrorText("");
+              setNewPasswordErrorText("");
+              setConfirmNewPasswordErrorText("");
             }}
           >
             {isPasswordFieldVisible && (
@@ -308,96 +310,71 @@ const EditProfileScreen = () => {
             )}
 
             <Text className="ml-1 text-darkgray text-base">
-              Neues Passwort festlegen
+              Change your password
             </Text>
           </TouchableOpacity>
+          {isPasswordChangeSuccessful && (
+            <Text className="mt-1 mx-8 text-xs text-green">
+              Your password has been updated successfully!
+            </Text>
+          )}
         </View>
 
-        {confirmText !== "" && (
-          <Text
-            className="ml-8 text-xs"
-            style={{
-              color:
-                confirmText === "Dein Passwort wurde erfolgreich geändert."
-                  ? COLORS.green
-                  : COLORS.red,
-            }}
-          >
-            {confirmText}
-          </Text>
-        )}
-
         {isPasswordFieldVisible && (
-          <View className="bg-white">
-            <FloatingTextInput
+          <View className="bg-white px-10">
+            <FloatingLabelInput
               textContentType="oneTimeCode"
+              errorText={oldPasswordErrorText}
               secureTextEntry={true}
-              label="Altes Passwort"
+              label="Old password"
               value={oldPassword}
               onChangeText={(text: any) => {
+                setOldPasswordErrorText("");
                 setOldPassword(text);
               }}
             />
-            <FloatingTextInput
+            <FloatingLabelInput
               textContentType="oneTimeCode"
+              errorText={newPasswordErrorText}
               secureTextEntry={true}
-              label="Neues Passwort"
+              label="New password"
               value={newPassword}
-              onChangeText={(text: any) => {
-                setNewPassword(text);
+              onChangeText={handleNewPasswordChange}
+              onBlur={() => {
+                checkNewPassword();
+                updateFormValidity();
               }}
-              onBlur={handleNewPassword}
             />
-            <FloatingTextInput
+            <FloatingLabelInput
               textContentType="oneTimeCode"
+              errorText={confirmNewPasswordErrorText}
               secureTextEntry={true}
-              label="Neues Passwort bestätigen"
+              label="Confirm new password"
               value={confirmNewPassword}
-              onChangeText={(text: any) => {
-                setConfirmNewPassword(text);
+              onChangeText={handleConfirmNewPasswordChange}
+              onBlur={() => {
+                checkConfirmNewPassword();
+                updateFormValidity();
               }}
-              onBlur={handleConfirmNewPassword}
             />
-            {errorText && (
-              <Text className="self-center mx-6 text-xs text-red mb-4">
-                {errorText}
-              </Text>
-            )}
             <TouchableOpacity
-              className="items-center mt-6 mb-20 mx-20 py-3 rounded-full"
-              style={[
-                {
-                  backgroundColor:
-                    oldPassword !== "" &&
-                    newPassword.length >= 8 &&
-                    newPassword == confirmNewPassword &&
-                    containsSpecialChar
-                      ? COLORS.primary
-                      : COLORS.lightgray,
-                },
-              ]}
+              className="items-center mt-6 mb-20 py-3 mx-16 rounded-xl"
+              style={{
+                backgroundColor: isFormValid
+                  ? COLORS.primary
+                  : COLORS.lightgray,
+              }}
               onPress={handlePasswordChange}
-              disabled={
-                oldPassword === "" ||
-                newPassword.length < 8 ||
-                newPassword !== confirmNewPassword ||
-                !containsSpecialChar
-              }
+              disabled={!isFormValid}
             >
-              <Text className="text-base">Passwort ändern</Text>
+              <Text className="text-base">Change password</Text>
             </TouchableOpacity>
           </View>
         )}
       </ScrollView>
     );
   } else {
-    return (
-      <View className="p-6 bg-white h-full">
-        <Text className="text-base">
-          Etwas ist schiefgelaufen. Versuche es später erneut.
-        </Text>
-      </View>
-    );
+    return <ErrorComp errorText="Something went wrong. Please try again." />;
   }
 };
 

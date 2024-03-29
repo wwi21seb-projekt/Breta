@@ -1,35 +1,29 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { SHADOWS } from "../theme";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import { handleSubscription } from "./functions/HandleSubscription";
-
-type RootStackParamList = {
-  GeneralProfile: { username: string };
-};
-
-type NavigationType = StackNavigationProp<RootStackParamList, "GeneralProfile">;
+import { push } from "../navigation/NavigationService";
+import { useAuth } from "../authentification/AuthContext";
 
 type Props = {
   username: string;
   profilePictureUrl: string;
-  enableFollowHandling: boolean;
-  followingId?: string;
+  followingId?: string | null;
+  setErrorText: Dispatch<SetStateAction<string>>;
 };
 
 const UserListItem: React.FC<Props> = ({
   username,
   profilePictureUrl,
-  enableFollowHandling,
   followingId,
+  setErrorText,
 }) => {
-  const navigation = useNavigation<NavigationType>();
-  const [isFollowed, setIsFollowed] = useState(followingId !== "");
+  const { token, user } = useAuth();
+  const [isFollowed, setIsFollowed] = useState(followingId !== null);
   const [subscriptionId, setSubscriptionId] = useState(
-    followingId !== undefined ? followingId : "",
+    followingId !== undefined ? followingId : null,
   );
-  const [error, setError] = useState("");
+  const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
 
   // Nur relevant für Freundschaftsanfragen
   // const handleAccept = () => {
@@ -40,34 +34,27 @@ const UserListItem: React.FC<Props> = ({
   //   console.log("Nutzer abgelehnt.");
   // };
 
-  if (error !== "") {
-    return (
-      <View>
-        <Text>Maaaan!</Text>
-      </View>
-    );
-  } else {
-    return (
-      <View
-        className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
-        style={{ ...SHADOWS.small }}
+  return (
+    <View
+      className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
+      style={{ ...SHADOWS.small }}
+    >
+      <TouchableOpacity
+        onPress={() => {
+          push("GeneralProfile", { username: username });
+        }}
+        className="flex-1 flex-row items-center"
       >
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("GeneralProfile", { username: username });
-          }}
-          className="flex-1 flex-row items-center"
-        >
-          <Image
-            source={require("../assets/images/Max.jpeg")}
-            // source={profilePictureUrl} sobald Bilder da sind
-            className="aspect-square rounded-full w-10"
-            alt="Profilbild"
-          />
-          <Text className="text-base ml-3">{username}</Text>
-        </TouchableOpacity>
+        <Image
+          source={require("../assets/images/Max.jpeg")}
+          // source={profilePictureUrl} sobald Bilder da sind
+          className="aspect-square rounded-full w-10"
+          alt="Picture"
+        />
+        <Text className="text-base ml-3">{username}</Text>
+      </TouchableOpacity>
 
-        {/* Das wäre für eine Freundschaftsanfrage
+      {/* Das wäre für eine Freundschaftsanfrage
                 <TouchableOpacity
                   className="mr-2"
                   onPress={() => handleAccept()}
@@ -87,28 +74,28 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-        {enableFollowHandling === true && (
-          <TouchableOpacity
-            className="py-1 px-2 rounded-3xl border"
-            onPress={() =>
-              handleSubscription(
-                isFollowed,
-                setIsFollowed,
-                username,
-                subscriptionId,
-                setSubscriptionId,
-                setError,
-              )
-            }
-          >
-            <Text className="text-xs">
-              {isFollowed ? "Entfolgen" : "Folgen"}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  }
+      {user !== username && (
+        <TouchableOpacity
+          className="py-1 px-2 rounded-3xl border"
+          disabled={isHandlingSubscription}
+          onPress={() =>
+            handleSubscription(
+              token,
+              isFollowed,
+              setIsFollowed,
+              username,
+              subscriptionId,
+              setSubscriptionId,
+              setErrorText,
+              setIsHandlingSubscription,
+            )
+          }
+        >
+          <Text className="text-xs">{isFollowed ? "Unfollow" : "Follow"}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 };
 
 export default UserListItem;
