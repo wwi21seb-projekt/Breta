@@ -57,7 +57,7 @@ const PostScreen: React.FC = () => {
 
           break;
         case 401:
-          setPostError("Unauthorized. Please login again");
+          setPostError("The Request is unauthorized. Please login to your account");
           break;
         default:
           console.error(response.status);
