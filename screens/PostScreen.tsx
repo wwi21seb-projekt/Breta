@@ -12,16 +12,12 @@ import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import * as Location from "expo-location";
+import { useNavigation } from "@react-navigation/native";
+import { navigate} from "../navigation/NavigationService";
+import ErrorComp from "../components/ErrorComp";
 
-type RootStackParamList = {
-  Feed: undefined;
-};
+const PostScreen: React.FC = () => {
 
-type PostScreenprops = {
-  navigation: StackNavigationProp<RootStackParamList, "Feed">;
-};
-
-const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   const { token } = useAuth();
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
@@ -55,7 +51,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
       switch (response.status) {
         case 201:
           setPostError("");
-          navigation.navigate("Feed");
+          navigate("Feed");
           break;
         case 400:
           setPostError(
@@ -70,7 +66,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           console.error(response.status);
       }
     } catch (error) {
-      console.error("Network error:", error);
+        setPostError(`Network Error: ${error}`)
     }
   };
 
@@ -79,7 +75,6 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
-        //eventually error about not getting Permission
         return;
       }
 
@@ -88,7 +83,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
       setLongitude(location.coords.longitude);
       setAccuracy(location.coords.accuracy);
     } catch (error) {
-      console.error("Error requesting location permission:", error);
+
+      setPostError(`Error requesting location permission: ${error}`)
     }
   };
 
@@ -103,8 +99,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
               setPostText(post);
             }}
             multiline={true}
-            numberOfLines={8} // Anzahl der sichtbaren Zeilen
-            placeholder="Verfasse hier deinen Text ..."
+            numberOfLines={8} 
+            placeholder="Please put your text here..."
             maxLength={256}
           />
         </View>
@@ -113,8 +109,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         </View>
         <View>
           {postError.length !== 0 && (
-            <Text className="text-red pt-5 text-center">{postError}</Text>
-          )}
+            <ErrorComp errorText={postError}/>
+            )}
         </View>
         <View className="bg-white justify-center flex-row">
           <TouchableOpacity
@@ -129,7 +125,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
               createPost();
             }}
           >
-            <Text className="text-black text-xs">Beitrag erstellen</Text>
+            <Text className="text-black text-xs">Create Post</Text>
           </TouchableOpacity>
         </View>
       </View>
