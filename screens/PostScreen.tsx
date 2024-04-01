@@ -11,7 +11,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
-import * as Location  from "expo-location";
+import * as Location from "expo-location";
 
 type RootStackParamList = {
   Feed: undefined;
@@ -31,11 +31,11 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
 
   useEffect(() => {
     getLocation();
-  })
+  });
 
   const createPost = async () => {
     let response;
-    
+
     try {
       response = await fetch(`${baseUrl}posts`, {
         method: "POST",
@@ -48,8 +48,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           location: {
             longitude: longitude,
             latitude: latitude,
-            accuracy: accuracy === null ? "" : Math.floor(accuracy) 
-          }
+            accuracy: accuracy === null ? "" : Math.floor(accuracy),
+          },
         }),
       });
       switch (response.status) {
@@ -61,7 +61,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           setPostError(
             "The request body is invalid. Please check the request body and try again.",
           );
-          
+
           break;
         case 401:
           setPostError("Unauthorized. Please login again");
