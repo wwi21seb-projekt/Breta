@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextInput,
   TouchableOpacity,
@@ -11,6 +11,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
+import * as Location  from "expo-location";
 
 type RootStackParamList = {
   Feed: undefined;
@@ -26,10 +27,15 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
   const [postError, setPostError] = useState("");
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
-  const [accuracy, setAccuracy] = useState(0);
+  const [accuracy, setAccuracy] = useState<number | null>(0);
+
+  useEffect(() => {
+    getLocation();
+  })
 
   const createPost = async () => {
     let response;
+    
     try {
       response = await fetch(`${baseUrl}posts`, {
         method: "POST",
@@ -39,6 +45,11 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         },
         body: JSON.stringify({
           content: postText,
+          location: {
+            longitude: longitude,
+            latitude: latitude,
+            accuracy: accuracy === null ? "" : Math.floor(accuracy) 
+          }
         }),
       });
       switch (response.status) {
@@ -50,6 +61,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           setPostError(
             "The request body is invalid. Please check the request body and try again.",
           );
+          
           break;
         case 401:
           setPostError("Unauthorized. Please login again");
@@ -59,6 +71,24 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Network error:", error);
+    }
+  };
+
+  const getLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        //eventually error about not getting Permission
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLatitude(location.coords.latitude);
+      setLongitude(location.coords.longitude);
+      setAccuracy(location.coords.accuracy);
+    } catch (error) {
+      console.error("Error requesting location permission:", error);
     }
   };
 
