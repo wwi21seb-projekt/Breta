@@ -13,11 +13,10 @@ import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { navigate} from "../navigation/NavigationService";
+import { navigate } from "../navigation/NavigationService";
 import ErrorComp from "../components/ErrorComp";
 
 const PostScreen: React.FC = () => {
-
   const { token } = useAuth();
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
@@ -66,7 +65,7 @@ const PostScreen: React.FC = () => {
           console.error(response.status);
       }
     } catch (error) {
-        setPostError(`Network Error: ${error}`)
+      setPostError(`Network Error: ${error}`);
     }
   };
 
@@ -83,8 +82,7 @@ const PostScreen: React.FC = () => {
       setLongitude(location.coords.longitude);
       setAccuracy(location.coords.accuracy);
     } catch (error) {
-
-      setPostError(`Error requesting location permission: ${error}`)
+      setPostError(`Error requesting location permission: ${error}`);
     }
   };
 
@@ -99,7 +97,7 @@ const PostScreen: React.FC = () => {
               setPostText(post);
             }}
             multiline={true}
-            numberOfLines={8} 
+            numberOfLines={8}
             placeholder="Please put your text here..."
             maxLength={256}
           />
@@ -108,9 +106,7 @@ const PostScreen: React.FC = () => {
           <Text className="text-black text-xs">{postText.length} / 256</Text>
         </View>
         <View>
-          {postError.length !== 0 && (
-            <ErrorComp errorText={postError}/>
-            )}
+          {postError.length !== 0 && <ErrorComp errorText={postError} />}
         </View>
         <View className="bg-white justify-center flex-row">
           <TouchableOpacity
