@@ -11,7 +11,7 @@ import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import * as Location from "expo-location";
-import { navigate} from "../navigation/NavigationService";
+import { navigate } from "../navigation/NavigationService";
 import ErrorComp from "../components/ErrorComp";
 
 const PostScreen: React.FC = () => {
