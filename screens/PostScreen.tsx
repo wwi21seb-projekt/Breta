@@ -7,12 +7,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import * as Location from "expo-location";
-import { useNavigation } from "@react-navigation/native";
 import { navigate} from "../navigation/NavigationService";
 import ErrorComp from "../components/ErrorComp";
 
