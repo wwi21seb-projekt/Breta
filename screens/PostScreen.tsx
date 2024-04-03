@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextInput,
   TouchableOpacity,
@@ -7,29 +7,28 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
+import * as Location from "expo-location";
+import { navigate } from "../navigation/NavigationService";
+import ErrorComp from "../components/ErrorComp";
 
-type RootStackParamList = {
-  Feed: undefined;
-};
-
-type PostScreenprops = {
-  navigation: StackNavigationProp<RootStackParamList, "Feed">;
-};
-
-const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
+const PostScreen: React.FC = () => {
   const { token } = useAuth();
   const [postText, setPostText] = useState("");
   const [postError, setPostError] = useState("");
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
-  const [accuracy, setAccuracy] = useState(0);
+  const [accuracy, setAccuracy] = useState<number | null>(0);
+
+  useEffect(() => {
+    getLocation();
+  });
 
   const createPost = async () => {
     let response;
+
     try {
       response = await fetch(`${baseUrl}posts`, {
         method: "POST",
@@ -39,26 +38,51 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
         },
         body: JSON.stringify({
           content: postText,
+          location: {
+            longitude: longitude,
+            latitude: latitude,
+            accuracy: accuracy === null ? "" : Math.floor(accuracy),
+          },
         }),
       });
       switch (response.status) {
         case 201:
           setPostError("");
-          navigation.navigate("Feed");
+          navigate("Feed");
           break;
         case 400:
           setPostError(
             "The request body is invalid. Please check the request body and try again.",
           );
+
           break;
         case 401:
-          setPostError("Unauthorized. Please login again");
+          setPostError(
+            "The Request is unauthorized. Please login to your account",
+          );
           break;
         default:
-          console.error(response.status);
+          setPostError(response.status.toString());
       }
     } catch (error) {
-      console.error("Network error:", error);
+      setPostError(`Network Error: ${error}`);
+    }
+  };
+
+  const getLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLatitude(location.coords.latitude);
+      setLongitude(location.coords.longitude);
+      setAccuracy(location.coords.accuracy);
+    } catch (error) {
+      setPostError(`Error requesting location permission: ${error}`);
     }
   };
 
@@ -73,8 +97,8 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
               setPostText(post);
             }}
             multiline={true}
-            numberOfLines={8} // Anzahl der sichtbaren Zeilen
-            placeholder="Verfasse hier deinen Text ..."
+            numberOfLines={8}
+            placeholder="Please put your text here..."
             maxLength={256}
           />
         </View>
@@ -82,9 +106,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
           <Text className="text-black text-xs">{postText.length} / 256</Text>
         </View>
         <View>
-          {postError.length !== 0 && (
-            <Text className="text-red pt-5 text-center">{postError}</Text>
-          )}
+          {postError.length !== 0 && <ErrorComp errorText={postError} />}
         </View>
         <View className="bg-white justify-center flex-row">
           <TouchableOpacity
@@ -99,7 +121,7 @@ const PostScreen: React.FC<PostScreenprops> = ({ navigation }) => {
               createPost();
             }}
           >
-            <Text className="text-black text-xs">Beitrag erstellen</Text>
+            <Text className="text-black text-xs">Create Post</Text>
           </TouchableOpacity>
         </View>
       </View>
