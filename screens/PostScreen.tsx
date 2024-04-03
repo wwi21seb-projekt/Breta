@@ -62,7 +62,9 @@ const PostScreen: React.FC = () => {
           );
           break;
         default:
-          console.error(response.status);
+          setPostError(
+            response.status.toString()
+          );
       }
     } catch (error) {
       setPostError(`Network Error: ${error}`);
