@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, RefreshControl, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import ErrorComp from "../components/ErrorComp";
@@ -41,10 +48,10 @@ const FeedScreen = () => {
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -72,7 +79,7 @@ const FeedScreen = () => {
       setErrorText("Connection error. Please try again.");
     } finally {
       setLoading(false);
-      if (type === 'personal') {
+      if (type === "personal") {
         setRefreshing(false);
       }
     }
@@ -88,14 +95,21 @@ const FeedScreen = () => {
   };
 
   const handleScroll = ({ nativeEvent }) => {
-    if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20 && hasMoreGlobalPosts && !loading) {
-      fetchPosts('global');
+    if (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+        nativeEvent.contentSize.height - 20 &&
+      hasMoreGlobalPosts &&
+      !loading
+    ) {
+      fetchPosts("global");
     }
   };
 
   const getCityFromCoordinates = async (latitude: any, longitude: any) => {
     try {
-      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`);
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`,
+      );
       if (response.ok) {
         const data = await response.json();
         return data.city;
@@ -112,7 +126,10 @@ const FeedScreen = () => {
     const updatedPosts = [];
     for (const post of posts) {
       if (post.location && post.location.latitude && post.location.longitude) {
-        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
+        const city = await getCityFromCoordinates(
+          post.location.latitude,
+          post.location.longitude,
+        );
         updatedPosts.push({ ...post, city });
       } else {
         updatedPosts.push(post);
@@ -124,10 +141,7 @@ const FeedScreen = () => {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       onScroll={handleScroll}
       scrollEventThrottle={16}
@@ -139,10 +153,12 @@ const FeedScreen = () => {
             <TextPostCard
               key={`personal-${index}`}
               username={post.author.username}
-              profilePic={post.author.profilePictureUrl || 'defaultProfilePicUrl'}
+              profilePic={
+                post.author.profilePictureUrl || "defaultProfilePicUrl"
+              }
               date={post.creationDate}
               postContent={post.content}
-              city={loadingCities ? "Loading city..." : post.city }
+              city={loadingCities ? "Loading city..." : post.city}
             />
           ))}
         </>
