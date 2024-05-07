@@ -14,7 +14,7 @@ const FeedScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [lastPostId, setLastPostId] = useState("");
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
-  const [loadingCities, setLoadingCities] = useState(false); // State for loading cities
+  const [loadingCities, setLoadingCities] = useState(false); 
   const globalLimit = 5;
   const personalLimit = 1000;
 
@@ -51,14 +51,14 @@ const FeedScreen = () => {
       if (response.ok) {
         const data = await response.json();
         if (type === 'personal') {
-          setLoadingCities(true); // Set loading cities to true before loading cities
+          setLoadingCities(true); 
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false); // Set loading cities to false after loading cities
+          setLoadingCities(false); 
           setPostsPersonal(updatedPersonalPosts);
         } else {
-          setLoadingCities(true); // Set loading cities to true before loading cities
+          setLoadingCities(true); 
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false); // Set loading cities to false after loading cities
+          setLoadingCities(false); 
           setPostsGlobal(prev => [...prev, ...updatedGlobalPosts]);
           setLastPostId(data.pagination.lastPostId);
           setHasMoreGlobalPosts(data.records.length === globalLimit);
@@ -93,7 +93,7 @@ const FeedScreen = () => {
     }
   };
 
-  const getCityFromCoordinates = async (latitude, longitude) => {
+  const getCityFromCoordinates = async (latitude: any, longitude: any) => {
     try {
       const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`);
       if (response.ok) {
@@ -108,7 +108,7 @@ const FeedScreen = () => {
     }
   };
 
-  const loadCitiesForPosts = async (posts) => {
+  const loadCitiesForPosts = async (posts: any) => {
     const updatedPosts = [];
     for (const post of posts) {
       if (post.location && post.location.latitude && post.location.longitude) {
@@ -134,7 +134,7 @@ const FeedScreen = () => {
     >
       {token ? (
         <>
-          <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>Persönliche Posts</Text>
+          <Text className="font-bold m-10 text-xl">Persönliche Posts</Text>
           {postsPersonal.map((post, index) => (
             <TextPostCard
               key={`personal-${index}`}
@@ -147,20 +147,21 @@ const FeedScreen = () => {
           ))}
         </>
       ) : (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <View style={{ borderRadius: 8, padding: 16 }}>
+        <View className="flex flex-1 items-center justify-center"    >
+          <View className="rounded-lg p-4">
             <Text>Please log in to see personal feed.</Text>
             <TouchableOpacity
-              style={{ backgroundColor: 'blue', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 20, marginTop: 10 }}
+              className="bg-primary py-2 px-5 rounded-lg mt-2"
+              
               onPress={() => navigate("Authentification")}
             >
-              <Text style={{ color: 'white', fontSize: 16 }}>Login</Text>
+              <Text className="text-white text-base">Login</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>Globale Posts</Text>
+      <Text className="font-bold m-10 text-lg">Globale Posts</Text>
       {postsGlobal.map((post, index) => (
         <TextPostCard
           key={`global-${index}`}
@@ -171,7 +172,7 @@ const FeedScreen = () => {
           city={loadingCities ? "Loading city..." : post.city}
         />
       ))}
-      {hasMoreGlobalPosts && <ActivityIndicator style={{ marginVertical: 20 }} size="small" color="#0000ff" />}
+      {hasMoreGlobalPosts && <ActivityIndicator className="my-20" size="small" color="#0000ff" />}
       {errorText && <ErrorComp errorText={errorText} />}
     </ScrollView>
   );
