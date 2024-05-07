@@ -12,7 +12,7 @@ import { baseUrl } from "../env";
 import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
-import { NativeScrollEvent } from 'react-native';
+import { NativeScrollEvent } from "react-native";
 
 const FeedScreen = () => {
   const { token } = useAuth();
@@ -96,7 +96,11 @@ const FeedScreen = () => {
     fetchPosts("personal");
   };
 
-  const handleScroll = ({ nativeEvent }: { nativeEvent: NativeScrollEvent }) => {
+  const handleScroll = ({
+    nativeEvent,
+  }: {
+    nativeEvent: NativeScrollEvent;
+  }) => {
     if (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
         nativeEvent.contentSize.height - 20 &&
@@ -142,7 +146,7 @@ const FeedScreen = () => {
 
   return (
     <ScrollView
-    className="bg-white"
+      className="bg-white"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
