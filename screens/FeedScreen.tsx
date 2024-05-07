@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, ScrollView, RefreshControl, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import ErrorComp from "../components/ErrorComp";
@@ -41,16 +48,16 @@ const FeedScreen = () => {
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        if (type === 'personal') {
+        if (type === "personal") {
           setLoadingCities(true); // Set loading cities to true before loading cities
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false); // Set loading cities to false after loading cities
@@ -59,7 +66,7 @@ const FeedScreen = () => {
           setLoadingCities(true); // Set loading cities to true before loading cities
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false); // Set loading cities to false after loading cities
-          setPostsGlobal(prev => [...prev, ...updatedGlobalPosts]);
+          setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
           setLastPostId(data.pagination.lastPostId);
           setHasMoreGlobalPosts(data.records.length === globalLimit);
         }
@@ -72,7 +79,7 @@ const FeedScreen = () => {
       setErrorText("Connection error. Please try again.");
     } finally {
       setLoading(false);
-      if (type === 'personal') {
+      if (type === "personal") {
         setRefreshing(false);
       }
     }
@@ -88,14 +95,21 @@ const FeedScreen = () => {
   };
 
   const handleScroll = ({ nativeEvent }) => {
-    if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20 && hasMoreGlobalPosts && !loading) {
-      fetchPosts('global');
+    if (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+        nativeEvent.contentSize.height - 20 &&
+      hasMoreGlobalPosts &&
+      !loading
+    ) {
+      fetchPosts("global");
     }
   };
 
   const getCityFromCoordinates = async (latitude, longitude) => {
     try {
-      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`);
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`,
+      );
       if (response.ok) {
         const data = await response.json();
         return data.city;
@@ -112,7 +126,10 @@ const FeedScreen = () => {
     const updatedPosts = [];
     for (const post of posts) {
       if (post.location && post.location.latitude && post.location.longitude) {
-        const city = await getCityFromCoordinates(post.location.latitude, post.location.longitude);
+        const city = await getCityFromCoordinates(
+          post.location.latitude,
+          post.location.longitude,
+        );
         updatedPosts.push({ ...post, city });
       } else {
         updatedPosts.push(post);
@@ -124,43 +141,54 @@ const FeedScreen = () => {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       onScroll={handleScroll}
       scrollEventThrottle={16}
     >
       {token ? (
         <>
-          <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>Persönliche Posts</Text>
+          <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>
+            Persönliche Posts
+          </Text>
           {postsPersonal.map((post, index) => (
             <TextPostCard
               key={`personal-${index}`}
               username={post.author.username}
-              profilePic={post.author.profilePictureUrl || 'defaultProfilePicUrl'}
+              profilePic={
+                post.author.profilePictureUrl || "defaultProfilePicUrl"
+              }
               date={post.creationDate}
               postContent={post.content}
-              city={loadingCities ? "Loading city..." : post.city }
+              city={loadingCities ? "Loading city..." : post.city}
             />
           ))}
         </>
       ) : (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
           <View style={{ borderRadius: 8, padding: 16 }}>
             <Text>Please log in to see personal feed.</Text>
             <TouchableOpacity
-              style={{ backgroundColor: 'blue', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 20, marginTop: 10 }}
+              style={{
+                backgroundColor: "blue",
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 20,
+                marginTop: 10,
+              }}
               onPress={() => navigate("Authentification")}
             >
-              <Text style={{ color: 'white', fontSize: 16 }}>Login</Text>
+              <Text style={{ color: "white", fontSize: 16 }}>Login</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>Globale Posts</Text>
+      <Text style={{ fontWeight: "bold", margin: 10, fontSize: 18 }}>
+        Globale Posts
+      </Text>
       {postsGlobal.map((post, index) => (
         <TextPostCard
           key={`global-${index}`}
@@ -171,7 +199,13 @@ const FeedScreen = () => {
           city={loadingCities ? "Loading city..." : post.city}
         />
       ))}
-      {hasMoreGlobalPosts && <ActivityIndicator style={{ marginVertical: 20 }} size="small" color="#0000ff" />}
+      {hasMoreGlobalPosts && (
+        <ActivityIndicator
+          style={{ marginVertical: 20 }}
+          size="small"
+          color="#0000ff"
+        />
+      )}
       {errorText && <ErrorComp errorText={errorText} />}
     </ScrollView>
   );
