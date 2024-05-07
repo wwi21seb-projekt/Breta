@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
 import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
+import { navigate } from "../navigation/NavigationService";
+import { NativeScrollEvent } from "react-native";
 
 const FeedScreen = () => {
   const { token } = useAuth();
@@ -32,7 +34,7 @@ const FeedScreen = () => {
     fetchPosts("global");
   }, [token]);
 
-  const fetchPosts = async (type) => {
+  const fetchPosts = async (type: string) => {
     if (loading) return;
     setLoading(true);
     let url = `${baseUrl}feed?feedType=${type}`;
@@ -94,7 +96,11 @@ const FeedScreen = () => {
     fetchPosts("personal");
   };
 
-  const handleScroll = ({ nativeEvent }) => {
+  const handleScroll = ({
+    nativeEvent,
+  }: {
+    nativeEvent: NativeScrollEvent;
+  }) => {
     if (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
         nativeEvent.contentSize.height - 20 &&
@@ -140,6 +146,7 @@ const FeedScreen = () => {
 
   return (
     <ScrollView
+      className="bg-white"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
