@@ -58,7 +58,8 @@ const SearchScreen = () => {
               <UserListItem
                 username={item.username}
                 profilePictureUrl={item.profilePictureUrl}
-                enableFollowHandling={false}
+                followingId={"searchResult"}
+                setErrorText={setUserSearchError}
               />
             )}
             showsVerticalScrollIndicator={false}

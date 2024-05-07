@@ -74,7 +74,7 @@ const UserListItem: React.FC<Props> = ({
                     color={COLORS.red}
                   />
                 </TouchableOpacity> */}
-      {user !== username && (
+      {user !== username && followingId !== "searchResult" && (
         <TouchableOpacity
           className="py-1 px-2 rounded-3xl border"
           disabled={isHandlingSubscription}
