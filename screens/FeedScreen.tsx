@@ -1,131 +1,198 @@
-import { useState, useEffect } from "react";
-import { ScrollView, Text, View, ActivityIndicator } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
-import Post from "../components/types/Post";
 import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 
 const FeedScreen = () => {
   const { token } = useAuth();
-  const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
-  const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
+  const [postsPersonal, setPostsPersonal] = useState([]);
+  const [postsGlobal, setPostsGlobal] = useState([]);
   const [errorText, setErrorText] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  const getPlaceName = async (latitude: number, longitude: number) => {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.address.city || "Unbekannte Stadt";
-      }
-      return "Unbekannte Stadt";
-    } catch {
-      return "Fehler beim Laden der Stadt";
-    }
-  };
-
-  const fetchPosts = async (type: "personal" | "global") => {
-    setLoading(true);
-    const url = `${baseUrl}feed?limit=10&feedType=${type}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await response.json();
-      switch (response.status) {
-        case 200: {
-          const updatedRecords = await Promise.all(
-            data.records.map(async (record: any) => ({
-              ...record,
-              username: record.author?.username || "Unbekannter Nutzer",
-              profilePic:
-                record.author?.profilePictureUrl || "standard_pic_url",
-              date: record.creationDate
-                ? new Date(record.creationDate).toLocaleDateString()
-                : "Unbekanntes Datum",
-              postContent: record.content || "Kein Inhalt",
-              city: await getPlaceName(
-                record.location.latitude,
-                record.location.longitude,
-              ),
-            })),
-          );
-
-          if (type === "personal") {
-            setPostsPersonal(updatedRecords);
-          } else {
-            setPostsGlobal(updatedRecords);
-          }
-          break;
-        }
-        case 401:
-          setErrorText(data.error.message);
-          break;
-        default:
-          setErrorText("Something went wrong. Please try again.");
-      }
-    } catch (error) {
-      setErrorText("Connection error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastPostId, setLastPostId] = useState("");
+  const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
+  const [loadingCities, setLoadingCities] = useState(false);
+  const globalLimit = 5;
+  const personalLimit = 1000;
 
   useEffect(() => {
-    setPostsPersonal([]);
     if (token) {
       fetchPosts("personal");
     }
     fetchPosts("global");
   }, [token]);
 
-  if (loading) {
-    return (
-      <View className="bg-white flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  } else if (postsPersonal.length !== 0 || postsGlobal.length !== 0) {
-    return (
-      <ScrollView className="p-4 bg-white">
-        <Text className="text-lg font-bold mb-4">Persönliche Posts</Text>
-        {postsPersonal.map((post, index) => (
-          <TextPostCard
-            key={`personal-${index}`}
-            username={post.author.username}
-            profilePic={post.author.profilePictureUrl}
-            date={post.creationDate}
-            postContent={post.content}
-            city={post.city}
-          />
-        ))}
+  const fetchPosts = async (type) => {
+    if (loading) return;
+    setLoading(true);
+    let url = `${baseUrl}feed?feedType=${type}`;
 
-        <Text className="text-lg font-bold mt-8 mb-4">Globale Posts</Text>
-        {postsGlobal.map((post, index) => (
-          <TextPostCard
-            key={`global-${index}`}
-            username={post.author.username}
-            profilePic={post.author.profilePictureUrl}
-            date={post.creationDate}
-            postContent={post.content}
-            city={post.city}
-          />
-        ))}
-      </ScrollView>
-    );
-  } else {
-    return <ErrorComp errorText={errorText} />;
-  }
+    if (type === "global") {
+      url += `&limit=${globalLimit}`;
+      if (lastPostId) {
+        url += `&postId=${lastPostId}`;
+      }
+    } else if (type === "personal") {
+      url += `&limit=${personalLimit}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (type === "personal") {
+          setLoadingCities(true);
+          const updatedPersonalPosts = await loadCitiesForPosts(data.records);
+          setLoadingCities(false);
+          setPostsPersonal(updatedPersonalPosts);
+        } else {
+          setLoadingCities(true);
+          const updatedGlobalPosts = await loadCitiesForPosts(data.records);
+          setLoadingCities(false);
+          setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
+          setLastPostId(data.pagination.lastPostId);
+          setHasMoreGlobalPosts(data.records.length === globalLimit);
+        }
+      } else {
+        setErrorText(`Error fetching ${type} posts: ${response.statusText}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error loading posts:", error);
+      setErrorText("Connection error. Please try again.");
+    } finally {
+      setLoading(false);
+      if (type === "personal") {
+        setRefreshing(false);
+      }
+    }
+  };
+
+  const onRefresh = () => {
+    if (!token) {
+      setRefreshing(false);
+      return;
+    }
+    setRefreshing(true);
+    fetchPosts("personal");
+  };
+
+  const handleScroll = ({ nativeEvent }) => {
+    if (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+        nativeEvent.contentSize.height - 20 &&
+      hasMoreGlobalPosts &&
+      !loading
+    ) {
+      fetchPosts("global");
+    }
+  };
+
+  const getCityFromCoordinates = async (latitude: any, longitude: any) => {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return data.city;
+      } else {
+        throw new Error(`Failed to retrieve city: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error fetching city:", error);
+      return "Unknown city";
+    }
+  };
+
+  const loadCitiesForPosts = async (posts: any) => {
+    const updatedPosts = [];
+    for (const post of posts) {
+      if (post.location && post.location.latitude && post.location.longitude) {
+        const city = await getCityFromCoordinates(
+          post.location.latitude,
+          post.location.longitude,
+        );
+        updatedPosts.push({ ...post, city });
+      } else {
+        updatedPosts.push(post);
+      }
+    }
+    return updatedPosts;
+  };
+
+  return (
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+    >
+      {token ? (
+        <>
+          <Text className="font-bold m-10 text-xl">Persönliche Posts</Text>
+          {postsPersonal.map((post, index) => (
+            <TextPostCard
+              key={`personal-${index}`}
+              username={post.author.username}
+              profilePic={
+                post.author.profilePictureUrl || "defaultProfilePicUrl"
+              }
+              date={post.creationDate}
+              postContent={post.content}
+              city={loadingCities ? "Loading city..." : post.city}
+            />
+          ))}
+        </>
+      ) : (
+        <View className="flex flex-1 items-center justify-center">
+          <View className="rounded-lg p-4">
+            <Text>Please log in to see personal feed.</Text>
+            <TouchableOpacity
+              className="bg-primary py-2 px-5 rounded-lg mt-2"
+              onPress={() => navigate("Authentification")}
+            >
+              <Text className="text-white text-base">Login</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      <Text className="font-bold m-10 text-lg">Globale Posts</Text>
+      {postsGlobal.map((post, index) => (
+        <TextPostCard
+          key={`global-${index}`}
+          username={post.author.username}
+          profilePic={post.author.profilePictureUrl}
+          date={post.creationDate}
+          postContent={post.content}
+          city={loadingCities ? "Loading city..." : post.city}
+        />
+      ))}
+      {hasMoreGlobalPosts && (
+        <ActivityIndicator className="my-20 text-blue" size="small" />
+      )}
+      {errorText && <ErrorComp errorText={errorText} />}
+    </ScrollView>
+  );
 };
 
 export default FeedScreen;
