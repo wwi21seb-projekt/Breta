@@ -188,7 +188,7 @@ const FeedScreen = () => {
           city={loadingCities ? "Loading city..." : post.city}
         />
       ))}
-      {hasMoreGlobalPosts && <ActivityIndicator className="my-20" size="small" />}
+      {hasMoreGlobalPosts && <ActivityIndicator className="my-20 text-blue" size="small"  />}
       {errorText && <ErrorComp errorText={errorText} />}
     </ScrollView>
   );
