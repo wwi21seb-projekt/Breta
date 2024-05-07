@@ -21,7 +21,7 @@ const FeedScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [lastPostId, setLastPostId] = useState("");
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
-  const [loadingCities, setLoadingCities] = useState(false); 
+  const [loadingCities, setLoadingCities] = useState(false);
   const globalLimit = 5;
   const personalLimit = 1000;
 
@@ -57,16 +57,16 @@ const FeedScreen = () => {
 
       if (response.ok) {
         const data = await response.json();
-        if (type === 'personal') {
-          setLoadingCities(true); 
+        if (type === "personal") {
+          setLoadingCities(true);
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false); 
+          setLoadingCities(false);
           setPostsPersonal(updatedPersonalPosts);
         } else {
-          setLoadingCities(true); 
+          setLoadingCities(true);
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false); 
-          setPostsGlobal(prev => [...prev, ...updatedGlobalPosts]);
+          setLoadingCities(false);
+          setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
           setLastPostId(data.pagination.lastPostId);
           setHasMoreGlobalPosts(data.records.length === globalLimit);
         }
@@ -163,12 +163,11 @@ const FeedScreen = () => {
           ))}
         </>
       ) : (
-        <View className="flex flex-1 items-center justify-center"    >
+        <View className="flex flex-1 items-center justify-center">
           <View className="rounded-lg p-4">
             <Text>Please log in to see personal feed.</Text>
             <TouchableOpacity
               className="bg-primary py-2 px-5 rounded-lg mt-2"
-              
               onPress={() => navigate("Authentification")}
             >
               <Text className="text-white text-base">Login</Text>
