@@ -26,11 +26,7 @@ const LoginPopup = () => {
       >
         <View className="bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
           <TouchableOpacity onPress={() => navigate("Feed")}>
-            <Ionicons
-              name="arrow-back"
-              size={26}
-              color={COLORS.black}
-            />
+            <Ionicons name="arrow-back" size={26} color={COLORS.black} />
           </TouchableOpacity>
           <View className="items-center py-2">
             <Text className="text-base mt-4 mb-6">

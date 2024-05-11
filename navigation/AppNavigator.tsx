@@ -31,31 +31,25 @@ const AppNavigator: React.FC = () => {
   } else
     return (
       <NavigationContainer ref={navigationRef}>
-                  <Stack.Navigator
-            screenOptions={() => ({
-              headerShown: true,
-              header: () => <AppTopBar />,
-            })}
-          >
-            <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
-            <Stack.Screen name="Imprint" component={Imprint} />
-            <Stack.Screen
-              name="Authentification"
-              component={Authentification}
-            />
-            <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
-            {isAuthenticated && (
-              <>
-                <Stack.Screen name="FollowerList" component={FollowerList} />
-                <Stack.Screen name="FollowingList" component={FollowingList} />
-                <Stack.Screen
-                  name="GeneralProfile"
-                  component={GeneralProfile}
-                />
-                <Stack.Screen name="EditProfile" component={EditProfile} />
-              </>
-            )}
-          </Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={() => ({
+            headerShown: true,
+            header: () => <AppTopBar />,
+          })}
+        >
+          <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
+          <Stack.Screen name="Imprint" component={Imprint} />
+          <Stack.Screen name="Authentification" component={Authentification} />
+          <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+          {isAuthenticated && (
+            <>
+              <Stack.Screen name="FollowerList" component={FollowerList} />
+              <Stack.Screen name="FollowingList" component={FollowingList} />
+              <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+            </>
+          )}
+        </Stack.Navigator>
       </NavigationContainer>
     );
 };

@@ -10,7 +10,7 @@ import {
   Platform,
   StatusBar,
   Image,
-  Text
+  Text,
 } from "react-native";
 import { navigate } from "../navigation/NavigationService";
 
@@ -57,11 +57,7 @@ const AppTopBar = () => {
       <View className="flex-row px-3 h-12 items-center mb-2">
         {canGoBack ? (
           <TouchableOpacity className="w-6" onPress={() => handleBack()}>
-            <Ionicons
-              name="arrow-back"
-              size={26}
-              color={COLORS.black}
-            />
+            <Ionicons name="arrow-back" size={26} color={COLORS.black} />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
@@ -89,11 +85,7 @@ const AppTopBar = () => {
         </View>
         {isAuthenticated && headerTitle === "" ? (
           <TouchableOpacity className="w-6" onPress={logout}>
-            <Ionicons
-              name="log-out-outline"
-              size={26}
-              color={COLORS.black}
-            />
+            <Ionicons name="log-out-outline" size={26} color={COLORS.black} />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
