@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { View, Text, Image } from "react-native";
 import {
+  View,
+  Text,
+  Image,
   TextInput,
   Dimensions,
   ScrollView,
