@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NativeBaseProvider } from "native-base";
+
 import { navigationRef } from "./NavigationService";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import { View, ActivityIndicator } from "react-native";
@@ -31,8 +31,7 @@ const AppNavigator: React.FC = () => {
   } else
     return (
       <NavigationContainer ref={navigationRef}>
-        <NativeBaseProvider>
-          <Stack.Navigator
+                  <Stack.Navigator
             screenOptions={() => ({
               headerShown: true,
               header: () => <AppTopBar />,
@@ -57,7 +56,6 @@ const AppNavigator: React.FC = () => {
               </>
             )}
           </Stack.Navigator>
-        </NativeBaseProvider>
       </NavigationContainer>
     );
 };

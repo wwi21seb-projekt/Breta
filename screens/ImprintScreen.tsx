@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Text, View, ActivityIndicator } from "react-native";
+import { Text, View, ActivityIndicator, ScrollView } from "react-native";
 import { baseUrl } from "../env";
-import { ScrollView } from "native-base";
 import ErrorComp from "../components/ErrorComp";
 
 const ImprintScreen = () => {

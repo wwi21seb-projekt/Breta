@@ -14,8 +14,7 @@ import { User } from "../components/types/User";
 import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import FloatingLabelInput from "../components/FloatingLabelInput";
-import { Icon } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 type RouteParams = {
   user: User;
@@ -293,18 +292,16 @@ const EditProfileScreen = () => {
             }}
           >
             {isPasswordFieldVisible && (
-              <Icon
-                as={Ionicons}
+              <Ionicons
                 name="chevron-down-outline"
-                size="sm"
+                size={14}
                 color={COLORS.darkgray}
               />
             )}
             {!isPasswordFieldVisible && (
-              <Icon
-                as={Ionicons}
+              <Ionicons
                 name="chevron-forward-outline"
-                size="sm"
+                size={14}
                 color={COLORS.darkgray}
               />
             )}

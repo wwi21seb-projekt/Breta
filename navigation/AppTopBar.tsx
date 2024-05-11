@@ -1,5 +1,4 @@
-import { Icon, Text } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../theme";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAuth } from "../authentification/AuthContext";
@@ -11,6 +10,7 @@ import {
   Platform,
   StatusBar,
   Image,
+  Text
 } from "react-native";
 import { navigate } from "../navigation/NavigationService";
 
@@ -57,10 +57,9 @@ const AppTopBar = () => {
       <View className="flex-row px-3 h-12 items-center mb-2">
         {canGoBack ? (
           <TouchableOpacity className="w-6" onPress={() => handleBack()}>
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="arrow-back"
-              size="xl"
+              size={26}
               color={COLORS.black}
             />
           </TouchableOpacity>
@@ -80,10 +79,9 @@ const AppTopBar = () => {
                 source={require("../assets/images/Breta_Logo.png")}
                 className="w-20 h-full"
               />
-              <Icon
-                as={Ionicons}
+              <Ionicons
                 name="information-circle-outline"
-                size="sm"
+                size={18}
                 color={COLORS.black}
               />
             </TouchableOpacity>
@@ -91,10 +89,9 @@ const AppTopBar = () => {
         </View>
         {isAuthenticated && headerTitle === "" ? (
           <TouchableOpacity className="w-6" onPress={logout}>
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="log-out-outline"
-              size="lg"
+              size={26}
               color={COLORS.black}
             />
           </TouchableOpacity>

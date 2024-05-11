@@ -6,9 +6,9 @@ import {
   Text,
   useWindowDimensions,
   ActivityIndicator,
+  FlatList
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { FlatList, Icon } from "native-base";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDebounce } from "use-debounce";
 import { baseUrl } from "../env";
 import { COLORS } from "../theme";
@@ -278,10 +278,9 @@ const SearchScreen = () => {
           onChangeText={handleSearchInputChange}
         />
         <TouchableOpacity className="flex items-center justify-center m-4">
-          <Icon
-            as={Ionicons}
+          <Ionicons
             name="search-outline"
-            size="xl"
+            size={26}
             color={COLORS.black}
           />
         </TouchableOpacity>
