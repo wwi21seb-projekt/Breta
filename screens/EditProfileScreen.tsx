@@ -85,7 +85,9 @@ const EditProfileScreen = () => {
           setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("There are issues communicating with the server, please try again later.");
+      setErrorText(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
@@ -200,7 +202,9 @@ const EditProfileScreen = () => {
           setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("There are issues communicating with the server, please try again later.");
+      setErrorText(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
@@ -371,7 +375,9 @@ const EditProfileScreen = () => {
       </ScrollView>
     );
   } else {
-    return <ErrorComp errorText="Something went wrong, please try again later." />;
+    return (
+      <ErrorComp errorText="Something went wrong, please try again later." />
+    );
   }
 };
 

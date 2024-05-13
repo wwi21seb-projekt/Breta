@@ -41,7 +41,9 @@ const GeneralProfileScreen = () => {
   } else if (userInfo !== undefined) {
     return <UserProfile personal={false} userInfo={userInfo} />;
   } else {
-    return <ErrorComp errorText="Something went wrong, please try again later." />;
+    return (
+      <ErrorComp errorText="Something went wrong, please try again later." />
+    );
   }
 };
 
