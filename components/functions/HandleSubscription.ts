@@ -30,7 +30,7 @@ export const handleSubscription = async (
         setErrorText(data.error.message);
       }
     } catch (error) {
-      setErrorText("Something went wrong. Please try again.");
+      setErrorText("Something went wrong, please try again later.");
     } finally {
       setIsHandlingSubscription(false);
     }

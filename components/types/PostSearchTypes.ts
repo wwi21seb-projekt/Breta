@@ -21,4 +21,8 @@ export interface PostRecords {
     limit: number;
     records: number;
   };
+  error: {
+    message: string;
+    code: string;
+  };
 }
