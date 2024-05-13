@@ -45,9 +45,7 @@ const SearchScreen = () => {
   //components for tabs in TabView -> in future gonna be UserList and own SearchPostFeed comps
   const userList = () => {
     if (userSearchError !== "") {
-      return (
-        <ErrorComp errorText={userSearchError}></ErrorComp>
-      );
+      return <ErrorComp errorText={userSearchError}></ErrorComp>;
     } else {
       return (
         <View>
@@ -76,9 +74,7 @@ const SearchScreen = () => {
 
   const postList = () => {
     if (postSearchError !== "") {
-      return (
-        <ErrorComp errorText={postSearchError}></ErrorComp>
-      );
+      return <ErrorComp errorText={postSearchError}></ErrorComp>;
     } else {
       return (
         <View>
@@ -157,14 +153,12 @@ const SearchScreen = () => {
             setUserSearchError(data.error.message);
             break;
           default:
-            setUserSearchError(
-              "Something went wrong, please try again later.",
-            );
+            setUserSearchError("Something went wrong, please try again later.");
         }
       }
     } catch (error) {
       setUserSearchError(
-        "There are issues communicating with the server, please try again later."
+        "There are issues communicating with the server, please try again later.",
       );
     } finally {
       setLoadingMoreUsers(false);
@@ -219,15 +213,14 @@ const SearchScreen = () => {
             break;
           default:
             setPostSearchError(
-              "Something went wrong, please try again later." +
-                response.status,
+              "Something went wrong, please try again later." + response.status,
             );
         }
       }
     } catch (error) {
       setPostSearchError(
-        "There are issues communicating with the server, please try again later."
-        );
+        "There are issues communicating with the server, please try again later.",
+      );
     } finally {
       setLoadingMorePosts(false);
     }

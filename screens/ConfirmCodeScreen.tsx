@@ -54,7 +54,9 @@ const ConfirmCodeScreen = () => {
           setServerError("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setServerError("There are issues communicating with the server, please try again later.");
+      setServerError(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
