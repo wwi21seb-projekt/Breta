@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NativeBaseProvider } from "native-base";
+
 import { navigationRef } from "./NavigationService";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import { View, ActivityIndicator } from "react-native";
@@ -31,33 +31,25 @@ const AppNavigator: React.FC = () => {
   } else
     return (
       <NavigationContainer ref={navigationRef}>
-        <NativeBaseProvider>
-          <Stack.Navigator
-            screenOptions={() => ({
-              headerShown: true,
-              header: () => <AppTopBar />,
-            })}
-          >
-            <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
-            <Stack.Screen name="Imprint" component={Imprint} />
-            <Stack.Screen
-              name="Authentification"
-              component={Authentification}
-            />
-            <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
-            {isAuthenticated && (
-              <>
-                <Stack.Screen name="FollowerList" component={FollowerList} />
-                <Stack.Screen name="FollowingList" component={FollowingList} />
-                <Stack.Screen
-                  name="GeneralProfile"
-                  component={GeneralProfile}
-                />
-                <Stack.Screen name="EditProfile" component={EditProfile} />
-              </>
-            )}
-          </Stack.Navigator>
-        </NativeBaseProvider>
+        <Stack.Navigator
+          screenOptions={() => ({
+            headerShown: true,
+            header: () => <AppTopBar />,
+          })}
+        >
+          <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
+          <Stack.Screen name="Imprint" component={Imprint} />
+          <Stack.Screen name="Authentification" component={Authentification} />
+          <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+          {isAuthenticated && (
+            <>
+              <Stack.Screen name="FollowerList" component={FollowerList} />
+              <Stack.Screen name="FollowingList" component={FollowingList} />
+              <Stack.Screen name="GeneralProfile" component={GeneralProfile} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+            </>
+          )}
+        </Stack.Navigator>
       </NavigationContainer>
     );
 };

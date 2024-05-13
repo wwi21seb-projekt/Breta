@@ -1,8 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "native-base";
 import { View } from "react-native";
 import stylePlusIcon from "../stylesheets/stylePlusIcon";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../theme";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 
@@ -30,10 +29,9 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="home"
-              size="md"
+              size={20}
               color={focused ? COLORS.primary : COLORS.black}
             />
           ),
@@ -45,10 +43,9 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="chatbubble"
-              size="md"
+              size={20}
               color={focused ? COLORS.primary : COLORS.black}
             />
           ),
@@ -62,10 +59,9 @@ const TabBottomBar: React.FC = () => {
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
             <View style={stylePlusIcon.addIcon}>
-              <Icon
-                as={Ionicons}
+              <Ionicons
                 name="add"
-                size="md"
+                size={20}
                 color={focused ? COLORS.primary : COLORS.black}
               />
             </View>
@@ -79,10 +75,9 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="search"
-              size="md"
+              size={20}
               color={focused ? COLORS.primary : COLORS.black}
             />
           ),
@@ -94,10 +89,9 @@ const TabBottomBar: React.FC = () => {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Icon
-              as={Ionicons}
+            <Ionicons
               name="person"
-              size="md"
+              size={20}
               color={focused ? COLORS.primary : COLORS.black}
             />
           ),

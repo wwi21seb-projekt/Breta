@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { View, Text, Image, Icon } from "native-base";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
+  View,
+  Text,
+  Image,
   TextInput,
   Dimensions,
   ScrollView,
@@ -105,10 +107,9 @@ const TextPostCard: React.FC<Props> = (props) => {
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
               <TouchableOpacity onPress={openCommentModal}>
-                <Icon
-                  as={Ionicons}
+                <Ionicons
                   name="chatbox-ellipses-outline"
-                  size={6}
+                  size={18}
                   color={COLORS.black}
                   className="mr-1"
                 />
@@ -117,10 +118,9 @@ const TextPostCard: React.FC<Props> = (props) => {
                 className="flex-row items-center"
                 onPress={handleLikePress}
               >
-                <Icon
-                  as={Ionicons}
+                <Ionicons
                   name={isLiked ? "heart" : "heart-outline"}
-                  size={6}
+                  size={18}
                   color={isLiked ? COLORS.primary : "black"}
                   className="mr-1"
                 />
@@ -145,7 +145,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             <View className="flex-row justify-between items-center border-b border-lightgray pb-4">
               <Text className="text-lg font-bold">Kommentare</Text>
               <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-                <Icon as={Ionicons} name="close" size={6} color="black" />
+                <Ionicons name="close" size={18} color="black" />
               </TouchableOpacity>
             </View>
             <ScrollView className="pt-4">

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Icon } from "native-base";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
 import { COLORS, SHADOWS } from "../theme";
-import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { navigate } from "../navigation/NavigationService";
 
@@ -27,12 +26,7 @@ const LoginPopup = () => {
       >
         <View className="bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
           <TouchableOpacity onPress={() => navigate("Feed")}>
-            <Icon
-              as={Ionicons}
-              name="arrow-back"
-              size="xl"
-              color={COLORS.black}
-            />
+            <Ionicons name="arrow-back" size={26} color={COLORS.black} />
           </TouchableOpacity>
           <View className="items-center py-2">
             <Text className="text-base mt-4 mb-6">

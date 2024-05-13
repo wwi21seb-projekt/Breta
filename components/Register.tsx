@@ -1,8 +1,7 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
-import { ScrollView, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
-import { View } from "native-base";
 import { useAuth } from "../authentification/AuthContext";
 
 interface Props {
