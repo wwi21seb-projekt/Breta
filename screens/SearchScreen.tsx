@@ -3,7 +3,6 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  Text,
   useWindowDimensions,
   ActivityIndicator,
   FlatList,
@@ -28,7 +27,6 @@ const SearchScreen = () => {
   const layout = useWindowDimensions();
   const [userSearchError, setUserSearchError] = useState("");
   const [postSearchError, setPostSearchError] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
   //style own TabBar since materials isn't fitting
   //any type since the types come directly from react-native-tab-view libary
