@@ -198,10 +198,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             setConfirmCodeText(data.error.message);
             break;
           default:
-            setServerError("Something went wrong. Please try again.");
+            setServerError("Something went wrong, please try again later.");
         }
       } catch (error) {
-        setServerError("Connection error. Please try again.");
+        setServerError("There are issues communicating with the server, please try again later.");
       }
     },
     register: async (
@@ -246,7 +246,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
               setUsernameErrorText("");
               setEmailErrorText(data.error.message);
             } else {
-              setServerError("Something went wrong. Please try again.");
+              setServerError("Something went wrong, please try again later.");
             }
             break;
           case 422: {
@@ -254,10 +254,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             break;
           }
           default:
-            setServerError("Something went wrong. Please try again.");
+            setServerError("Something went wrong, please try again later.");
         }
       } catch (error) {
-        setServerError("Connection error. Please try again.");
+        setServerError("There are issues communicating with the server, please try again later.");
       }
     },
     activateUser: async (
@@ -292,10 +292,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             setConfirmErrorText(data.error.message);
             break;
           default:
-            setServerError("Something went wrong. Please try again.");
+            setServerError("Something went wrong, please try again later.");
         }
       } catch (error) {
-        setServerError("Connection error. Please try again.");
+        setServerError("There are issues communicating with the server, please try again later.");
       }
     },
     logout: async () => {

@@ -18,6 +18,7 @@ import UserListItem from "../components/UserListItem";
 import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
 import { useAuth } from "../authentification/AuthContext";
+import ErrorComp from "../components/ErrorComp";
 
 const SearchScreen = () => {
   const { token } = useAuth();
@@ -27,6 +28,7 @@ const SearchScreen = () => {
   const layout = useWindowDimensions();
   const [userSearchError, setUserSearchError] = useState("");
   const [postSearchError, setPostSearchError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   //style own TabBar since materials isn't fitting
   //any type since the types come directly from react-native-tab-view libary
@@ -44,9 +46,7 @@ const SearchScreen = () => {
   const userList = () => {
     if (userSearchError !== "") {
       return (
-        <View className="p-6 bg-white h-full">
-          <Text className="text-base">{userSearchError}</Text>
-        </View>
+        <ErrorComp errorText={userSearchError}></ErrorComp>
       );
     } else {
       return (
@@ -77,9 +77,7 @@ const SearchScreen = () => {
   const postList = () => {
     if (postSearchError !== "") {
       return (
-        <View className="p-6 bg-white h-full">
-          <Text className="text-base">{postSearchError}</Text>
-        </View>
+        <ErrorComp errorText={postSearchError}></ErrorComp>
       );
     } else {
       return (
@@ -156,17 +154,17 @@ const SearchScreen = () => {
       } else {
         switch (response.status) {
           case 401:
-            setUserSearchError("Sie sind nicht authentifiziert!");
+            setUserSearchError(data.error.message);
             break;
           default:
             setUserSearchError(
-              "Etwas ist schiefgelaufen. Versuche es später erneut.",
+              "Something went wrong, please try again later.",
             );
         }
       }
     } catch (error) {
       setUserSearchError(
-        "Es gab einen fehler bei der Kommunikation mit dem Server.",
+        "There are issues communicating with the server, please try again later."
       );
     } finally {
       setLoadingMoreUsers(false);
@@ -217,19 +215,19 @@ const SearchScreen = () => {
       } else {
         switch (response.status) {
           case 401:
-            setPostSearchError("Sie sind nicht authentifiziert.");
+            setPostSearchError(data.error.message);
             break;
           default:
             setPostSearchError(
-              "Etwas ist schiefgelaufen. Versuche es später erneut." +
+              "Something went wrong, please try again later." +
                 response.status,
             );
         }
       }
     } catch (error) {
       setPostSearchError(
-        "Es gab einen fehler bei der Kommunikation mit dem Server." + error,
-      );
+        "There are issues communicating with the server, please try again later."
+        );
     } finally {
       setLoadingMorePosts(false);
     }

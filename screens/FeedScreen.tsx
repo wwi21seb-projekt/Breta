@@ -78,7 +78,7 @@ const FeedScreen = () => {
       }
     } catch (error) {
       console.error("Error loading posts:", error);
-      setErrorText("Connection error. Please try again.");
+      setErrorText("There are issues communicating with the server, please try again later.");
     } finally {
       setLoading(false);
       if (type === "personal") {

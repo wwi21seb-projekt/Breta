@@ -23,10 +23,10 @@ const ImprintScreen = () => {
           data = await response.json();
           setImprintText(data.text);
         } else {
-          setErrorText("Something went wrong. Please try again.");
+          setErrorText("Something went wrong, please try again later.");
         }
       } catch (error) {
-        setErrorText("Connection error. Please try again.");
+        setErrorText("There are issues communicating with the server, please try again later.");
       }
     })().finally(() => {
       setLoading(false);

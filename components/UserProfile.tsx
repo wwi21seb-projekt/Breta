@@ -66,10 +66,10 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           setErrorText(data.error.message);
           break;
         default:
-          setErrorText("Something went wrong. Please try again.");
+          setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("Connection error. Please try again.");
+      setErrorText("There are issues communicating with the server, please try again later.");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -100,10 +100,10 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           setErrorText(data.error.message);
           break;
         default:
-          setErrorText("Something went wrong. Please try again.");
+          setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("Connection error. Please try again.");
+      setErrorText("There are issues communicating with the server, please try again later.");
     }
   };
 
@@ -314,7 +314,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       />
     );
   } else {
-    return <ErrorComp errorText="Something went wrong. Please try again." />;
+    return <ErrorComp errorText="Something went wrong, please try again later." />;
   }
 };
 export default UserProfile;

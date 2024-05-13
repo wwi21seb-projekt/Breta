@@ -51,10 +51,10 @@ const ConfirmCodeScreen = () => {
           setConfirmErrorText(data.error.message);
           break;
         default:
-          setServerError("Something went wrong. Please try again.");
+          setServerError("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setServerError("Connection error. Please try again.");
+      setServerError("There are issues communicating with the server, please try again later.");
     }
   };
 
