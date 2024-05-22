@@ -43,6 +43,13 @@ jobs:
         run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
 
       # artifact publish
+      - name: Create Git Tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag ${{github.event.after}}
+          git push ${{github.event.after}}
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
@@ -52,3 +59,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ github.workspace }}/app-release.apk
+          git_tag: ${{github.event.after}}
