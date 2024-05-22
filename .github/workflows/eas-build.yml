@@ -65,4 +65,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ github.workspace }}/app-release.apk
-          git_tag: ${{ env.COMMIT_SHORT_SHA }}
+          tag_name: ${{ env.COMMIT_SHORT_SHA }}
