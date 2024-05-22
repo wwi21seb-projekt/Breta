@@ -13,6 +13,7 @@ import {
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
+import ErrorComp from "./ErrorComp";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -56,6 +57,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [isPostRepost, setisPostRepost] = useState(false)
+  const [repostError, setRepostError] = useState("")
 
   const addComment = () => {
     if (commentText.trim()) {
@@ -112,23 +114,27 @@ const TextPostCard: React.FC<Props> = (props) => {
           content: postContent
         }),
       });
+      let data = await response.json()
       switch (response.status) {
-        case 201:
-
-          break;
         case 400:
-
-          break;
         case 401:
-          
+        case 404:
+          setRepostError(data.error.message)
           break;
         default:
+          setRepostError("Something went wrong, please try again later.")
       }
     } catch (error) {
+      setRepostError(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
-
+  if(repostError !== ""){
+      return <ErrorComp errorText={repostError}></ErrorComp>;
+  }
+  else{
   return (
     <View className="items-center mx-2.5 mb-5">
       {!isRepost ? (
@@ -301,6 +307,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       </Modal>
     </View>
   );
+  }
 };
 
 export default TextPostCard;
