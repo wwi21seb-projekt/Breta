@@ -8,10 +8,14 @@ jobs:
   build-and-publish:
     name: Install, build and publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       # setup
       - name: Setup repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup node
         uses: actions/setup-node@v4
