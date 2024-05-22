@@ -52,7 +52,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag ${{github.event.after}}
-          git push ${{github.event.after}}
+          git push origin ${{github.event.after}}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
