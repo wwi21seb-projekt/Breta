@@ -64,13 +64,14 @@ const FeedScreen = () => {
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false);
           setPostsPersonal(updatedPersonalPosts);
-        } else {
+        } else{
           setLoadingCities(true);
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
           setLastPostId(data.pagination.lastPostId);
           setHasMoreGlobalPosts(data.records.length === globalLimit);
+          console.log(data.records)
         }
       } else {
         setErrorText(`Error fetching ${type} posts: ${response.statusText}`);
@@ -168,6 +169,9 @@ const FeedScreen = () => {
               date={post.creationDate}
               postContent={post.content}
               city={loadingCities ? "Loading city..." : post.city}
+              postId={post.postId}
+              repostAuthor={post.repost == null ? "" : post.repost.author.username}
+              isRepost={post.repost == null ? false : true}
             />
           ))}
         </>
@@ -194,6 +198,9 @@ const FeedScreen = () => {
           date={post.creationDate}
           postContent={post.content}
           city={loadingCities ? "Loading city..." : post.city}
+          postId={post.postId}
+          repostAuthor={post.repost == null ? "" : post.repost.author.username}
+          isRepost={post.repost == null? false : true}
         />
       ))}
       {hasMoreGlobalPosts && (

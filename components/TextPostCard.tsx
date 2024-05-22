@@ -11,6 +11,8 @@ import {
   Modal,
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
+import { baseUrl } from "../env";
+import { useAuth } from "../authentification/AuthContext";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -25,14 +27,18 @@ interface Comment {
 interface Props {
   username: string;
   profilePic: string;
-  date: string;
+  date: string; 
   initialLikes?: number;
   postContent: any;
   style?: React.CSSProperties;
   city: string;
+  postId: string;
+  repostAuthor?: string;
+  isRepost: boolean;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
+  const { token } = useAuth();
   const {
     username,
     postContent,
@@ -40,12 +46,16 @@ const TextPostCard: React.FC<Props> = (props) => {
     date,
     city,
     initialLikes = 149999,
-  } = props;
+    postId,
+    repostAuthor,
+    isRepost
+    } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
+  const [isPostRepost, setisPostRepost] = useState(false)
 
   const addComment = () => {
     if (commentText.trim()) {
@@ -87,8 +97,41 @@ const TextPostCard: React.FC<Props> = (props) => {
     setCommentModalVisible(false);
   };
 
+  const repostPost =  async () => {
+    let response;
+
+    try {
+      response = await fetch(`${baseUrl}posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          repostedPostId: postId,
+          content: postContent
+        }),
+      });
+      switch (response.status) {
+        case 201:
+
+          break;
+        case 400:
+
+          break;
+        case 401:
+          
+          break;
+        default:
+      }
+    } catch (error) {
+    }
+  };
+
+
   return (
     <View className="items-center mx-2.5 mb-5">
+      {!isRepost ? (
       <View
         className="w-full bg-white rounded-full p-4 z-20 relative"
         style={{ ...SHADOWS.small }}
@@ -106,6 +149,15 @@ const TextPostCard: React.FC<Props> = (props) => {
 
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
+            <TouchableOpacity onPress={repostPost}>
+                <Ionicons
+                  name="repeat-outline"
+                  size={18}
+                  color={COLORS.black}
+                  className="mr-1"
+                />
+              </TouchableOpacity>
+              
               <TouchableOpacity onPress={openCommentModal}>
                 <Ionicons
                   name="chatbox-ellipses-outline"
@@ -113,7 +165,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                   color={COLORS.black}
                   className="mr-1"
                 />
-              </TouchableOpacity>
+              </TouchableOpacity> 
               <TouchableOpacity
                 className="flex-row items-center"
                 onPress={handleLikePress}
@@ -131,10 +183,65 @@ const TextPostCard: React.FC<Props> = (props) => {
           </View>
         </View>
       </View>
-
+      
+      ) : (
+        <View className="w-full bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
+          <View className="flex flex-col justify-end items-end z-20 relative" >
+              <View className="flex-row items-center justify-between">
+              <View className="flex-1 ml-2 pt-4">
+                <Text className="font-bold">{username}</Text>
+                <Text className="text-xs text-lightgray"> {city}</Text>
+              </View>
+                <TouchableOpacity onPress={openCommentModal}>
+                  <Ionicons
+                    name="chatbox-ellipses-outline"
+                    size={18}
+                    color={COLORS.black}
+                    className="mr-1"
+                  />
+                </TouchableOpacity> 
+                <TouchableOpacity
+                  className="flex-row items-center"
+                  onPress={handleLikePress}
+                >
+                  <Ionicons
+                    name={isLiked ? "heart" : "heart-outline"}
+                    size={18}
+                    color={isLiked ? COLORS.primary : "black"}
+                    className="mr-1"
+                  />
+                  <Text className="ml-1">{formatLikes(likes)}</Text>
+                </TouchableOpacity>
+              </View>
+              <Text className="text-xs text-lightgray text-l mt-[-14] mb-1"> {date}</Text>
+            <View
+            className="w-full bg-white rounded-full p-4 z-10 relative"
+            style={{ ...SHADOWS.small }}
+            >
+              <View className="w-full flex-row items-center">
+                <Image
+                  source={{ uri: profilePic }}
+                  className="w-10 h-10 rounded-full"
+                  alt="PB"
+                />
+                <View className="ml-2">
+                  <Text className="align-center font-bold">{repostAuthor}</Text>
+                  <Text className="text-xs text-lightgray"> {city}</Text>
+                  <Text className="text-xs text-lightgray text-l mt-[-15]"> {date}</Text>
+                </View>
+            </View>
+          </View>
+        </View>
+        <View className="m-1.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
+            <Text>{postContent}</Text>
+          </View>
+        </View>
+      ) }
+    {!isRepost ? (
       <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10 relative">
         <Text>{postContent}</Text>
       </View>
+    ) : (<></>) }
 
       <Modal
         visible={isCommentModalVisible}
