@@ -51,8 +51,9 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag ${{github.event.after}}
-          git push origin ${{github.event.after}}
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          git tag $calculatedSha
+          git push origin $calculatedSha
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
