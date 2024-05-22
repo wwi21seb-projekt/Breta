@@ -18,7 +18,7 @@ import { Post, PostRecords } from "../components/types/PostSearchTypes";
 import TextPostCard from "../components/TextPostCard";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";
-// CD Trigger
+// CD Triggerasldjfhölkasdjf
 const SearchScreen = () => {
   const { token } = useAuth();
   const [searchInput, setSearchInput] = useState("");
