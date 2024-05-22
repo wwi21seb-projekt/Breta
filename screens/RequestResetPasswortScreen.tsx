@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity, Text, View } from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
 import FloatingLabelInput from "../components/FloatingLabelInput";
 import { COLORS } from "../theme";
 import { useState } from "react";
@@ -46,10 +46,7 @@ const RequestResetPasswordScreen = () => {
   }
   else {
     return (
-      <ScrollView className="bg-white px-10"
-      automaticallyAdjustKeyboardInsets={true}
-      alwaysBounceVertical={false}
-      showsVerticalScrollIndicator={false}>
+      <View className="bg-white px-10 h-full">
       <View className="mt-5">
       <FloatingLabelInput
          errorText={errorTextUsername}
@@ -72,7 +69,7 @@ const RequestResetPasswordScreen = () => {
          onPress={requestResetPassword}
          disabled={!isUsernameFilled}
      ><Text className="text-base">Request password reset</Text></TouchableOpacity>
-   </ScrollView>
+   </View>
     );
   }
 };
