@@ -12,16 +12,10 @@ permissions:
   contents: write
 
 jobs:
-  install-format-lint:
+  lint-format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          cache: "npm"
-          node-version-file: "package.json"
-      - run: npm ci
       - name: Run ESLint
         run: npm run lint
       - name: Format Code with Prettier
@@ -38,10 +32,10 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 21.x
           cache: 'npm'
+          node-version-file: "package.json"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
