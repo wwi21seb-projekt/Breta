@@ -1,0 +1,72 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them and run tests across different versions of node
+
+name: Pull Request into main
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  install-format-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "npm"
+          node-version-file: "package.json"
+      - run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+      - name: Format Code with Prettier
+        run: npm run format
+      - name: Auto Commit formated code
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply formatting changes
+          branch: ${{ github.head_ref }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+      
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21.x
+          cache: 'npm'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Android app
+        run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: ${{ github.workspace }}/app-release.apk
