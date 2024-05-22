@@ -34,7 +34,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Expo
+      - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
         with:
           expo-version: latest
@@ -60,7 +60,7 @@ jobs:
         run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
       # artifact publish
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-release
           path: ${{ github.workspace }}/app-release.apk
