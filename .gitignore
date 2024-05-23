@@ -33,3 +33,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# prevent uploading apk
+*.apk
+
+# android studio
+.idea
