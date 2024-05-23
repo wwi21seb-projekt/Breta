@@ -3,10 +3,13 @@
 name: Pull Request into main
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
     branches: ["main"]
+    types: [opened, reopened, synchronize] # default werte, aber für readability
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -60,7 +63,7 @@ jobs:
         run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
       # artifact publish
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: ${{ github.workspace }}/app-release.apk
