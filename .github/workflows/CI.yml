@@ -5,7 +5,7 @@ name: Pull Request into main
 on:
   pull_request:
     branches: ["main"]
-    types: [opened, reopened, edited]
+    types: [opened, reopened, synchronize] # default werte, aber für readability
 
 permissions:
   contents: write
