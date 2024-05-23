@@ -63,7 +63,7 @@ jobs:
         run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
       # artifact publish
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: ${{ github.workspace }}/app-release.apk

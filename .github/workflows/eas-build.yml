@@ -62,7 +62,7 @@ jobs:
           git push origin ${{ env.COMMIT_SHORT_SHA }}
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: ${{ github.workspace }}/app-release.apk
