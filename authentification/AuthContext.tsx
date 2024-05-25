@@ -154,21 +154,25 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
-  async function registerDeviceForNotifications() {
-    const [deviceToken, setDeviceToken] = useState('')
-    const [tokenError, setTokenError] = useState('')
-    const [registerTokenError, setRegisterTokenError] = useState('')
-    registerForPushNotificationsAsync()
-      .then((token) => setDeviceToken(token ?? ''))
-      .catch((error: any) => setTokenError(`${error}`));
-    
-      if(tokenError !== ''){
-        let response;
-        let data;
+  async function registerDeviceForNotifications(authToken: any) {
+    let tokenError;
+    let registerTokenError;
+    let deviceToken: string = '';
+    try{
+      deviceToken = await registerForPushNotificationsAsync() ?? '';
+    }catch (error){
+      tokenError = error
+    }
+    if(!tokenError){
+      let response;
+      let data;
+      try{
+        console.log("deviceToken to Backend: " + deviceToken)
         response = await fetch(`${baseUrl}push/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify({
             type: "expo",
@@ -176,20 +180,27 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           }),
         });
         data = await response.json();
+        console.log(response.status)
         switch (response.status) {
-          case 200:
+          case 201:
             console.log("Device successfully registered for Notifacations! PushToken: ", deviceToken)
+            break;
           case 401: 
-            setRegisterTokenError("Error: " + data.error + "\nMessage: " + data.message)
+            registerTokenError = "401 Error: " + data.error.title + "\nMessage: " + data.error.message
+            break;
           case 400:
-            setRegisterTokenError("Error: " + data.error + "\nMessage: " + data.message)
-        }
-        if(registerTokenError !== ''){
-          console.log(registerTokenError)
-        }
-      }else{
-        console.log(tokenError)
+            registerTokenError = "400 Error: " + data.error.title + "\nMessage: " + data.error.message
+            break;
+          }
+      }catch (error){
+        console.log(error)
       }
+      if(registerTokenError){
+        console.log(registerTokenError)
+      }
+    }else{
+      console.log(tokenError)
+    }
   }
 
   const authContext: AuthContextType = {
@@ -224,7 +235,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
             await AsyncStorage.setItem("user", username);
             //register device to Navigationservice
-            registerDeviceForNotifications()
+            console.log("HALLOOOOOOOO!!!!!")
+            await registerDeviceForNotifications(data.token);
             navigate("Feed");
             break;
           case 401:
@@ -243,7 +255,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         }
       } catch (error) {
         setServerError(
-          "There are issues communicating with the server, please try again later.",
+          "There are issues communicating with the server, please try again later.\n" + error,
         );
       }
     },
