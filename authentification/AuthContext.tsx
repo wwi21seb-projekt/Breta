@@ -13,6 +13,7 @@ import { baseUrl } from "../env";
 import { navigate, reset } from "../navigation/NavigationService";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
+import { registerForPushNotificationsAsync } from "../screens/NotificationScreen"
 
 interface AuthContextType {
   token: string | null;
@@ -153,6 +154,44 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  async function registerDeviceForNotifications() {
+    const [deviceToken, setDeviceToken] = useState('')
+    const [tokenError, setTokenError] = useState('')
+    const [registerTokenError, setRegisterTokenError] = useState('')
+    registerForPushNotificationsAsync()
+      .then((token) => setDeviceToken(token ?? ''))
+      .catch((error: any) => setTokenError(`${error}`));
+    
+      if(tokenError !== ''){
+        let response;
+        let data;
+        response = await fetch(`${baseUrl}push/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "expo",
+            token: deviceToken,
+          }),
+        });
+        data = await response.json();
+        switch (response.status) {
+          case 200:
+            console.log("Device successfully registered for Notifacations! PushToken: ", deviceToken)
+          case 401: 
+            setRegisterTokenError("Error: " + data.error + "\nMessage: " + data.message)
+          case 400:
+            setRegisterTokenError("Error: " + data.error + "\nMessage: " + data.message)
+        }
+        if(registerTokenError !== ''){
+          console.log(registerTokenError)
+        }
+      }else{
+        console.log(tokenError)
+      }
+  }
+
   const authContext: AuthContextType = {
     login: async (
       username,
@@ -184,6 +223,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             await AsyncStorage.setItem("token", data.token);
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
             await AsyncStorage.setItem("user", username);
+            //register device to Navigationservice
+            registerDeviceForNotifications()
             navigate("Feed");
             break;
           case 401:
