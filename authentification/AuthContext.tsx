@@ -13,7 +13,7 @@ import { baseUrl } from "../env";
 import { navigate, reset } from "../navigation/NavigationService";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
-import { registerForPushNotificationsAsync } from "../screens/NotificationScreen"
+import { registerForPushNotificationsAsync } from "../screens/NotificationScreen";
 
 interface AuthContextType {
   token: string | null;
@@ -235,7 +235,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
             await AsyncStorage.setItem("user", username);
             //register device to Navigationservice
-            console.log("HALLOOOOOOOO!!!!!")
             await registerDeviceForNotifications(data.token);
             navigate("Feed");
             break;

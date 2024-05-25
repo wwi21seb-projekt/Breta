@@ -35,8 +35,8 @@ const AppTopBar = () => {
     headerTitle = "Activate account";
   } else if (route.name === "EditProfile") {
     headerTitle = "Edit profile";
-  } else if (route.name === "Notifications"){
-    headerTitle = "Notifications"
+  } else if (route.name === "Notifications") {
+    headerTitle = "Notifications";
   } else {
     headerTitle = "";
   }
@@ -66,8 +66,11 @@ const AppTopBar = () => {
           <></>
         )}
         {isAuthenticated && headerTitle === "" ? (
-          <TouchableOpacity className="w-6" onPress={() => navigate("Notifications")}>
-            <Ionicons name="notifications-outline" size={26}/>
+          <TouchableOpacity
+            className="w-6"
+            onPress={() => navigate("Notifications")}
+          >
+            <Ionicons name="notifications-outline" size={26} />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
