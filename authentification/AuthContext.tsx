@@ -157,17 +157,17 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   async function registerDeviceForNotifications(authToken: any) {
     let tokenError;
     let registerTokenError;
-    let deviceToken: string = '';
-    try{
-      deviceToken = await registerForPushNotificationsAsync() ?? '';
-    }catch (error){
-      tokenError = error
+    let deviceToken: string = "";
+    try {
+      deviceToken = (await registerForPushNotificationsAsync()) ?? "";
+    } catch (error) {
+      tokenError = error;
     }
-    if(!tokenError){
+    if (!tokenError) {
       let response;
       let data;
-      try{
-        console.log("deviceToken to Backend: " + deviceToken)
+      try {
+        console.log("deviceToken to Backend: " + deviceToken);
         response = await fetch(`${baseUrl}push/register`, {
           method: "POST",
           headers: {
@@ -180,26 +180,37 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           }),
         });
         data = await response.json();
-        console.log(response.status)
+        console.log(response.status);
         switch (response.status) {
           case 201:
-            console.log("Device successfully registered for Notifacations! PushToken: ", deviceToken)
+            console.log(
+              "Device successfully registered for Notifacations! PushToken: ",
+              deviceToken,
+            );
             break;
-          case 401: 
-            registerTokenError = "401 Error: " + data.error.title + "\nMessage: " + data.error.message
+          case 401:
+            registerTokenError =
+              "401 Error: " +
+              data.error.title +
+              "\nMessage: " +
+              data.error.message;
             break;
           case 400:
-            registerTokenError = "400 Error: " + data.error.title + "\nMessage: " + data.error.message
+            registerTokenError =
+              "400 Error: " +
+              data.error.title +
+              "\nMessage: " +
+              data.error.message;
             break;
-          }
-      }catch (error){
-        console.log(error)
+        }
+      } catch (error) {
+        console.log(error);
       }
-      if(registerTokenError){
-        console.log(registerTokenError)
+      if (registerTokenError) {
+        console.log(registerTokenError);
       }
-    }else{
-      console.log(tokenError)
+    } else {
+      console.log(tokenError);
     }
   }
 
@@ -254,7 +265,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         }
       } catch (error) {
         setServerError(
-          "There are issues communicating with the server, please try again later.\n" + error,
+          "There are issues communicating with the server, please try again later.\n" +
+            error,
         );
       }
     },
