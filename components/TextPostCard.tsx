@@ -160,7 +160,7 @@ const TextPostCard: React.FC<Props> = (props) => {
           if (text) {
             const addedComment = JSON.parse(text);
             const formattedComment = {
-              commentId: addedComment.commentId || `${Date.now()}-${Math.random()}`,
+              commentId: addedComment.commentId || `${Date.now()}`,
               content: addedComment.content,
               author: {
                 username: user, 
