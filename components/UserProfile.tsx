@@ -1,326 +1,408 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   View,
-  Modal,
   Text,
   Image,
+  TextInput,
+  Dimensions,
+  ScrollView,
   TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
+  Modal,
+  Pressable,
 } from "react-native";
-import { SHADOWS } from "../theme";
-import { User } from "../components/types/User";
-import { handleSubscription } from "./functions/HandleSubscription";
+import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
-import { navigate, push } from "../navigation/NavigationService";
+import LoginPopup from "./LoginPopup";
+import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect } from "@react-navigation/native";
-import ErrorComp from "./ErrorComp";
+import { loadUser } from "./functions/LoadUser";
+import { User } from "./types/User";
 
-type Props = {
-  personal: boolean;
-  userInfo: User;
-};
+const windowHeight = Dimensions.get("window").height;
 
-const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
+interface Comment {
+  commentId: string;
+  content: string;
+  author: {
+    username: string;
+    nickname: string;
+    profilePictureURL: string;
+  };
+  creationDate: string;
+}
+
+interface Props {
+  postId: string;
+  username: string;
+  profilePic: string;
+  date: string;
+  initialLikes?: number;
+  postContent: any;
+  style?: React.CSSProperties;
+  city: string;
+  initialLiked?: boolean;
+}
+
+const TextPostCard: React.FC<Props> = (props) => {
+  const {
+    postId,
+    username,
+    postContent,
+    profilePic,
+    date,
+    city,
+    initialLikes = 0,
+    initialLiked = false,
+  } = props;
   const { token, user } = useAuth();
-  const following = userInfo.username;
-  const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
-  const [errorText, setErrorText] = useState("");
-  const [subscriptionId, setSubscriptionId] = useState<string | null>(
-    userInfo.subscriptionId,
-  );
-  const [posts, setPosts] = useState<OwnPost[]>([]);
-  const [offset, setOffset] = useState(0);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMoreData, setHasMoreData] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
-  const [currentPostId, setCurrentPostId] = useState("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [likes, setLikes] = useState(initialLikes);
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const isAuthenticated = useCheckAuthentication();
+  const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
 
-  const fetchPosts = async (loadMore: boolean) => {
-    setLoading(true);
-    let response;
-    let data!: ResponseOwnPost;
-    let newOffset = loadMore ? offset + 3 : 0;
-    const urlWithParams = `${baseUrl}users/${userInfo.username}/feed?offset=${newOffset}&limit=3`;
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadUser(user, setCurrentUser, setCommentError, token);
+    }
+    fetchComments();
+    fetchLikeStatus();
+  }, []);
+
+  const fetchComments = async () => {
+    const url = `${baseUrl}posts/${postId}/comments?limit=10&offset=0`;
     try {
-      response = await fetch(urlWithParams, {
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      data = await response.json();
-      switch (response.status) {
-        case 200:
-          setPosts(loadMore ? [...posts, ...data.records] : data.records);
-          setOffset(newOffset);
-          setHasMoreData(data.pagination.records - data.pagination.offset > 3);
-          break;
-        case 401:
-        case 404:
-          setErrorText(data.error.message);
-          break;
-        default:
-          setErrorText("Something went wrong, please try again later.");
+
+      if (response.ok) {
+        const text = await response.text();
+        if (text) {
+          const data = JSON.parse(text);
+          setComments(data.records || []);
+          setCommentError(null);
+        } else {
+          setComments([]);
+          setCommentError(null);
+        }
+      } else {
+        handleFetchError(response.status);
       }
     } catch (error) {
-      setErrorText(
-        "There are issues communicating with the server, please try again later.",
+      console.error("Error fetching comments:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
       );
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
     }
   };
 
-  const deletePost = async () => {
-    let response;
-    let data;
-    const urlWithParams = `${baseUrl}posts/${currentPostId}`;
+  const fetchLikeStatus = async () => {
+    const url = `${baseUrl}posts/${postId}/like-status`;
     try {
-      response = await fetch(urlWithParams, {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsLiked(data.isLiked);
+        setLikes(data.likes);
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching like status:", error);
+    }
+  };
+
+  const handleFetchError = (status: number) => {
+    switch (status) {
+      case 401:
+        setCommentError("Unauthorized request.");
+        break;
+      default:
+        setCommentError("Something went wrong, please try again later.");
+    }
+  };
+
+  const addComment = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
+    if (commentText.trim() && currentUser) {
+      const url = `${baseUrl}posts/${postId}/comments`;
+      const newComment = {
+        content: commentText,
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newComment),
+        });
+
+        if (response.ok) {
+          const text = await response.text();
+          if (text) {
+            const addedComment = JSON.parse(text);
+            const formattedComment = {
+              commentId: addedComment.commentId || `${Date.now()}-${Math.random()}`,
+              content: addedComment.content,
+              author: {
+                username: currentUser.username,
+                nickname: "",
+                profilePictureURL: currentUser.profilePictureURL,
+              },
+              creationDate: new Date().toISOString(),
+            };
+            setComments([...comments, formattedComment]);
+            setCommentText("");
+            setCommentError(null);
+          }
+        } else {
+          handleFetchError(response.status);
+        }
+      } catch (error) {
+        console.error("Error adding comment:", error);
+        setCommentError(
+          "There are issues communicating with the server, please try again later."
+        );
+      }
+    }
+  };
+
+  const likePost = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
+    const url = `${baseUrl}posts/${postId}/likes`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setLikes((prevLikes) => prevLikes + 1);
+        setIsLiked(true);
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error liking the post:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
+      );
+    }
+  };
+
+  const unlikePost = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
+    const url = `${baseUrl}posts/${postId}/likes`;
+
+    try {
+      const response = await fetch(url, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      switch (response.status) {
-        case 204:
-          setModalVisible(false);
-          fetchPosts(false);
-          break;
-        case 401:
-        case 403:
-        case 404:
-          data = await response.json();
-          setErrorText(data.error.message);
-          break;
-        default:
-          setErrorText("Something went wrong, please try again later.");
+
+      if (response.ok) {
+        setLikes((prevLikes) => Math.max(prevLikes - 1, 0));
+        setIsLiked(false);
+      } else {
+        handleFetchError(response.status);
       }
     } catch (error) {
-      setErrorText(
-        "There are issues communicating with the server, please try again later.",
+      console.error("Error unliking the post:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
       );
     }
   };
 
-  const loadMorePosts = () => {
-    if (!loadingMore && hasMoreData) {
-      setLoadingMore(true);
-      fetchPosts(true);
+  const handleLikePress = () => {
+    if (isLiked) {
+      unlikePost();
+    } else {
+      likePost();
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setErrorText("");
-      fetchPosts(false);
-    }, []),
-  );
+  const formatLikes = (count: number): string => {
+    const roundToTenths = (num: number) => Math.floor(num * 10) / 10;
 
-  const renderHeader = () => {
-    return (
-      <View className="bg-white pb-4">
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setCurrentPostId("");
-            setModalVisible(false);
-          }}
-        >
-          <View
-            className="flex-1 justify-center items-center"
-            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
-          >
-            <View className="bg-white rounded-3xl px-8 py-4">
-              <Text className="text-lg mb-10">
-                Do you really want to delete this post?
-              </Text>
-              <View className="flex-row">
-                <TouchableOpacity onPress={() => deletePost()}>
-                  <Text className="text-red text-base font-bold">Delete</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="ml-auto"
-                  onPress={() => {
-                    setCurrentPostId("");
-                    setModalVisible(false);
-                  }}
-                >
-                  <Text className="text-black text-base font-bold">Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-        <Image
-          source={require("../assets/images/Max.jpeg")}
-          className="w-full h-48"
-          alt="Picture"
-        />
-        {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
-        <View className="items-center p-6">
-          {userInfo.nickname && (
-            <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>
-          )}
-          <Text className="italic text-lg text-darkgray mb-6">
-            @{userInfo.username}
-          </Text>
-          {userInfo.status && <Text className="mb-8">{userInfo.status}</Text>}
-          {personal && (
-            <TouchableOpacity
-              style={{ ...SHADOWS.small }}
-              className="bg-white mb-10 px-12 py-3 rounded-2xl"
-              onPress={() => navigate("EditProfile", { user: userInfo })}
-            >
-              <Text>Edit profile</Text>
-            </TouchableOpacity>
-          )}
-          {!personal && user !== following && (
-            <View className="w-full justify-center flex-row space-x-4 mb-6">
-              <TouchableOpacity
-                style={{ ...SHADOWS.small }}
-                className="bg-white py-3 rounded-2xl flex-1"
-                onPress={() => console.log("Start chat!")}
-              >
-                <Text className="text-center">Chat</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ ...SHADOWS.small }}
-                className="bg-white py-3 rounded-2xl flex-1"
-                disabled={isHandlingSubscription}
-                onPress={() =>
-                  handleSubscription(
-                    token,
-                    isFollowed,
-                    setIsFollowed,
-                    following,
-                    subscriptionId,
-                    setSubscriptionId,
-                    setErrorText,
-                    setIsHandlingSubscription,
-                  )
-                }
-              >
-                <Text className="text-center">
-                  {isFollowed ? "Unfollow" : "Follow"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <View className="justify-center flex-row space-around">
-            <View className="items-center justify-center p-3 flex-1">
-              <Text className="font-bold text-base">{userInfo.posts}</Text>
-              <Text>Posts</Text>
-            </View>
-            <TouchableOpacity
-              className="items-center justify-center p-3 flex-1"
-              disabled={userInfo.follower === 0}
-              onPress={() =>
-                push("FollowerList", {
-                  username: userInfo.username,
-                })
-              }
-            >
-              <Text className="font-bold text-base">{userInfo.follower}</Text>
-              <Text>Follower</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="items-center justify-center p-3 flex-1"
-              disabled={userInfo.following === 0}
-              onPress={() =>
-                push("FollowingList", {
-                  username: userInfo.username,
-                })
-              }
-            >
-              <Text className="font-bold text-base">{userInfo.following}</Text>
-              <Text>Following</Text>
-            </TouchableOpacity>
-            {personal === true && (
-              <TouchableOpacity
-                className="items-center justify-center p-3 flex-1"
-                disabled={true}
-                onPress={() =>
-                  console.log("Freundschaftsanfragen: Wird noch implementiert")
-                }
-              >
-                <Text className="font-bold text-base">0</Text>
-                <Text>Requests</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-        <Text className="font-bold text-xl ml-6">Posts</Text>
-        {posts === null && (
-          <Text className="ml-8 mt-2">
-            This profile currently has no posts.
-          </Text>
-        )}
-      </View>
-    );
+    if (count >= 1000000) {
+      return roundToTenths(count / 1000000) + " M";
+    }
+    if (count >= 1000) {
+      return roundToTenths(count / 1000) + " T";
+    }
+    return count.toString();
   };
 
-  if (loading && !loadingMore) {
-    return (
-      <View className="bg-white flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  } else if (errorText) {
-    return <ErrorComp errorText={errorText} />;
-  } else if (posts !== undefined) {
-    return (
-      <FlatList
-        className="bg-white"
-        data={posts}
-        keyExtractor={(item) => item.postId}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
-            style={{ ...SHADOWS.small }}
-            disabled={!personal}
-            onLongPress={() => {
-              setCurrentPostId(item.postId);
-              setModalVisible(true);
-            }}
-          >
-            <View className="flex-row">
-              {/* view is placeholder for location */}
-              <View className="w-1/2" />
-              <Text className="w-1/2 text-xs text-right">
-                {item.creationDate.split("T")[0]}
-              </Text>
+  const openCommentModal = () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+    setCommentModalVisible(true);
+  };
+
+  const closeCommentModal = () => {
+    setCommentModalVisible(false);
+  };
+
+  return (
+    <View className="items-center mx-2.5 mb-5">
+      <View
+        className="w-full bg-white rounded-full p-4 z-20 relative"
+        style={{ ...SHADOWS.small }}
+      >
+        <View className="flex-row items-center justify-between">
+          <Image
+            source={{ uri: profilePic }}
+            className="w-10 h-10 rounded-full"
+            alt="PB"
+          />
+          <View className="flex-1 ml-2">
+            <Text className="font-bold">{username}</Text>
+            <Text className="text-xs text-lightgray"> {city}</Text>
+          </View>
+
+          <View className="flex flex-col justify-end items-end">
+            <View className="flex flex-row">
+              <TouchableOpacity onPress={openCommentModal}>
+                <Ionicons
+                  name="chatbox-ellipses-outline"
+                  size={18}
+                  color={COLORS.black}
+                  className="mr-1"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={handleLikePress}
+              >
+                <Ionicons
+                  name={isLiked ? "heart" : "heart-outline"}
+                  size={18}
+                  color={isLiked ? COLORS.primary : "black"}
+                  className="mr-1"
+                />
+                <Text className="ml-1">{formatLikes(likes)}</Text>
+              </TouchableOpacity>
             </View>
-            <Text className="my-5 text-lg font-semibold text-center">
-              {item.content}
+            <Text className="text-xs text-lightgray">
+              {" "}
+              {new Date(date).toLocaleString()}
             </Text>
-          </TouchableOpacity>
-        )}
-        showsVerticalScrollIndicator={false}
-        onEndReached={loadMorePosts}
-        onEndReachedThreshold={0.2}
-        ListFooterComponent={
-          loadingMore ? <ActivityIndicator size={"small"} /> : null
-        }
-        ListHeaderComponent={renderHeader}
-      />
-    );
-  } else {
-    return (
-      <ErrorComp errorText="Something went wrong, please try again later." />
-    );
-  }
+          </View>
+        </View>
+
+        <View className="my-2"><Text>{postContent}</Text></View>
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isCommentModalVisible}
+        onRequestClose={closeCommentModal}
+      >
+        <View className="flex-1 justify-end">
+          <View className="h-3/4 bg-white rounded-t-3xl p-4 shadow-lg">
+            <View className="flex-row justify-between items-center pb-3 border-b border-lightgray">
+              <Text className="text-lg font-bold">Kommentare</Text>
+              <Pressable onPress={closeCommentModal}>
+                <Ionicons name="close" size={24} color="black" />
+              </Pressable>
+            </View>
+            <ScrollView>
+              {commentError && <Text className="text-red-500">{commentError}</Text>}
+              {comments.length === 0 ? (
+                <Text className="text-center text-lightgray mt-4">Keine Kommentare vorhanden</Text>
+              ) : (
+                comments.map((comment) => (
+                  <View
+                    key={comment.commentId}
+                    className="flex-row items-start py-3 border-b border-lightgray"
+                  >
+                    <Image
+                      source={{ uri: comment.author.profilePictureURL }}
+                      className="w-8 h-8 rounded-full mr-3"
+                    />
+                    <View className="flex-1">
+                      <Text className="font-bold">{comment.author.username}</Text>
+                      <Text>{comment.content}</Text>
+                      <Text className="text-xs text-lightgray">
+                        {new Date(comment.creationDate).toLocaleString()}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+              )}
+            </ScrollView>
+            <View className="flex-row items-center border-t border-lightgray p-4">
+              <TextInput
+                className="flex-1 mr-4 bg-lightgray rounded-full p-3 text-sm"
+                placeholder="Schreiben Sie einen Kommentar..."
+                onChangeText={setCommentText}
+                value={commentText}
+                multiline
+              />
+              <TouchableOpacity
+                className="bg-brigtBlue p-3 rounded-full"
+                onPress={addComment}
+              >
+                <Text className="font-bold text-sm">Posten</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isLoginPopupVisible}
+        onRequestClose={() => setLoginPopupVisible(false)}
+      >
+        <LoginPopup />
+      </Modal>
+    </View>
+  );
 };
-export default UserProfile;
+
+export default TextPostCard;

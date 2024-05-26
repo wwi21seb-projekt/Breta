@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   View,
@@ -9,20 +9,29 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Pressable,
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
+import { baseUrl } from "../env";
+import LoginPopup from "./LoginPopup";
+import { useCheckAuthentication } from "../authentification/CheckAuthentification";
+import { useAuth } from "../authentification/AuthContext";
 
 const windowHeight = Dimensions.get("window").height;
 
 interface Comment {
-  id: string;
-  text: string;
-  username: string;
-  profilePic: string;
-  date: string;
+  commentId: string;
+  content: string;
+  author: {
+    username: string;
+    nickname: string;
+    profilePictureURL: string;
+  };
+  creationDate: string;
 }
 
 interface Props {
+  postId: string;
   username: string;
   profilePic: string;
   date: string;
@@ -30,34 +39,219 @@ interface Props {
   postContent: any;
   style?: React.CSSProperties;
   city: string;
+  initialLiked?: boolean;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
   const {
+    postId,
     username,
     postContent,
     profilePic,
     date,
     city,
-    initialLikes = 149999,
+    initialLikes = 0,
+    initialLiked = false,
   } = props;
+  const { token, user } = useAuth();
   const [likes, setLikes] = useState(initialLikes);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(initialLiked);
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const isAuthenticated = useCheckAuthentication();
+  const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
 
-  const addComment = () => {
+  useEffect(() => {
+    fetchComments();
+    fetchLikeStatus();
+  }, []);
+
+  const fetchComments = async () => {
+    const url = `${baseUrl}posts/${postId}/comments?limit=10&offset=0`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const text = await response.text();
+        if (text) {
+          const data = JSON.parse(text);
+          setComments(data.records || []);
+          setCommentError(null);
+        } else {
+          setComments([]);
+          setCommentError(null);
+        }
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
+      );
+    }
+  };
+
+  const fetchLikeStatus = async () => {
+    const url = `${baseUrl}posts/${postId}/like-status`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsLiked(data.isLiked);
+        setLikes(data.likes);
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching like status:", error);
+    }
+  };
+
+  const handleFetchError = (status: number) => {
+    switch (status) {
+      case 401:
+        setCommentError("Unauthorized request.");
+        break;
+      default:
+        setCommentError("Something went wrong, please try again later.");
+    }
+  };
+
+  const addComment = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
     if (commentText.trim()) {
+      const url = `${baseUrl}posts/${postId}/comments`;
       const newComment = {
-        id: Date.now().toString(),
-        text: commentText,
-        username: username,
-        profilePic: profilePic,
-        city: city,
+        content: commentText,
       };
-      setComments([...comments, newComment]);
-      setCommentText("");
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newComment),
+        });
+
+        if (response.ok) {
+          const text = await response.text();
+          if (text) {
+            const addedComment = JSON.parse(text);
+            const formattedComment = {
+              commentId: addedComment.commentId || `${Date.now()}-${Math.random()}`,
+              content: addedComment.content,
+              author: {
+                username: user, 
+                nickname: "",
+                profilePictureURL: "",
+              },
+              creationDate: new Date().toISOString(),
+            };
+            setComments([...comments, formattedComment]);
+            setCommentText("");
+            setCommentError(null);
+          }
+        } else {
+          handleFetchError(response.status);
+        }
+      } catch (error) {
+        console.error("Error adding comment:", error);
+        setCommentError(
+          "There are issues communicating with the server, please try again later."
+        );
+      }
+    }
+  };
+
+  const likePost = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
+    const url = `${baseUrl}posts/${postId}/likes`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setLikes((prevLikes) => prevLikes + 1);
+        setIsLiked(true);
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error liking the post:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
+      );
+    }
+  };
+
+  const unlikePost = async () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+
+    const url = `${baseUrl}posts/${postId}/likes`;
+
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setLikes((prevLikes) => Math.max(prevLikes - 1, 0));
+        setIsLiked(false);
+      } else {
+        handleFetchError(response.status);
+      }
+    } catch (error) {
+      console.error("Error unliking the post:", error);
+      setCommentError(
+        "There are issues communicating with the server, please try again later."
+      );
+    }
+  };
+
+  const handleLikePress = () => {
+    if (isLiked) {
+      unlikePost();
+    } else {
+      likePost();
     }
   };
 
@@ -73,13 +267,11 @@ const TextPostCard: React.FC<Props> = (props) => {
     return count.toString();
   };
 
-  const handleLikePress = () => {
-    const newLikes = isLiked ? Math.max(likes - 1, 0) : likes + 1;
-    setLikes(newLikes);
-    setIsLiked(!isLiked);
-  };
-
   const openCommentModal = () => {
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
     setCommentModalVisible(true);
   };
 
@@ -137,37 +329,38 @@ const TextPostCard: React.FC<Props> = (props) => {
       </View>
 
       <Modal
+        animationType="slide"
+        transparent={true}
         visible={isCommentModalVisible}
-        onRequestClose={() => setCommentModalVisible(false)}
+        onRequestClose={closeCommentModal}
       >
         <View className="flex-1 justify-end">
-          <View className=" rounded-t-xl p-5 h-3/4">
-            <View className="flex-row justify-between items-center border-b border-lightgray pb-4">
+          <View className="h-3/4 bg-white rounded-t-3xl p-4 shadow-lg">
+            <View className="flex-row justify-between items-center pb-3 border-b border-lightgray">
               <Text className="text-lg font-bold">Kommentare</Text>
-              <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-                <Ionicons name="close" size={18} color="black" />
-              </TouchableOpacity>
+              <Pressable onPress={closeCommentModal}>
+                <Ionicons name="close" size={24} color="black" />
+              </Pressable>
             </View>
-            <ScrollView className="pt-4">
+            <ScrollView>
+              {commentError && <Text className="text-red-500">{commentError}</Text>}
               {comments.length === 0 ? (
-                <Text className="text-center text-sm py-5">
-                  Es sind noch keine Kommentare da!
-                </Text>
+                <Text className="text-center text-lightgray mt-4">Keine Kommentare vorhanden</Text>
               ) : (
                 comments.map((comment) => (
                   <View
-                    key={comment.id}
+                    key={comment.commentId}
                     className="flex-row items-start py-3 border-b border-lightgray"
                   >
                     <Image
-                      source={{ uri: comment.profilePic }}
+                      source={{ uri: comment.author.profilePictureURL }}
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
-                      <Text className="font-bold">{comment.username}</Text>
-                      <Text>{comment.text}</Text>
+                      <Text className="font-bold">{comment.author.username}</Text>
+                      <Text>{comment.content}</Text>
                       <Text className="text-xs text-lightgray">
-                        {comment.date}
+                        {new Date(comment.creationDate).toLocaleString()}
                       </Text>
                     </View>
                   </View>
@@ -186,11 +379,20 @@ const TextPostCard: React.FC<Props> = (props) => {
                 className="bg-brigtBlue p-3 rounded-full"
                 onPress={addComment}
               >
-                <Text className=" font-bold text-sm">Posten</Text>
+                <Text className="font-bold text-sm">Posten</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isLoginPopupVisible}
+        onRequestClose={() => setLoginPopupVisible(false)}
+      >
+        <LoginPopup />
       </Modal>
     </View>
   );
