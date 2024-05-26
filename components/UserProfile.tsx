@@ -101,7 +101,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     } catch (error) {
       console.error("Error fetching comments:", error);
       setCommentError(
-        "There are issues communicating with the server, please try again later."
+        "There are issues communicating with the server, please try again later.",
       );
     }
   };
@@ -166,7 +166,8 @@ const TextPostCard: React.FC<Props> = (props) => {
           if (text) {
             const addedComment = JSON.parse(text);
             const formattedComment = {
-              commentId: addedComment.commentId || `${Date.now()}-${Math.random()}`,
+              commentId:
+                addedComment.commentId || `${Date.now()}-${Math.random()}`,
               content: addedComment.content,
               author: {
                 username: currentUser.username,
@@ -185,7 +186,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       } catch (error) {
         console.error("Error adding comment:", error);
         setCommentError(
-          "There are issues communicating with the server, please try again later."
+          "There are issues communicating with the server, please try again later.",
         );
       }
     }
@@ -217,7 +218,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     } catch (error) {
       console.error("Error liking the post:", error);
       setCommentError(
-        "There are issues communicating with the server, please try again later."
+        "There are issues communicating with the server, please try again later.",
       );
     }
   };
@@ -248,7 +249,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     } catch (error) {
       console.error("Error unliking the post:", error);
       setCommentError(
-        "There are issues communicating with the server, please try again later."
+        "There are issues communicating with the server, please try again later.",
       );
     }
   };
@@ -332,7 +333,9 @@ const TextPostCard: React.FC<Props> = (props) => {
           </View>
         </View>
 
-        <View className="my-2"><Text>{postContent}</Text></View>
+        <View className="my-2">
+          <Text>{postContent}</Text>
+        </View>
       </View>
 
       <Modal
@@ -350,9 +353,13 @@ const TextPostCard: React.FC<Props> = (props) => {
               </Pressable>
             </View>
             <ScrollView>
-              {commentError && <Text className="text-red-500">{commentError}</Text>}
+              {commentError && (
+                <Text className="text-red-500">{commentError}</Text>
+              )}
               {comments.length === 0 ? (
-                <Text className="text-center text-lightgray mt-4">Keine Kommentare vorhanden</Text>
+                <Text className="text-center text-lightgray mt-4">
+                  Keine Kommentare vorhanden
+                </Text>
               ) : (
                 comments.map((comment) => (
                   <View
@@ -364,7 +371,9 @@ const TextPostCard: React.FC<Props> = (props) => {
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
-                      <Text className="font-bold">{comment.author.username}</Text>
+                      <Text className="font-bold">
+                        {comment.author.username}
+                      </Text>
                       <Text>{comment.content}</Text>
                       <Text className="text-xs text-lightgray">
                         {new Date(comment.creationDate).toLocaleString()}
