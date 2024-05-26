@@ -79,7 +79,7 @@ const FeedScreen = () => {
     } catch (error) {
       console.error("Error loading posts:", error);
       setErrorText(
-        "There are issues communicating with the server, please try again later."
+        "There are issues communicating with the server, please try again later.",
       );
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ const FeedScreen = () => {
   const getCityFromCoordinates = async (latitude: any, longitude: any) => {
     try {
       const response = await fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=de`,
       );
       if (response.ok) {
         const data = await response.json();
@@ -136,7 +136,7 @@ const FeedScreen = () => {
       if (post.location && post.location.latitude && post.location.longitude) {
         const city = await getCityFromCoordinates(
           post.location.latitude,
-          post.location.longitude
+          post.location.longitude,
         );
         updatedPosts.push({ ...post, city });
       } else {
@@ -195,9 +195,7 @@ const FeedScreen = () => {
           key={`global-${index}`}
           postId={post.postId}
           username={post.author.username}
-          profilePic={
-            post.author.profilePictureUrl || "defaultProfilePicUrl"
-          }
+          profilePic={post.author.profilePictureUrl || "defaultProfilePicUrl"}
           date={post.creationDate}
           postContent={post.content}
           city={loadingCities ? "Loading city..." : post.city}
