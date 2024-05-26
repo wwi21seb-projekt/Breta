@@ -62,7 +62,6 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [commentError, setCommentError] = useState<string | null>(null);
   const isAuthenticated = useCheckAuthentication();
   const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
- 
 
   useEffect(() => {
     fetchComments();
