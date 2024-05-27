@@ -92,11 +92,10 @@ export default function App() {
   const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
+  notificationListener.current =
+    Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
       });
-
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
