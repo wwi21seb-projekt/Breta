@@ -301,7 +301,6 @@ const TextPostCard: React.FC<Props> = (props) => {
           setRepostError(data.error.message)
           break;
         default:
-          console.log(response)
           setRepostError("Something went wrong, please try again later.")
       }
     } catch (error) {

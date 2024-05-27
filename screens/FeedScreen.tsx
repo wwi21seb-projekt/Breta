@@ -29,7 +29,6 @@ const FeedScreen = () => {
   const personalLimit = 1000;
 
   useEffect(() => {
-    console.log(lastPostId)
     if (token) {
       fetchPosts("personal");
     }
