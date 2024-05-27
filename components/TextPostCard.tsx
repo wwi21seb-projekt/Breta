@@ -58,7 +58,6 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
   const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
-  const [isPostRepost, setsPostRepost] = useState(false)
   const [repostError, setRepostError] = useState("")
 
   useEffect(() => {
