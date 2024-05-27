@@ -14,6 +14,7 @@ export type RootStackParamList = {
   FollowerList: { username: string };
   FollowingList: { username: string };
   EditProfile: { user: any };
+  Notifications: undefined;
 };
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();

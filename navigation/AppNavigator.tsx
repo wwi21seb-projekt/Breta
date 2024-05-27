@@ -16,6 +16,7 @@ import FollowingList from "../screens/FollowingListScreen";
 import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
 import { useAuth } from "../authentification/AuthContext";
+import NotificationScreen from "../screens/NotificationScreen";
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,10 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
           {isAuthenticated && (
             <>
+              <Stack.Screen
+                name="Notifications"
+                component={NotificationScreen}
+              />
               <Stack.Screen name="FollowerList" component={FollowerList} />
               <Stack.Screen name="FollowingList" component={FollowingList} />
               <Stack.Screen name="GeneralProfile" component={GeneralProfile} />

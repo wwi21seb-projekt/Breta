@@ -13,6 +13,7 @@ import { baseUrl } from "../env";
 import { navigate, reset } from "../navigation/NavigationService";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
+import { registerForPushNotificationsAsync } from "../screens/NotificationScreen";
 
 interface AuthContextType {
   token: string | null;
@@ -153,6 +154,64 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  async function registerDeviceForNotifications(authToken: any) {
+    let tokenError;
+    let registerTokenError;
+    let deviceToken: string = "";
+    try {
+      deviceToken = (await registerForPushNotificationsAsync()) ?? "";
+    } catch (error) {
+      tokenError = error;
+    }
+    if (!tokenError) {
+      let response;
+      let data;
+      try {
+        response = await fetch(`${baseUrl}push/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            type: "expo",
+            token: deviceToken,
+          }),
+        });
+        data = await response.json();
+        switch (response.status) {
+          case 201:
+            console.log(
+              "Device successfully registered for Notifacations! PushToken: ",
+              deviceToken,
+            );
+            break;
+          case 401:
+            registerTokenError =
+              "401 Error: " +
+              data.error.title +
+              "\nMessage: " +
+              data.error.message;
+            break;
+          case 400:
+            registerTokenError =
+              "400 Error: " +
+              data.error.title +
+              "\nMessage: " +
+              data.error.message;
+            break;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      if (registerTokenError) {
+        console.log(registerTokenError);
+      }
+    } else {
+      console.log(tokenError);
+    }
+  }
+
   const authContext: AuthContextType = {
     login: async (
       username,
@@ -184,6 +243,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             await AsyncStorage.setItem("token", data.token);
             await AsyncStorage.setItem("refreshToken", data.refreshToken);
             await AsyncStorage.setItem("user", username);
+            //register device to Navigationservice
+            await registerDeviceForNotifications(data.token);
             navigate("Feed");
             break;
           case 401:
@@ -202,7 +263,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         }
       } catch (error) {
         setServerError(
-          "There are issues communicating with the server, please try again later.",
+          "There are issues communicating with the server, please try again later.\n" +
+            error,
         );
       }
     },
