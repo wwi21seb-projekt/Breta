@@ -18,6 +18,8 @@ import LoginPopup from "./LoginPopup";
 import { useAuth } from "../authentification/AuthContext";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import ErrorComp from "./ErrorComp";
+import CommentIcon from "./CommentIcon";
+import LikeIcon from "./LikeIcon";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -346,27 +348,13 @@ const TextPostCard: React.FC<Props> = (props) => {
                   className="mr-1"
                 />
               </TouchableOpacity>
-              
-              <TouchableOpacity onPress={openCommentModal}>
-                <Ionicons
-                  name="chatbox-ellipses-outline"
-                  size={18}
-                  color={COLORS.black}
-                  className="mr-1"
-                />
-              </TouchableOpacity> 
-              <TouchableOpacity
-                className="flex-row items-center"
-                onPress={handleLikePress}
-              >
-                <Ionicons
-                  name={isLiked ? "heart" : "heart-outline"}
-                  size={18}
-                  color={isLiked ? COLORS.primary : "black"}
-                  className="mr-1"
-                />
-                <Text className="ml-1">{formatLikes(likes)}</Text>
-              </TouchableOpacity>
+              <CommentIcon onPress={openCommentModal}/>
+              <LikeIcon
+                isLiked={isLiked}
+                likes={likes}
+                handleLikePress={handleLikePress}
+                formatLikes={formatLikes}
+              />
             </View>
             <Text className="text-xs text-lightgray text-l "> {date.split("T")[0]}</Text>
           </View>
@@ -381,27 +369,14 @@ const TextPostCard: React.FC<Props> = (props) => {
                 <Text className="font-bold">{username}</Text>
                 <Text className="text-xs text-lightgray"> {city}</Text>
               </View>
-                <TouchableOpacity onPress={openCommentModal}>
-                  <Ionicons
-                    name="chatbox-ellipses-outline"
-                    size={18}
-                    color={COLORS.black}
-                    className="mr-1"
-                  />
-                </TouchableOpacity> 
-                <TouchableOpacity
-                  className="flex-row items-center"
-                  onPress={handleLikePress}
-                >
-                  <Ionicons
-                    name={isLiked ? "heart" : "heart-outline"}
-                    size={18}
-                    color={isLiked ? COLORS.primary : "black"}
-                    className="mr-1"
-                  />
-                  <Text className="ml-1">{formatLikes(likes)}</Text>
-                </TouchableOpacity>
-              </View>
+              <CommentIcon onPress={openCommentModal}/>
+              <LikeIcon
+                isLiked={isLiked}
+                likes={likes}
+                handleLikePress={handleLikePress}
+                formatLikes={formatLikes}
+              />
+              </View>,
               <Text className="text-xs text-lightgray text-l mt-[-14] mb-1"> {date.split("T")[0]}</Text>
             <View
             className="w-full bg-white rounded-full p-4 z-10 relative"
