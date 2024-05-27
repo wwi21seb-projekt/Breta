@@ -167,7 +167,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       let response;
       let data;
       try {
-        console.log("deviceToken to Backend: " + deviceToken);
         response = await fetch(`${baseUrl}push/register`, {
           method: "POST",
           headers: {
@@ -180,7 +179,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           }),
         });
         data = await response.json();
-        console.log(response.status);
         switch (response.status) {
           case 201:
             console.log(
