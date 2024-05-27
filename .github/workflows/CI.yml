@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 jobs:
-  lint-format-build:
+  lint-build:
     runs-on: ubuntu-latest
     steps:
       #setup
@@ -50,14 +50,6 @@ jobs:
       # lint
       - name: Run ESLint
         run: npm run lint
-      # format
-      - name: Format Code with Prettier
-        run: npm run format
-      - name: Auto Commit formated code
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Apply formatting changes
-          branch: ${{ github.head_ref }}
       # build
       - name: Build Android app
         run: eas build --platform android --profile apk --local --output ${{ github.workspace }}/app-release.apk
