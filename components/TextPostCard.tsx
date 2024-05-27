@@ -16,30 +16,20 @@ import { baseUrl } from "../env";
 import LoginPopup from "./LoginPopup";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import { useAuth } from "../authentification/AuthContext";
+import Comment from "../components/types/Comment";
 
 const windowHeight = Dimensions.get("window").height;
-
-interface Comment {
-  commentId: string;
-  content: string;
-  author: {
-    username: string;
-    nickname: string;
-    profilePictureURL: string;
-  };
-  creationDate: string;
-}
 
 interface Props {
   postId: string;
   username: string;
   profilePic: string;
   date: string;
-  initialLikes?: number;
-  postContent: any;
+  initialLikes: number;
+  postContent: string;
   style?: React.CSSProperties;
   city: string;
-  initialLiked?: boolean;
+  initialLiked: boolean;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
@@ -65,8 +55,11 @@ const TextPostCard: React.FC<Props> = (props) => {
  
 
   useEffect(() => {
-    fetchComments();
-    fetchLikeStatus();
+    if(token) {
+      fetchComments();
+      fetchLikeStatus();
+    }
+
   }, []);
 
   const fetchComments = async () => {
@@ -102,7 +95,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   };
 
   const fetchLikeStatus = async () => {
-    const url = `${baseUrl}posts/${postId}/like-status`;
+    const url = `${baseUrl}posts/${postId}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -114,8 +107,9 @@ const TextPostCard: React.FC<Props> = (props) => {
 
       if (response.ok) {
         const data = await response.json();
-        setIsLiked(data.isLiked);
+        setIsLiked(data.liked);
         setLikes(data.likes);
+       
       } else {
         handleFetchError(response.status);
       }
@@ -358,7 +352,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                     className="flex-row items-start py-3 border-b border-lightgray"
                   >
                     <Image
-                      source={{ uri: comment.author.profilePictureURL }}
+                      source={{ uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }}
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
