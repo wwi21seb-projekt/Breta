@@ -58,7 +58,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
   const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
-  const [isPostRepost, setisPostRepost] = useState(false)
+  const [isPostRepost, setsPostRepost] = useState(false)
   const [repostError, setRepostError] = useState("")
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const TextPostCard: React.FC<Props> = (props) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      let data = await response.json();
+      const data = await response.json();
       switch (response.status) {
         case 200:
           if (data) {
@@ -144,7 +144,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             setCommentError("");
           }
         } else {
-          let data = await response.json()
+          const data = await response.json()
           switch (response.status) {
             case 401:
             case 404:
@@ -186,10 +186,11 @@ const TextPostCard: React.FC<Props> = (props) => {
           break;
         case 401:
         case 404:
-        case 409:
-          let data = await response.json()
+        case 409:{
+          const data = await response.json()
           setRepostError(data.error.message)
           break;
+        }
         default:
           setRepostError("Something went wrong, please try again later.")
       }
@@ -224,10 +225,11 @@ const TextPostCard: React.FC<Props> = (props) => {
           break;
         case 401:
         case 404:
-        case 409:
-          let data = await response.json()
+        case 409:{
+          const data = await response.json()
           setRepostError(data.error.message)
           break;
+        }
         default:
           setRepostError("Something went wrong, please try again later.")
       }
@@ -296,10 +298,11 @@ const TextPostCard: React.FC<Props> = (props) => {
           break;
         case 400:
         case 401:
-        case 404:
-          let data = await response.json()
+        case 404:{
+          const data = await response.json()
           setRepostError(data.error.message)
           break;
+        }
         default:
           setRepostError("Something went wrong, please try again later.")
       }
