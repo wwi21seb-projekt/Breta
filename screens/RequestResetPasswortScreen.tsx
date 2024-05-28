@@ -50,12 +50,12 @@ const RequestResetPasswordScreen = () => {
       <View className="mt-5">
       <FloatingLabelInput
          errorText={errorTextUsername}
-         noErrorText={true}
          label="Username"
          value={username}
          onChangeText={(text) => {
            setUsername(text);
            setIsUsernameFilled(!!text);
+           setErrorTextUsername("")
          }}
        />
        </View>

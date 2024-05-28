@@ -36,35 +36,31 @@ const SetResetPasswordScreen = () => {
   const [isReseted, setIsReseted] = useState(false);
   const [username, setUsername] = useState("");
   const [isUsernameFilled, setIsUsernameFilled] = useState(false);
-  const [errorTextUsername, setErrorTextUsername] = useState("");
-  const [errorCodeField, setErrorCodeField] = useState("");
   const [errorText, setErrorText] = useState("");
 
   const resetPassword = async () => {
     let response;
     let data;
     try {
-      response = await fetch(`${baseUrl}users/${username}/set-password`, {
+      response = await fetch(`${baseUrl}users/${username}/reset-password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        body: JSON.stringify({
+          token: value,
+          newPassword: newPassword,
+        }),
       });
       switch (response.status) {
         case 204:
           setIsReseted(true);
           break;
         case 400:
-          data = await response.json();
-          setErrorText(data.error.message);
-          break;
         case 403:
-          data = await response.json();
-          setErrorCodeField(data.error.message);
-          break;
         case 404:
           data = await response.json();
-          setErrorTextUsername(data.error.message);
+          setErrorText(data.error.message);
           break;
         default:
           setErrorText("Something went wrong, please try again later.");
@@ -89,10 +85,10 @@ const SetResetPasswordScreen = () => {
           <Text className="text-base">You can now</Text>
           <TouchableOpacity onPress={() => navigate("Authentification")}>
             <Text className="text-primary text-base underline font-semibold">
-              {" "}
-              login with your new password.{" "}
+              {" "}login{" "}
             </Text>
           </TouchableOpacity>
+          <Text className="text-base">with your new password.</Text>
         </View>
       </View>
     );
@@ -127,14 +123,7 @@ const SetResetPasswordScreen = () => {
     )}
   />
   </View>
-  {errorCodeField && (
-    <Text className="mt-1 mx-8 text-xs text-red">
-      {errorCodeField}
-    </Text>
-  )}
   <FloatingLabelInput
-        errorText={errorTextUsername}
-        noErrorText={true}
         label="Username"
         value={username}
         onChangeText={(text) => {
