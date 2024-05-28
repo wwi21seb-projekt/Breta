@@ -487,7 +487,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         <View className="flex-1 justify-end">
           <View className="h-3/4 bg-white rounded-t-3xl p-4 shadow-lg">
             <View className="flex-row justify-between items-center pb-3 border-b border-lightgray">
-              <Text className="text-lg font-bold">Kommentare</Text>
+              <Text className="text-lg font-bold">Comments</Text>
               <Pressable onPress={closeCommentModal}>
                 <Ionicons name="close" size={24} color="black" />
               </Pressable>
@@ -498,7 +498,7 @@ const TextPostCard: React.FC<Props> = (props) => {
               )}
               {comments.length === 0 ? (
                 <Text className="text-center text-lightgray mt-4">
-                  Keine Kommentare vorhanden
+                  No Comments available
                 </Text>
               ) : (
                 comments.map((comment) => (
