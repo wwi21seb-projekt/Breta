@@ -27,10 +27,10 @@ const SetResetPasswordScreen = () => {
     value,
     setValue,
   });
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [newPasswordErrorText, setNewPasswordErrorText] = useState("");
-  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] =
+  const [newResetPassword, setNewResetPassword] = useState("");
+  const [confirmNewResetPassword, setConfirmNewResetPassword] = useState("");
+  const [newResetPasswordErrorText, setNewResetPasswordErrorText] = useState("");
+  const [confirmNewResetPasswordErrorText, setConfirmNewResetPasswordErrorText] =
     useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [isReseted, setIsReseted] = useState(false);
@@ -49,7 +49,7 @@ const SetResetPasswordScreen = () => {
         },
         body: JSON.stringify({
           token: value,
-          newPassword: newPassword,
+          newPassword: newResetPassword,
         }),
       });
       switch (response.status) {
@@ -133,30 +133,30 @@ const SetResetPasswordScreen = () => {
       />
    <FloatingLabelInput
       textContentType="oneTimeCode"
-      errorText={newPasswordErrorText}
+      errorText={newResetPasswordErrorText}
       secureTextEntry={true}
       label="New password"
-      value={newPassword}
+      value={newResetPassword}
       onChangeText={(text: string) => {
-      handleNewPasswordChange(text, setNewPasswordErrorText, setNewPassword);
+      handleNewPasswordChange(text, setNewResetPasswordErrorText, setNewResetPassword);
       }}
       onBlur={() => {
-      checkNewPassword(newPassword, setNewPasswordErrorText);
-      updateFormValidity(newPassword, setNewPasswordErrorText, confirmNewPassword, setConfirmNewPasswordErrorText, setIsFormValid);
+      checkNewPassword(newResetPassword, setNewResetPasswordErrorText);
+      updateFormValidity(newResetPassword, setNewResetPasswordErrorText, confirmNewResetPassword, setConfirmNewResetPasswordErrorText, setIsFormValid);
       }}
     />
     <FloatingLabelInput
       textContentType="oneTimeCode"
-      errorText={confirmNewPasswordErrorText}
+      errorText={confirmNewResetPasswordErrorText}
       secureTextEntry={true}
       label="Confirm new password"
-      value={confirmNewPassword}
+      value={confirmNewResetPassword}
       onChangeText={(text: string) => {
-      handleConfirmNewPasswordChange(text, setConfirmNewPasswordErrorText, setConfirmNewPassword);
+      handleConfirmNewPasswordChange(text, setConfirmNewResetPasswordErrorText, setConfirmNewResetPassword);
       }}
       onBlur={() => {
-      checkConfirmNewPassword(confirmNewPassword, newPassword, setConfirmNewPasswordErrorText)
-      updateFormValidity(newPassword, setNewPasswordErrorText, confirmNewPassword, setConfirmNewPasswordErrorText, setIsFormValid);
+      checkConfirmNewPassword(confirmNewResetPassword, newResetPassword, setConfirmNewResetPasswordErrorText)
+      updateFormValidity(newResetPassword, setNewResetPasswordErrorText, confirmNewResetPassword, setConfirmNewResetPasswordErrorText, setIsFormValid);
       }}
     />
     <TouchableOpacity
