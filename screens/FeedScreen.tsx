@@ -171,7 +171,7 @@ const FeedScreen = () => {
               city={loadingCities ? "Loading city..." : post.city}
               postId={post.postId}
               repostAuthor={post.repost == null ? "" : post.repost.author.username}
-              isRepost={post.repost == null ? false : true}
+              isRepost={post.repost !== null}
               initialLikes={post.likes}
               initialLiked={post.liked}
             />
@@ -202,7 +202,7 @@ const FeedScreen = () => {
           city={loadingCities ? "Loading city..." : post.city}
           postId={post.postId}
           repostAuthor={post.repost == null ? "" : post.repost.author.username}
-          isRepost={post.repost == null? false : true}
+          isRepost={post.repost !== null}
           initialLikes={post.likes}
           initialLiked={post.liked}
         />

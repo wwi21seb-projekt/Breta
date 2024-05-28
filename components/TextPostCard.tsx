@@ -59,7 +59,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
-  const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
+  const [loginPopupVisible, setLoginPopupVisible] = useState(false);
   const [repostError, setRepostError] = useState("")
   const [confirmationVisible, setConfirmationVisible] = useState(false)
 
@@ -545,7 +545,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={isLoginPopupVisible}
+        visible={loginPopupVisible}
         onRequestClose={() => setLoginPopupVisible(false)}
       >
         <LoginPopup/>

@@ -1,8 +1,7 @@
-// LikeButton.tsx
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { COLORS } from '../theme'; // Stellen Sie sicher, dass der Pfad korrekt ist
+import { COLORS } from '../theme'; 
 
 interface LikeButtonProps {
   isLiked: boolean;
