@@ -20,7 +20,7 @@ const LikeIcon: React.FC<LikeButtonProps> = ({ isLiked, likes, handleLikePress, 
       <Ionicons
         name={isLiked ? "heart" : "heart-outline"}
         size={18}
-        color={isLiked ? COLORS.primary : "black"}
+        color={isLiked ? COLORS.primary : COLORS.black}
         className="mr-1"
       />
       <Text className="ml-1">{formatLikes(likes)}</Text>

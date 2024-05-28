@@ -61,6 +61,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const isAuthenticated = useCheckAuthentication();
   const [isLoginPopupVisible, setLoginPopupVisible] = useState(false);
   const [repostError, setRepostError] = useState("")
+  const [confirmationVisible, setConfirmationVisible] = useState(false)
 
   useEffect(() => {
     if(token) {
@@ -126,27 +127,25 @@ const TextPostCard: React.FC<Props> = (props) => {
           body: JSON.stringify(newComment),
         });
         
-        if (response.ok) {
-          const text = await response.text();
-          if (text) {
-            const addedComment = JSON.parse(text);
-            const formattedComment = {
-              commentId: addedComment.commentId || `${Date.now()}`,
-              content: addedComment.content,
-              author: {
-                username: user,
-                nickname: "",
-                profilePictureURL: "",
-              },
-              creationDate: new Date().toISOString(),
-            };
-            setComments([...comments, formattedComment]);
-            setCommentText("");
-            setCommentError("");
-          }
-        } else {
           const data = await response.json()
           switch (response.status) {
+            case 201:
+              if (data) {
+                const formattedComment = {
+                  commentId: data.commentId || `${Date.now()}`,
+                  content: data.content,
+                  author: {
+                    username: user,
+                    nickname: "",
+                    profilePictureURL: "",
+                  },
+                  creationDate: new Date().toISOString(),
+                };
+                setComments([...comments, formattedComment]);
+                setCommentText("");
+                setCommentError("");
+              }
+              break;
             case 401:
             case 404:
             case 409:
@@ -154,9 +153,7 @@ const TextPostCard: React.FC<Props> = (props) => {
               break;
             default:
               setRepostError("Something went wrong, please try again later.")
-          }
-        }
-        
+          }  
       } catch (error) {
         setCommentError(
           "There are issues communicating with the server, please try again later.",
@@ -275,10 +272,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   };
 
   const repostPost =  async () => {
-    if (!isAuthenticated) {
-      setLoginPopupVisible(true);
-      return;
-    }
+    
     let response;
 
     try {
@@ -312,21 +306,96 @@ const TextPostCard: React.FC<Props> = (props) => {
         "There are issues communicating with the server, please try again later.",
       );
     }
+    setConfirmationVisible(false)
   }
-    
-  
 
+  const repostConfirm = async () => {
 
+    if (!isAuthenticated) {
+      setLoginPopupVisible(true);
+      return;
+    }
+    setConfirmationVisible(true)
+    return(
+      <Modal
+          animationType="none"
+          transparent={true}
+          visible={confirmationVisible}
+          onRequestClose={() => {
+            setConfirmationVisible(false);
+          }}
+        >
+          <View
+            className="flex-1 justify-center items-center"
+            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
+          >
+            <View className="bg-white rounded-3xl px-8 py-4">
+              <Text className="text-lg mb-10">
+                Do you really want to delete this post?
+              </Text>
+              <View className="flex-row">
+                <TouchableOpacity onPress={() => repostPost}>
+                  <Text className="text-red text-base font-bold">Delete</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="ml-auto"
+                  onPress={() => {
+                    setConfirmationVisible(false);
+                  }}
+                >
+                  <Text className="text-black text-base font-bold">Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+    )
+  }    
   if(repostError !== ""){
       return <ErrorComp errorText={repostError}></ErrorComp>;
   }  else{
   return (
     <View className="items-center mx-2.5 mb-5">
+      <Modal
+          animationType="none"
+          transparent={true}
+          visible={confirmationVisible}
+          onRequestClose={() => {
+            setConfirmationVisible(false);
+          }}
+        >
+          <View
+            className="flex-1 justify-center items-center"
+            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
+          >
+            <View className="bg-white rounded-3xl px-8 py-4">
+              <Text className="text-lg mb-10">
+                Do you really want to repost this post?
+              </Text>
+              <View className="flex-row">
+                <TouchableOpacity onPress={() => repostPost()}>
+                  <Text className="text-red text-base font-bold">Repost</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="ml-auto"
+                  onPress={() => {
+                    setConfirmationVisible(false);
+                  }}
+                >
+                  <Text className="text-black text-base font-bold">Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       {!isRepost ? (
       <View
         className="w-full bg-white rounded-full p-4 z-20 relative"
         style={{ ...SHADOWS.small }}
       >
+        
         <View className="flex-row items-center justify-between">
           <Image
             source={{ uri: profilePic || "defaultProfilePicUrl" }}
@@ -340,7 +409,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
-            <TouchableOpacity onPress={repostPost}>
+            <TouchableOpacity onPress={repostConfirm}>
                 <Ionicons
                   name="repeat-outline"
                   size={18}
@@ -376,7 +445,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 handleLikePress={handleLikePress}
                 formatLikes={formatLikes}
               />
-              </View>,
+              </View>
               <Text className="text-xs text-lightgray text-l mt-[-14] mb-1"> {date.split("T")[0]}</Text>
             <View
             className="w-full bg-white rounded-full p-4 z-10 relative"
