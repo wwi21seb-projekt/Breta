@@ -1,28 +1,15 @@
 import { useState } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { COLORS } from "../theme";
-
-import {
-  CodeField,
-  Cursor,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from "react-native-confirmation-code-field";
 import { baseUrl } from "../env";
 import Error from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
-
-const CELL_COUNT = 6;
+import ConfirmationCodeField from "../components/ConfirmationCodeField";
 
 const ConfirmCodeScreen = () => {
   const { user, activateUser } = useAuth();
   const [value, setValue] = useState("");
-  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value,
-    setValue,
-  });
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [alreadyActivated, setAlreadyActivated] = useState(false);
   const [confirmErrorText, setConfirmErrorText] = useState("");
@@ -111,29 +98,7 @@ const ConfirmCodeScreen = () => {
         <Text className="text-center text-lg font-bold mb-2">
           Please confirm the code here:
         </Text>
-        <CodeField
-          ref={ref}
-          {...props}
-          value={value}
-          onChangeText={setValue}
-          cellCount={CELL_COUNT}
-          keyboardType="number-pad"
-          textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }) => (
-            <View
-              key={index}
-              style={{
-                borderColor: isFocused ? COLORS.primary : COLORS.lightgray,
-              }}
-              className="w-10 h-10 border-2 rounded justify-center"
-              onLayout={getCellOnLayoutHandler(index)}
-            >
-              <Text className="text-base text-center">
-                {symbol || (isFocused ? <Cursor /> : null)}
-              </Text>
-            </View>
-          )}
-        />
+        <ConfirmationCodeField value={value} setValue={setValue}/>
         {!!confirmErrorText && (
           <Text className="text-red text-sm pt-3 px-8 text-center">
             {confirmErrorText}

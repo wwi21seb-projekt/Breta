@@ -1,12 +1,6 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import { COLORS} from "../theme";
 import { useState } from "react";
-import {
-    CodeField,
-    Cursor,
-    useBlurOnFulfill,
-    useClearByFocusCell,
-  } from "react-native-confirmation-code-field";
 import FloatingLabelInput from "../components/FloatingLabelInput";
 import { checkNewPassword } from "../components/functions/CheckNewPassword";
 import { checkConfirmNewPassword } from "../components/functions/CheckConfirmNewPassword";
@@ -17,16 +11,10 @@ import { baseUrl } from "../env";
 import ErrorComp from "../components/ErrorComp";
 import { navigate } from "../navigation/NavigationService";
 import { ScrollView } from "react-native-gesture-handler";
-
-const CELL_COUNT = 6;
+import ConfirmationCodeField from "../components/ConfirmationCodeField";
 
 const SetResetPasswordScreen = () => {
     const [value, setValue] = useState("");
-    const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
-    const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value,
-    setValue,
-  });
   const [newResetPassword, setNewResetPassword] = useState("");
   const [confirmNewResetPassword, setConfirmNewResetPassword] = useState("");
   const [newResetPasswordErrorText, setNewResetPasswordErrorText] = useState("");
@@ -99,29 +87,7 @@ const SetResetPasswordScreen = () => {
       showsVerticalScrollIndicator={false}>
       <Text className="my-4 text-base">A confirmation code has been sent to the corresponding email address.</Text>
       <View className="mb-6">
-    <CodeField
-    ref={ref}
-    {...props}
-    value={value}
-    onChangeText={setValue}
-    cellCount={CELL_COUNT}
-    keyboardType="number-pad"
-    textContentType="oneTimeCode"
-    renderCell={({ index, symbol, isFocused }) => (
-      <View
-        key={index}
-        style={{
-          borderColor: isFocused ? COLORS.primary : COLORS.lightgray,
-        }}
-        className="w-10 h-10 border-2 rounded justify-center"
-        onLayout={getCellOnLayoutHandler(index)}
-      >
-        <Text className="text-base text-center">
-          {symbol || (isFocused ? <Cursor /> : null)}
-        </Text>
-      </View>
-    )}
-  />
+    <ConfirmationCodeField value={value} setValue={setValue}/>
   </View>
   <FloatingLabelInput
         label="Username"
