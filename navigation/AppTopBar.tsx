@@ -35,11 +35,14 @@ const AppTopBar = () => {
     headerTitle = "Activate account";
   } else if (route.name === "EditProfile") {
     headerTitle = "Edit profile";
+  } else if (route.name === "Notifications") {
+    headerTitle = "Notifications";
   } else if (route.name === "SetReset") {
     headerTitle = "Reset password";
   } else {
     headerTitle = "";
   }
+  //set new Headertitle "Notifications"
 
   const handleBack = () => {
     if (route.name === "Authentification") {
@@ -60,6 +63,16 @@ const AppTopBar = () => {
         {canGoBack ? (
           <TouchableOpacity className="w-6" onPress={() => handleBack()}>
             <Ionicons name="arrow-back" size={26} color={COLORS.black} />
+          </TouchableOpacity>
+        ) : (
+          <></>
+        )}
+        {isAuthenticated && headerTitle === "" ? (
+          <TouchableOpacity
+            className="w-6"
+            onPress={() => navigate("Notifications")}
+          >
+            <Ionicons name="notifications-outline" size={26} />
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
@@ -90,7 +103,7 @@ const AppTopBar = () => {
             <Ionicons name="log-out-outline" size={26} color={COLORS.black} />
           </TouchableOpacity>
         ) : (
-          <View className="w-6" />
+          <></>
         )}
       </View>
     </SafeAreaView>

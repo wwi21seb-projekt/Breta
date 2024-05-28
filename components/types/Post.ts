@@ -1,14 +1,20 @@
 interface Post {
   postId: string;
-  author: {
-    username: string;
-    profilePictureUrl: string;
-  };
+  author: Author;
   creationDate: string;
   content: string;
-  likes: string;
-  location: string;
-  city: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  city?: any;
+  likes: number;
+  liked: boolean;
+}
+
+interface Author {
+  username: string;
+  profilePictureUrl: string;
 }
 
 export default Post;

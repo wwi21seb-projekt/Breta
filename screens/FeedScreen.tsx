@@ -13,11 +13,12 @@ import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
 import { NativeScrollEvent } from "react-native";
+import Post from "../components/types/Post";
 
 const FeedScreen = () => {
   const { token } = useAuth();
-  const [postsPersonal, setPostsPersonal] = useState([]);
-  const [postsGlobal, setPostsGlobal] = useState([]);
+  const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
+  const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,7 +57,6 @@ const FeedScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (response.ok) {
         const data = await response.json();
         if (type === "personal") {
@@ -64,7 +64,7 @@ const FeedScreen = () => {
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false);
           setPostsPersonal(updatedPersonalPosts);
-        } else {
+        } else{
           setLoadingCities(true);
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setLoadingCities(false);
@@ -96,6 +96,7 @@ const FeedScreen = () => {
     }
     setRefreshing(true);
     fetchPosts("personal");
+    fetchPosts("global");
   };
 
   const handleScroll = ({
@@ -130,7 +131,7 @@ const FeedScreen = () => {
     }
   };
 
-  const loadCitiesForPosts = async (posts: any) => {
+  const loadCitiesForPosts = async (posts: Post[]) => {
     const updatedPosts = [];
     for (const post of posts) {
       if (post.location && post.location.latitude && post.location.longitude) {
@@ -168,6 +169,11 @@ const FeedScreen = () => {
               date={post.creationDate}
               postContent={post.content}
               city={loadingCities ? "Loading city..." : post.city}
+              postId={post.postId}
+              repostAuthor={post.repost == null ? "" : post.repost.author.username}
+              isRepost={post.repost !== null}
+              initialLikes={post.likes}
+              initialLiked={post.liked}
             />
           ))}
         </>
@@ -194,6 +200,11 @@ const FeedScreen = () => {
           date={post.creationDate}
           postContent={post.content}
           city={loadingCities ? "Loading city..." : post.city}
+          postId={post.postId}
+          repostAuthor={post.repost == null ? "" : post.repost.author.username}
+          isRepost={post.repost !== null}
+          initialLikes={post.likes}
+          initialLiked={post.liked}
         />
       ))}
       {hasMoreGlobalPosts && (
