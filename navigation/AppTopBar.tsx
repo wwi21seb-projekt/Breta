@@ -37,6 +37,8 @@ const AppTopBar = () => {
     headerTitle = "Edit profile";
   } else if (route.name === "Notifications") {
     headerTitle = "Notifications";
+  } else if (route.name === "SetReset") {
+    headerTitle = "Reset password";
   } else {
     headerTitle = "";
   }

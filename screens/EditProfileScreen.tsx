@@ -15,6 +15,11 @@ import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import FloatingLabelInput from "../components/FloatingLabelInput";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { checkNewPassword } from "../components/functions/CheckNewPassword";
+import { checkConfirmNewPassword } from "../components/functions/CheckConfirmNewPassword";
+import { handleNewPasswordChange } from "../components/functions/HandleNewPasswordChange";
+import { handleConfirmNewPasswordChange } from "../components/functions/HandleConfirmNewPasswordChange";
+import { updateFormValidity } from "../components/functions/FormValidity";
 
 type RouteParams = {
   user: User;
@@ -46,11 +51,6 @@ const EditProfileScreen = () => {
 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
-
-  const updateFormValidity = () => {
-    const isValid = checkNewPassword() && checkConfirmNewPassword();
-    setIsFormValid(isValid);
-  };
 
   const handleTrivialInfoChange = async () => {
     let response;
@@ -108,60 +108,6 @@ const EditProfileScreen = () => {
   const handleStatusChange = (text: string) => {
     if (text.length <= maxCharactersStatus) {
       setStatus(text);
-    }
-  };
-
-  const checkNewPassword = () => {
-    if (newPassword.length === 0) {
-      setNewPasswordErrorText("");
-      return false;
-    } else if (newPassword.length >= 8) {
-      if (
-        /[A-Z]/.test(newPassword) &&
-        /[a-z]/.test(newPassword) &&
-        /\d/.test(newPassword) &&
-        /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(newPassword)
-      ) {
-        setNewPasswordErrorText("");
-        return true;
-      } else {
-        setNewPasswordErrorText(
-          "The password must contain at least one lowercase letter, one uppercase letter, one number and one special character.",
-        );
-        return false;
-      }
-    } else {
-      setNewPasswordErrorText(
-        "The password must be at least 8 characters long.",
-      );
-      return false;
-    }
-  };
-
-  const handleNewPasswordChange = (text: string) => {
-    setNewPasswordErrorText("");
-    if (text.length <= 20) {
-      setNewPassword(text);
-    }
-  };
-
-  const checkConfirmNewPassword = () => {
-    if (confirmNewPassword.length === 0) {
-      setConfirmNewPasswordErrorText("");
-      return false;
-    } else if (newPassword === confirmNewPassword) {
-      setConfirmNewPasswordErrorText("");
-      return true;
-    } else {
-      setConfirmNewPasswordErrorText("The passwords do not match.");
-      return false;
-    }
-  };
-
-  const handleConfirmNewPasswordChange = (text: string) => {
-    setConfirmNewPasswordErrorText("");
-    if (text.length <= 20) {
-      setConfirmNewPassword(text);
     }
   };
 
@@ -329,7 +275,7 @@ const EditProfileScreen = () => {
               secureTextEntry={true}
               label="Old password"
               value={oldPassword}
-              onChangeText={(text: any) => {
+              onChangeText={(text: string) => {
                 setOldPasswordErrorText("");
                 setOldPassword(text);
               }}
@@ -340,10 +286,12 @@ const EditProfileScreen = () => {
               secureTextEntry={true}
               label="New password"
               value={newPassword}
-              onChangeText={handleNewPasswordChange}
+              onChangeText={(text: string) => {
+                handleNewPasswordChange(text, setNewPasswordErrorText, setNewPassword);
+              }}
               onBlur={() => {
-                checkNewPassword();
-                updateFormValidity();
+                checkNewPassword(newPassword, setNewPasswordErrorText);
+                updateFormValidity(newPassword, setNewPasswordErrorText, confirmNewPassword, setConfirmNewPasswordErrorText, setIsFormValid);
               }}
             />
             <FloatingLabelInput
@@ -352,10 +300,12 @@ const EditProfileScreen = () => {
               secureTextEntry={true}
               label="Confirm new password"
               value={confirmNewPassword}
-              onChangeText={handleConfirmNewPasswordChange}
+              onChangeText={(text: string) => {
+                handleConfirmNewPasswordChange(text, setConfirmNewPasswordErrorText, setConfirmNewPassword);
+              }}
               onBlur={() => {
-                checkConfirmNewPassword();
-                updateFormValidity();
+                checkConfirmNewPassword(confirmNewPassword, newPassword, setConfirmNewPasswordErrorText);
+                updateFormValidity(newPassword, setNewPasswordErrorText, confirmNewPassword, setConfirmNewPasswordErrorText, setIsFormValid);
               }}
             />
             <TouchableOpacity

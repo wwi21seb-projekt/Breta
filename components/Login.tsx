@@ -64,6 +64,9 @@ const Login: React.FC<Props> = ({ setServerError }) => {
           setIsPasswordFilled(!!text);
         }}
       />
+      <TouchableOpacity onPress={() => navigate("RequestReset")}>
+        <Text className="text-darkgray underline text-sm mt-1 ml-3">Forgot password</Text>
+      </TouchableOpacity>
       {!!confirmCodeText && (
         <>
           <Text className="text-sm text-red my-1 mx-2">{confirmCodeText}</Text>
