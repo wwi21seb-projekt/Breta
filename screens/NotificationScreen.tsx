@@ -10,6 +10,7 @@ import { Notification } from "../components/types/Notification"
 import NotificationTab from "../components/NotificationTab";
 import { useIsFocused } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 
 
 Notifications.setNotificationHandler({
@@ -92,13 +93,14 @@ export async function registerForPushNotificationsAsync() {
 }
 
 export default function App() {
-  const { token, user } = useAuth();
+  const { token} = useAuth();
   const [expoPushToken] = useState("");
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
   >(undefined);
   const [notificationUser, setNotificationUser] = useState<Notification[]>([])
   const [errorText, setErrorText] = useState("")
+  const [refreshing, setRefreshing] = useState(false);7
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
   const isFocused = useIsFocused();
@@ -126,6 +128,15 @@ export default function App() {
         Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, [isFocused]);
+
+  const onRefresh = () => {
+
+    setRefreshing(true);
+    fetchNotifications()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
 
   const fetchNotifications = async () => {
 
@@ -179,14 +190,18 @@ export default function App() {
         )}
         showsVerticalScrollIndicator={false}
         onEndReachedThreshold={0.2}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}></RefreshControl>}
         className="bg-white"
       ></FlatList>
       ) : (
-        <View className="items-center justify-center flex-0">
-          <Text className="text-xl text-lightgray">You have no new notifications</Text>      
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}></RefreshControl>}>
+        <View className="flex-0 items-center justify-center">
+           <Text className="text-xl text-lightgray">You have no new notifications</Text>      
         </View>
+        </ScrollView>
         )}
+        
     </View>
-  );
+      );
 }
 }
