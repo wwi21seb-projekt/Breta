@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, View, Image, Button, Platform, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, Platform, FlatList } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import { SHADOWS } from "../theme";
 import { useAuth } from "../authentification/AuthContext";
 import { baseUrl } from "../env";
 import { Notification } from "../components/types/Notification"
@@ -21,7 +20,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-async function sendPushNotification(expoPushToken: string) {
+/*async function sendPushNotification(expoPushToken: string) {
   const message = {
     to: expoPushToken,
     sound: "default",
@@ -39,7 +38,7 @@ async function sendPushNotification(expoPushToken: string) {
     },
     body: JSON.stringify(message),
   });
-}
+}*/
 
 function handleRegistrationError(errorMessage: string) {
   alert(errorMessage);
@@ -96,7 +95,7 @@ export default function App() {
   const { token} = useAuth();
   const [expoPushToken] = useState("");
   const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
+   Notifications.Notification | undefined
   >(undefined);
   const [notificationUser, setNotificationUser] = useState<Notification[]>([])
   const [errorText, setErrorText] = useState("")
@@ -151,9 +150,10 @@ export default function App() {
         },
       });
       let data = await response.json()
+      let userNotification
       switch (response.status) {
         case 200:
-          const userNotification = await data.records 
+          userNotification = await data.records 
           setNotificationUser(userNotification)
           break;
         case 401:

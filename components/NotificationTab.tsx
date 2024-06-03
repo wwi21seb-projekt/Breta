@@ -1,10 +1,7 @@
-import UserListItem from "../components/UserListItem";
 import React, { useState } from "react";
-import { View, Image, Text, FlatList, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import { baseUrl } from "../env";
-import { AboRecords, UserRecords } from "../components/types/UserListTypes";
 import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
 import { SHADOWS } from "../theme";
 import { push } from "../navigation/NavigationService";
@@ -24,12 +21,10 @@ const {
     timestamp,
     notificationType,
     username,
-    profilePictureUrl,
     } = props;
   const { token } = useAuth();
   const [errorText, setErrorText] = useState("");
-  const [offset, setOffset] = useState(0);
-
+  
   const deleteNotification = async () => {
 
     let response;
@@ -42,12 +37,13 @@ const {
           Authorization: `Bearer ${token}`,
         },
       });
+      let data;
       switch (response.status) {
         case 204:
           break;
         case 401:
         case 404:
-            const data = await response.json()
+            data = await response.json()
             setErrorText(data.error.message)
           break;
         default:
