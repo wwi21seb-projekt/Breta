@@ -11,7 +11,6 @@ type Props = {
     timestamp: string,
     notificationType: string,
     username: string,
-    profilePictureUrl: string
 }
 
 const NotificationTab: React.FC<Props> = (props) => {
@@ -24,7 +23,7 @@ const {
     } = props;
   const { token } = useAuth();
   const [errorText, setErrorText] = useState("");
-  
+
   const deleteNotification = async () => {
 
     let response;

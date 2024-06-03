@@ -93,13 +93,12 @@ export async function registerForPushNotificationsAsync() {
 
 export default function App() {
   const { token} = useAuth();
-  const [expoPushToken] = useState("");
   const [notification, setNotification] = useState<
    Notifications.Notification | undefined
   >(undefined);
   const [notificationUser, setNotificationUser] = useState<Notification[]>([])
   const [errorText, setErrorText] = useState("")
-  const [refreshing, setRefreshing] = useState(false);7
+  const [refreshing, setRefreshing] = useState(false);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
   const isFocused = useIsFocused();
