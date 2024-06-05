@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../authentification/AuthContext';
-import { COLORS, SIZES, SHADOWS } from '../theme';
+import { COLORS, SHADOWS } from '../theme';
 import { baseUrl } from '../env';
 import Message from '../components/types/Message';
 

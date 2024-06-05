@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Modal,
@@ -142,13 +142,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
 
       const data = await response.json();
   
-      if (!response.ok) {
-        if (data.error && data.error.code === "ERR-001") {
-         
-        } else {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-      } else {
+      if (response.ok) {
         navigate("ChatDetail", { chatId: data.chatId });
       }
     } catch (error) {

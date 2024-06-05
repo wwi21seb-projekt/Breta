@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { useAuth } from '../authentification/AuthContext';
-import { COLORS, SHADOWS } from '../theme';
+import {  SHADOWS } from '../theme';
 import { baseUrl } from '../env';
 import { navigate } from '../navigation/NavigationService';
 import Chat from '../components/types/Chat';
