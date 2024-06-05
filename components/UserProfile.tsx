@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Modal,
@@ -29,7 +29,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
   const [subscriptionId, setSubscriptionId] = useState<string | null>(
-    userInfo.subscriptionId,
+    userInfo.subscriptionId
   );
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [offset, setOffset] = useState(0);
@@ -70,7 +70,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       }
     } catch (error) {
       setErrorText(
-        "There are issues communicating with the server, please try again later.",
+        "There are issues communicating with the server, please try again later."
       );
     } finally {
       setLoading(false);
@@ -106,7 +106,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       }
     } catch (error) {
       setErrorText(
-        "There are issues communicating with the server, please try again later.",
+        "There are issues communicating with the server, please try again later."
       );
     }
   };
@@ -122,8 +122,42 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     React.useCallback(() => {
       setErrorText("");
       fetchPosts(false);
-    }, []),
+    }, [])
   );
+
+  const createChat = async () => {
+    let response;
+    try {
+      response = await fetch(`${baseUrl}chats`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: userInfo.username,
+          content: "Start of the chat"
+        })
+      });
+
+      const data = await response.json();
+  
+      if (!response.ok) {
+        if (data.error && data.error.code === "ERR-001") {
+         
+        } else {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+      } else {
+        navigate("ChatDetail", { chatId: data.chatId });
+      }
+    } catch (error) {
+      
+      navigate("Chat");
+      setErrorText("Failed to create a new chat");
+    }
+  };
+  
 
   const renderHeader = () => {
     return (
@@ -191,7 +225,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
                 className="bg-white py-3 rounded-2xl flex-1"
-                onPress={() => console.log("Start chat!")}
+                onPress={createChat}
               >
                 <Text className="text-center">Chat</Text>
               </TouchableOpacity>
@@ -208,7 +242,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
                     subscriptionId,
                     setSubscriptionId,
                     setErrorText,
-                    setIsHandlingSubscription,
+                    setIsHandlingSubscription
                   )
                 }
               >

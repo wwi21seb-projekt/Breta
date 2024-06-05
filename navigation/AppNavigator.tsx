@@ -17,6 +17,8 @@ import GeneralProfile from "../screens/GeneralProfileScreen";
 import EditProfile from "../screens/EditProfileScreen";
 import { useAuth } from "../authentification/AuthContext";
 import NotificationScreen from "../screens/NotificationScreen";
+import ChatDetailScreen from "../screens/ChatDetailScreen";
+import ChatScreen from "../screens/ChatScreen";
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,8 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Imprint" component={Imprint} />
           <Stack.Screen name="Authentification" component={Authentification} />
           <Stack.Screen name="ConfirmCode" component={ConfirmCode} />
+          <Stack.Screen name="ChatScreen" component={ChatScreen} />
+          <Stack.Screen name="ChatDetail" component={ChatDetailScreen} />
           {isAuthenticated && (
             <>
               <Stack.Screen
