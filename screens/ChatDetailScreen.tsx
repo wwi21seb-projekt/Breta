@@ -101,7 +101,6 @@ const ChatDetailScreen = () => {
         <ScrollView
           ref={scrollViewRef}
           className="flex-1 py-4 px-4"
-          contentContainerStyle={{ paddingBottom: 20 }}
           automaticallyAdjustKeyboardInsets={true}
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
