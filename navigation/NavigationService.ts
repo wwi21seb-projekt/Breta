@@ -15,6 +15,8 @@ export type RootStackParamList = {
   FollowerList: { username: string };
   FollowingList: { username: string };
   EditProfile: { user: any };
+  RequestReset: undefined;
+  SetReset: undefined;
   Notifications: undefined;
 };
 

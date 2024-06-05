@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../theme";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useAuth } from "../authentification/AuthContext";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import {
@@ -13,13 +13,18 @@ import {
   Text,
 } from "react-native";
 import { navigate } from "../navigation/NavigationService";
+import { useCallback, useEffect, useState } from "react";
+import { baseUrl } from "../env";
 
 const AppTopBar = () => {
+  const { token} = useAuth();
   const navigation = useNavigation();
   const route = useRoute();
   const canGoBack = navigation.canGoBack();
   const { logout } = useAuth();
   const isAuthenticated = useCheckAuthentication();
+  const [notificationCount, setNotificationCount] = useState(0)
+  const isFocused = useIsFocused();
 
   let headerTitle: string;
 
@@ -37,6 +42,8 @@ const AppTopBar = () => {
     headerTitle = "Edit profile";
   } else if (route.name === "Notifications") {
     headerTitle = "Notifications";
+  } else if (route.name === "SetReset") {
+    headerTitle = "Reset password";
   } else {
     headerTitle = "";
   }
@@ -49,6 +56,56 @@ const AppTopBar = () => {
       navigation.goBack();
     }
   };
+
+  useEffect(() => {
+    updateNotifications(); 
+    const intervalId = setInterval(updateNotifications, 60000); 
+
+    return () => clearInterval(intervalId);
+  }, [token]); 
+
+  useEffect(() => {
+    if (isFocused) {
+      updateNotifications();
+    }
+  }, [isFocused, token]); 
+
+  useFocusEffect(
+    useCallback(() => {
+      updateNotifications();
+    }, [route, navigation]) 
+  );
+
+
+  const updateNotifications = async () => {
+
+    let response;
+
+    try {
+      response = await fetch(`${baseUrl}notifications`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let data = await response.json()
+      switch (response.status) {
+        case 200:
+          setNotificationCount(await data.records.length)
+          break;
+        case 401:
+          setNotificationCount(0)
+          break;
+        default:
+          setNotificationCount(0)
+      }
+    } catch (error) {
+      setNotificationCount(0)
+
+    }
+    
+  }
 
   return (
     <SafeAreaView
@@ -70,7 +127,15 @@ const AppTopBar = () => {
             className="w-6"
             onPress={() => navigate("Notifications")}
           >
-            <Ionicons name="notifications-outline" size={26} />
+            <Ionicons name="notifications-outline" size={27} />
+            {notificationCount > 0 && (
+            <View className="absolute top-0 right-0 bg-red-600 rounded-full w-[21] h-6 flex items-center justify-center">
+              {notificationCount < 10 ? (
+              <Text className="text-primary text-sm font-bold">{notificationCount}</Text>
+               ) : 
+               <Text className="text-primary text-[10px] font-bold">9+</Text>}
+            </View>
+            )}
           </TouchableOpacity>
         ) : (
           <View className="w-6" />
