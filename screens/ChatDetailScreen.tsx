@@ -43,7 +43,7 @@ const ChatDetailScreen = () => {
       }
   
       const data = await response.json();
-      if (!data || !data.records || !data.pagination) {
+      if (!data?.records || !data?.pagination) {
         throw new Error('Invalid response format');
       }
 
@@ -109,7 +109,7 @@ const ChatDetailScreen = () => {
         >
           {loading && <Text>Loading...</Text>}
           {error && <Text className="text-red">{error}</Text>}
-          {messages && messages.map((message) => {
+          {messages?.map((message) => {
             const isMyMessage = message.sender && message.sender.username === 'Ich';
             return (
               <View

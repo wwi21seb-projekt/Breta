@@ -63,6 +63,7 @@ const ChatScreen = () => {
       }
     >
       <Text className="text-2xl font-bold mb-4">Chats</Text>
+      {loading}
       {error && <Text className="text-red-500">{error}</Text>}
       {chats.map((chat) => (
         <TouchableOpacity
