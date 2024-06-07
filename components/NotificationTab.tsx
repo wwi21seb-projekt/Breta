@@ -3,14 +3,18 @@ import { View, Image, Text, TouchableOpacity } from "react-native";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";
-import { SHADOWS } from "../theme";
 import { push } from "../navigation/NavigationService";
+import { useFocusEffect } from "@react-navigation/native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { COLORS } from "../theme";
 
 type Props = {
     notificationId: string,
     timestamp: string,
     notificationType: string,
     username: string,
+    profilePictureUrl: string
+    onRefresh: () => void
 }
 
 const NotificationTab: React.FC<Props> = (props) => {
@@ -20,6 +24,7 @@ const {
     timestamp,
     notificationType,
     username,
+    onRefresh
     } = props;
   const { token } = useAuth();
   const [errorText, setErrorText] = useState("");
@@ -56,19 +61,26 @@ const {
   }
 
   const pressNotification =  () => {
-
     deleteNotification();
     push("GeneralProfile", { username: username });
-
   }
 
-  if (errorText !== "") {
-    return <ErrorComp errorText={errorText} />;
-  } else if (notificationType == "follow") {
+  const  ignoreNotification =  () => {
+    deleteNotification();
+    onRefresh()
+  }
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setErrorText("");
+    }, [])
+  );
+
+   if (notificationType == "follow") {
         return(
             <View
-            className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
-            style={{ ...SHADOWS.small }}
+            className="flex-row bg-white py-2 my-2 mx-4 border-t"
           >
             <TouchableOpacity className="flex-1 flex-row items-center"
             onPress={pressNotification}>
@@ -79,19 +91,24 @@ const {
                 alt="Picture"
               />
               <View className="ml-3">
-                <Text className="text-base">{username + " now follows you"}</Text>
-                <Text className="text-xxs text-lightgray">{timestamp.split("T")[0]}</Text>
+                <Text className="text-base">{username + " now follows you."}</Text>
+                <Text className="text-xs text-lightgray">{timestamp.split("T")[0]}</Text>
               </View>
             </TouchableOpacity>
+            <TouchableOpacity className="mt-1" onPress={ignoreNotification}>
+                <Ionicons name="close-outline" size={17} color={COLORS.red} />
+              </TouchableOpacity>
           </View>
           
         )
    
-  } else if (notificationType == "repost") {
+  } else if (errorText !== "") {
+    return <ErrorComp errorText={errorText} />;
+  }
+  else if (notificationType == "repost") {
     return(
    <View
-    className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
-    style={{ ...SHADOWS.small }}
+    className="flex-row items-center bg-white py-2 my-2 mx-4 border-t"
     >
             <TouchableOpacity
                 className="flex-1 flex-row items-center"
@@ -103,15 +120,11 @@ const {
               className="aspect-square rounded-full w-10"
               alt="Picture"
             />
-            <Text className="text-base ml-3">{username +  " has reposted you"}</Text>
+            <Text className="text-base ml-3">{username +  " has reposted you."}</Text>
           </TouchableOpacity>
           </View>
             )
-  } else {
-    return (
-      <ErrorComp errorText="Something went wrong, please try again later." />
-    );
-  }
+  } 
 };
 
 export default NotificationTab;
