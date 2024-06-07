@@ -11,31 +11,24 @@ const ProfileScreen = () => {
   const { user, token } = useAuth();
   const [userInfo, setUserInfo] = useState<User>();
   const [errorText, setErrorText] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      setLoading(true);
       if (user && token) {
         loadUser(user, setUserInfo, setErrorText, token);
       }
-      setLoading(false);
     }, []),
   );
 
-  if (loading) {
-    return (
-      <View className="bg-white flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  } else if (errorText !== "") {
+  if (errorText) {
     return <ErrorComp errorText={errorText} />;
   } else if (userInfo !== undefined) {
     return <UserProfile personal={true} userInfo={userInfo} />;
   } else {
     return (
-      <ErrorComp errorText="Something went wrong, please try again later." />
+      <View className="bg-white flex-1 justify-center items-center">
+         <ActivityIndicator size="large" />
+      </View>
     );
   }
 };
