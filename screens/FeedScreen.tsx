@@ -20,15 +20,14 @@ const FeedScreen = () => {
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingPersonalFeed, setLoadingPersonalFeed] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastPostId, setLastPostId] = useState("");
+  const [lastGlobalPostId, setLastGlobalPostId] = useState("");
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
-  const [loadingCities, setLoadingCities] = useState(false);
   const globalLimit = 5;
-  const personalLimit = 1000;
 
   useEffect(() => {
+    setErrorText("");
     if (token) {
       fetchPosts("personal");
     }
@@ -36,19 +35,14 @@ const FeedScreen = () => {
   }, [token]);
 
   const fetchPosts = async (type: string) => {
-    if (loading) return;
-    setLoading(true);
     let url = `${baseUrl}feed?feedType=${type}`;
 
     if (type === "global") {
       url += `&limit=${globalLimit}`;
-      if (lastPostId) {
-        url += `&postId=${lastPostId}`;
+      if (lastGlobalPostId) {
+        url += `&postId=${lastGlobalPostId}`;
       }
-    } else if (type === "personal") {
-      url += `&limit=${personalLimit}`;
-    }
-
+    } 
   
     try {
       const response = await fetch(url, {
@@ -61,43 +55,36 @@ const FeedScreen = () => {
       if (response.ok) {
         const data = await response.json();
         if (type === "personal") {
-          setLoadingCities(true);
+          setLoadingPersonalFeed(true);
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false);
           setPostsPersonal(updatedPersonalPosts);
+          setLoadingPersonalFeed(false);
         } else{
-          setLoadingCities(true);
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
-          setLoadingCities(false);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
-          setLastPostId(data.pagination.lastPostId);
+          setLastGlobalPostId(data.pagination.lastPostId);
           setHasMoreGlobalPosts(data.records.length === globalLimit);
         }
       } else {
-        setErrorText(`Error fetching ${type} posts: ${response.statusText}`);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      console.error("Error loading posts:", error);
       setErrorText(
-        "There are issues communicating with the server, please try again later.",
-      );
+        "There are issues communicating with the server, please try again later.");
     } finally {
-      setLoading(false);
-      if (type === "personal") {
-        setRefreshing(false);
-      }
+      
     }
   };
 
   const onRefresh = () => {
-    if (!token) {
-      setRefreshing(false);
-      return;
-    }
     setRefreshing(true);
-    fetchPosts("personal");
+    if (token) {
+      fetchPosts("personal");
+    }
     fetchPosts("global");
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
   };
 
   const handleScroll = ({
@@ -107,9 +94,7 @@ const FeedScreen = () => {
   }) => {
     if (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-        nativeEvent.contentSize.height - 20 &&
-      hasMoreGlobalPosts &&
-      !loading
+        nativeEvent.contentSize.height - 20 && hasMoreGlobalPosts
     ) {
       fetchPosts("global");
     }
@@ -123,11 +108,11 @@ const FeedScreen = () => {
       if (response.ok) {
         const data = await response.json();
         return data.city;
+        
       } else {
-        throw new Error(`Failed to retrieve city: ${response.statusText}`);
+        return "Unknown city";
       }
     } catch (error) {
-      console.error("Error fetching city:", error);
       return "Unknown city";
     }
   };
@@ -147,7 +132,10 @@ const FeedScreen = () => {
     }
     return updatedPosts;
   };
-
+  
+  if (errorText) {
+    return <ErrorComp errorText={errorText}></ErrorComp>;
+  } else {
   return (
     <ScrollView
       className="bg-white"
@@ -159,17 +147,16 @@ const FeedScreen = () => {
     >
       {token ? (
         <>
-          <Text className="font-bold m-10 text-xl">Persönliche Posts</Text>
+          <Text className="font-bold m-6 text-lg">Personal Feed</Text>
           {postsPersonal.map((post, index) => (
             <TextPostCard
               key={`personal-${index}`}
               username={post.author.username}
-              profilePic={
-                post.author.profilePictureUrl || "defaultProfilePicUrl"
-              }
+              // post.author.picture.url
+              profilePic={"url"}
               date={post.creationDate}
               postContent={post.content}
-              city={loadingCities ? "Loading city..." : post.city}
+              city={post.city}
               postId={post.postId}
               repostAuthor={post.repost == null ? "" : post.repost.author.username}
               isRepost={post.repost !== null}
@@ -177,43 +164,47 @@ const FeedScreen = () => {
               initialLiked={post.liked}
             />
           ))}
+          {loadingPersonalFeed && (
+          <ActivityIndicator className="mb-8" size="small" />
+        )}
         </>
       ) : (
-        <View className="flex flex-1 items-center justify-center">
-          <View className="rounded-lg p-4">
-            <Text>Please log in to see personal feed.</Text>
+        <View className="flex items-center justify-center">
+          <View className="rounded-lg p-3">
+            <Text className="text-base mb-2">Please login to see your personal feed.</Text>
             <TouchableOpacity
-              className="bg-primary py-2 px-5 rounded-lg mt-2"
+              className="bg-primary py-2 px-7 mx-auto rounded-lg"
               onPress={() => navigate("Authentification")}
             >
-              <Text className="text-white text-base">Login</Text>
+              <Text className="text-white text-base text-center">Login</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      <Text className="font-bold m-10 text-lg">Globale Posts</Text>
-      {postsGlobal.map((post, index) => (
-        <TextPostCard
-          key={`global-${index}`}
-          username={post.author.username}
-          profilePic={post.author.profilePictureUrl}
-          date={post.creationDate}
-          postContent={post.content}
-          city={loadingCities ? "Loading city..." : post.city}
-          postId={post.postId}
-          repostAuthor={post.repost == null ? "" : post.repost.author.username}
-          isRepost={post.repost !== null}
-          initialLikes={post.likes}
-          initialLiked={post.liked}
-        />
-      ))}
-      {hasMoreGlobalPosts && (
-        <ActivityIndicator className="my-20 text-blue" size="small" />
-      )}
-      {errorText && <ErrorComp errorText={errorText} />}
+    <Text className="font-bold m-6 text-lg">Global Feed</Text>
+        {postsGlobal.map((post, index) => (
+          <TextPostCard
+            key={`global-${index}`}
+            username={post.author.username}
+            // post.author.picture.url
+            profilePic={""}
+            date={post.creationDate}
+            postContent={post.content}
+            city={post.city}
+            postId={post.postId}
+            //repostAuthor={post.repost == null ? "" : post.repost.author.username}
+            isRepost={post.repost !== null}
+            initialLikes={post.likes}
+            initialLiked={post.liked}
+          />
+        ))}
+        {hasMoreGlobalPosts && (
+          <ActivityIndicator className="mb-8" size="small" />
+        )}    
     </ScrollView>
   );
 };
+}
 
 export default FeedScreen;
