@@ -92,7 +92,7 @@ const {
               />
               <View className="ml-3">
                 <Text className="text-base">{username + " now follows you."}</Text>
-                <Text className="text-xs text-lightgray">{timestamp.split("T")[0]}</Text>
+                <Text className="text-xs text-darkgray">{timestamp.split("T")[0]}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity className="mt-1 justify-center" onPress={ignoreNotification}>

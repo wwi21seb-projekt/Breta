@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   ActivityIndicator,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import TextPostCard from "../components/TextPostCard";
 import { baseUrl } from "../env";
@@ -13,6 +13,7 @@ import ErrorComp from "../components/ErrorComp";
 import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
 import { NativeScrollEvent } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Post from "../components/types/Post";
 
 const FeedScreen = () => {
@@ -22,8 +23,8 @@ const FeedScreen = () => {
   const [errorText, setErrorText] = useState("");
   const [loadingPersonalFeed, setLoadingPersonalFeed] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastGlobalPostId, setLastGlobalPostId] = useState("");
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
+  const [lastGlobalPostId, setLastGlobalPostId] = useState("");
   const globalLimit = 5;
 
   useEffect(() => {
@@ -33,6 +34,12 @@ const FeedScreen = () => {
     }
     fetchPosts("global");
   }, [token]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setErrorText("");
+    }, []),
+  );
 
   const fetchPosts = async (type: string) => {
     let url = `${baseUrl}feed?feedType=${type}`;
@@ -63,7 +70,7 @@ const FeedScreen = () => {
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
           setLastGlobalPostId(data.pagination.lastPostId);
-          setHasMoreGlobalPosts(data.records.length === globalLimit);
+          setHasMoreGlobalPosts(postsGlobal.length < data.pagination.records)
         }
       } else {
         setErrorText("Something went wrong, please try again later.");
@@ -71,8 +78,6 @@ const FeedScreen = () => {
     } catch (error) {
       setErrorText(
         "There are issues communicating with the server, please try again later.");
-    } finally {
-      
     }
   };
 
@@ -148,9 +153,8 @@ const FeedScreen = () => {
       {token ? (
         <>
           <Text className="font-bold m-6 text-lg">Personal Feed</Text>
-          {postsPersonal.map((post, index) => (
+          {postsPersonal.map((post) => (
             <TextPostCard
-              key={`personal-${index}`}
               username={post.author.username}
               // post.author.picture.url
               profilePic={"url"}
@@ -158,7 +162,7 @@ const FeedScreen = () => {
               postContent={post.content}
               city={post.city}
               postId={post.postId}
-              repostAuthor={post.repost == null ? "" : post.repost.author.username}
+              repostAuthor={(post.repost && post.repost.author) ? post.repost.author.username : ""}
               isRepost={post.repost !== null}
               initialLikes={post.likes}
               initialLiked={post.liked}
@@ -181,11 +185,9 @@ const FeedScreen = () => {
           </View>
         </View>
       )}
-
     <Text className="font-bold m-6 text-lg">Global Feed</Text>
-        {postsGlobal.map((post, index) => (
+        {postsGlobal.map((post) => (
           <TextPostCard
-            key={`global-${index}`}
             username={post.author.username}
             // post.author.picture.url
             profilePic={""}
@@ -193,7 +195,7 @@ const FeedScreen = () => {
             postContent={post.content}
             city={post.city}
             postId={post.postId}
-            //repostAuthor={post.repost == null ? "" : post.repost.author.username}
+            repostAuthor={(post.repost && post.repost.author) ? post.repost.author.username : ""}
             isRepost={post.repost !== null}
             initialLikes={post.likes}
             initialLiked={post.liked}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Comment from "../components/types/Comment";
 import {
@@ -20,6 +20,7 @@ import CommentIcon from "./CommentIcon";
 import LikeIcon from "./LikeIcon";
 import LoginPopup from "./LoginPopup";
 import { useFocusEffect } from "@react-navigation/native";
+import { push } from "../navigation/NavigationService";
 
 
 interface Props {
@@ -28,10 +29,9 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
-  style?: React.CSSProperties;
   city: string;
   postId: string;
-  repostAuthor?: string;
+  repostAuthor: string;
   isRepost: boolean;
   initialLiked: boolean;
 }
@@ -345,17 +345,15 @@ const TextPostCard: React.FC<Props> = (props) => {
                 Do you really want to repost this post?
               </Text>
               <View className="flex-row">
-                <TouchableOpacity onPress={() => repostPost()}>
-                  <Text className="text-red text-base font-bold">Repost</Text>
+                <TouchableOpacity onPress={() => setConfirmationVisible(false)}>
+                  <Text className="text-red text-base font-bold">Cancel</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   className="ml-auto"
-                  onPress={() => {
-                    setConfirmationVisible(false);
-                  }}
+                  onPress={repostPost}
                 >
-                  <Text className="text-black text-base font-bold">Cancel</Text>
+                  <Text className="text-black text-base font-bold">Repost</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -363,29 +361,30 @@ const TextPostCard: React.FC<Props> = (props) => {
         </Modal>
       {!isRepost ? (
       <View
-        className="w-full bg-white rounded-full p-4 z-20 relative"
+        className="w-full bg-white rounded-full p-2 z-20 relative"
         style={{ ...SHADOWS.small }}
       >
         
         <View className="flex-row items-center justify-between">
           <Image
-            source={{ uri: profilePic || "defaultProfilePicUrl" }}
+            source={require("../assets/images/Max.jpeg")}
             className="w-10 h-10 rounded-full"
             alt="PB"
           />
-          <View className="flex-1 ml-2">
-            <Text className="font-bold">{username}</Text>
-            <Text className="text-xs text-lightgray">{city}</Text>
-          </View>
+          <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: username })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{username}</Text>
+            <Text className="text-xs text-darkgray">{city}</Text>
+          </TouchableOpacity>
 
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
-            <TouchableOpacity onPress={repostConfirm}>
+            <TouchableOpacity className="mr-1" onPress={repostConfirm}>
                 <Ionicons
                   name="repeat-outline"
-                  size={18}
+                  size={20}
                   color={COLORS.black}
-                  className="mr-1"
                 />
               </TouchableOpacity>
               <CommentIcon onPress={openCommentModal}/>
@@ -396,19 +395,26 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
             </View>
-            <Text className="text-xs text-lightgray text-l ">{date.split("T")[0]}</Text>
+            <Text className="text-xs text-darkgray mr-1">{date.split("T")[0]}</Text>
           </View>
         </View>
       </View>
       
       ) : (
-        <View className="w-full bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
+        <View className="w-full bg-white rounded-xl p-2" style={{ ...SHADOWS.small }}>
           <View className="flex flex-col justify-end items-end z-20 relative" >
               <View className="flex-row items-center justify-between">
-              <View className="flex-1 ml-2 pt-4">
-                <Text className="font-bold">{username}</Text>
-                <Text className="text-xs text-lightgray">{city}</Text>
-              </View>
+            <Image
+              source={require("../assets/images/Max.jpeg")}
+            className="w-10 h-10 rounded-full"
+            alt="PB"
+          />
+          <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: username })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{username}</Text>
+            <Text className="text-xs text-darkgray">{city}</Text>
+          </TouchableOpacity>
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
                 isLiked={isLiked}
@@ -417,32 +423,37 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
               </View>
-              <Text className="text-xs text-lightgray text-l mt-[-14] mb-1">{date.split("T")[0]}</Text>
+              <Text className="text-xs text-darkgray mt-[-10] mb-1.5">{date.split("T")[0]}</Text>
             <View
-            className="w-full bg-white rounded-full p-4 z-10 relative"
+            className="w-full bg-white rounded-full p-2 z-10 relative"
             style={{ ...SHADOWS.small }}
             >
               <View className="w-full flex-row items-center">
                 <Image
-                  source={{ uri: profilePic|| "defaultProfilePicUrl" }}
+                  source={require("../assets/images/Max.jpeg")}
                   className="w-10 h-10 rounded-full"
                   alt="PB"
                 />
-                <View className="ml-2">
+                {repostAuthor !== "" ? ( <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: repostAuthor })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{repostAuthor}</Text>
+            <Text className="text-xs text-darkgray">{city}</Text>
+          </TouchableOpacity>) : (<View className="flex-1 ml-2">
                   <Text className="align-center font-bold">{repostAuthor}</Text>
-                  <Text className="text-xs text-lightgray"> {city}</Text>
-                  <Text className="text-xs text-lightgray text-l mt-[-15]">{date.split("T")[0]}</Text>
-                </View>
+                  <Text className="text-xs text-darkgray">{city}</Text>
+                </View>)}
+                <Text className="text-xs text-darkgray mt-[-12] mr-1">{date.split("T")[0]}</Text>
             </View>
           </View>
         </View>
-        <View className="m-1.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
+        <View className="m-2.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
             <Text>{postContent}</Text>
           </View>
         </View>
       ) }
     {!isRepost ? (
-      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10 relative">
+      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10">
         <Text>{postContent}</Text>
       </View>
     ) : (<></>) }
@@ -457,7 +468,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         {commentError !== "" ? (<ErrorComp errorText={commentError}></ErrorComp>) : (
         <View className="flex-1 justify-end">
           <View className="h-3/4 bg-white rounded-t-3xl p-4 shadow-lg">
-            <View className="flex-row justify-between items-center pb-3 border-b border-lightgray">
+            <View className="flex-row justify-between items-center pb-3 border-b border-darkgray">
               <Text className="text-lg font-bold">Comments</Text>
               <Pressable onPress={closeCommentModal}>
                 <Ionicons name="close" size={24} color="black" />
@@ -468,17 +479,18 @@ const TextPostCard: React.FC<Props> = (props) => {
                 <Text className="text-red-500">{commentError}</Text>
               )}
               {comments.length === 0 ? (
-                <Text className="text-center text-lightgray mt-4">
+                <Text className="text-center text-darkgray mt-4">
                   There are no comments yet.
                 </Text>
               ) : (
                 comments.map((comment) => (
                   <View
                     key={comment.commentId}
-                    className="flex-row items-start py-3 border-b border-lightgray"
+                    className="flex-row items-start py-3 border-b border-darkgray"
                   >
                     <Image
-                      source={{ uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }}
+                    // { uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }
+                      source={require("../assets/images/Max.jpeg")}
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
@@ -486,7 +498,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                         {comment.author.username}
                       </Text>
                       <Text>{comment.content}</Text>
-                      <Text className="text-xs text-lightgray">
+                      <Text className="text-xs text-darkgray">
                         {new Date(comment.creationDate).toLocaleString()}
                       </Text>
                     </View>
@@ -494,16 +506,16 @@ const TextPostCard: React.FC<Props> = (props) => {
                 ))
               )}
             </ScrollView>
-            <View className="flex-row items-center border-t border-lightgray p-4">
+            <View className="flex-row items-center border-t border-darkgray p-4">
               <TextInput
-                className="flex-1 mr-4 bg-lightgray rounded-full p-3 text-sm"
+                className="flex-1 mr-4 bg-darkgray rounded-full p-3 text-sm"
                 placeholder="Schreiben Sie einen Kommentar..."
                 onChangeText={setCommentText}
                 value={commentText}
                 multiline
               />
               <TouchableOpacity
-                className="bg-brigtBlue p-3 rounded-full"
+                className="bg-primary p-3 rounded-full"
                 onPress={addComment}
               >
                 <Text className="font-bold text-sm">Post</Text>
