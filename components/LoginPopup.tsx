@@ -4,8 +4,17 @@ import { Modal, View, Text, TouchableOpacity } from "react-native";
 import { COLORS, SHADOWS } from "../theme";
 import { useFocusEffect } from "@react-navigation/native";
 import { navigate } from "../navigation/NavigationService";
+import { Dispatch, SetStateAction } from "react";
 
-const LoginPopup = () => {
+type Props = {
+  setIsLoginPopupVisible?: Dispatch<SetStateAction<boolean>>
+};
+
+const LoginPopup: React.FC<Props> = (props) => {
+    const {
+      setIsLoginPopupVisible
+    } = props;
+ 
   const [modalVisible, setModalVisible] = useState(true);
 
   useFocusEffect(
@@ -18,6 +27,14 @@ const LoginPopup = () => {
     }, []),
   );
 
+  const closeModel = () => {
+    setModalVisible(false); 
+    navigate("Feed"); 
+    if (setIsLoginPopupVisible !== undefined) {
+      setIsLoginPopupVisible(false);
+    }
+  };
+
   return (
     <Modal transparent={true} visible={modalVisible} animationType="none">
       <View
@@ -25,7 +42,7 @@ const LoginPopup = () => {
         style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
       >
         <View className="bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
-        <TouchableOpacity onPress={() => {setModalVisible(false); navigate("Feed")}}>
+        <TouchableOpacity onPress={() => {closeModel()}}>
             <Ionicons name="arrow-back" size={26} color={COLORS.black} />
           </TouchableOpacity>
           <View className="items-center py-2">

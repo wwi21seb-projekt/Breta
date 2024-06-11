@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Comment from "../components/types/Comment";
 import {
@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   TextInput,
-  Dimensions,
   ScrollView,
   TouchableOpacity,
   Modal,
@@ -14,14 +13,13 @@ import {
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import LoginPopup from "./LoginPopup";
 import { useAuth } from "../authentification/AuthContext";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import ErrorComp from "./ErrorComp";
 import CommentIcon from "./CommentIcon";
 import LikeIcon from "./LikeIcon";
-
-const windowHeight = Dimensions.get("window").height;
+import LoginPopup from "./LoginPopup";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 interface Props {
@@ -59,15 +57,23 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
-  const [loginPopupVisible, setLoginPopupVisible] = useState(false);
-  const [repostError, setRepostError] = useState("")
-  const [confirmationVisible, setConfirmationVisible] = useState(false)
+  const [repostError, setRepostError] = useState("");
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [isLoginPopupVisible, setIsLoginPopupVisible] = useState(false);
 
   useEffect(() => {
     if(token) {
       fetchComments();
     }
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoginPopupVisible(false);
+      setCommentError("");
+      setRepostError("");
+    }, []),
+  );
 
 
   const fetchComments = async () => {
@@ -109,7 +115,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const addComment = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
     if (commentText.trim()) {
@@ -164,7 +170,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const likePost = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
 
@@ -201,7 +207,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const unlikePost = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
 
@@ -224,8 +230,8 @@ const TextPostCard: React.FC<Props> = (props) => {
         case 401:
         case 404:
         case 409:{
-          const data = await response.json()
-          setRepostError(data.error.message)
+          const data = await response.json();
+          setRepostError(data.error.message);
           break;
         }
         default:
@@ -261,7 +267,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const openCommentModal = () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
     setCommentModalVisible(true);
@@ -294,8 +300,8 @@ const TextPostCard: React.FC<Props> = (props) => {
         case 400:
         case 401:
         case 404:{
-          const data = await response.json()
-          setRepostError(data.error.message)
+          const data = await response.json();
+          setRepostError(data.error.message);
           break;
         }
         default:
@@ -312,45 +318,10 @@ const TextPostCard: React.FC<Props> = (props) => {
   const repostConfirm = async () => {
 
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
-    setConfirmationVisible(true)
-    return(
-      <Modal
-          animationType="none"
-          transparent={true}
-          visible={confirmationVisible}
-          onRequestClose={() => {
-            setConfirmationVisible(false);
-          }}
-        >
-          <View
-            className="flex-1 justify-center items-center"
-            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
-          >
-            <View className="bg-white rounded-3xl px-8 py-4">
-              <Text className="text-lg mb-10">
-                Do you really want to delete this post?
-              </Text>
-              <View className="flex-row">
-                <TouchableOpacity onPress={() => repostPost}>
-                  <Text className="text-red text-base font-bold">Delete</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="ml-auto"
-                  onPress={() => {
-                    setConfirmationVisible(false);
-                  }}
-                >
-                  <Text className="text-black text-base font-bold">Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-    )
+    setConfirmationVisible(true);
   }    
   if(repostError !== ""){
       return <ErrorComp errorText={repostError}></ErrorComp>;
@@ -404,7 +375,7 @@ const TextPostCard: React.FC<Props> = (props) => {
           />
           <View className="flex-1 ml-2">
             <Text className="font-bold">{username}</Text>
-            <Text className="text-xs text-lightgray"> {city}</Text>
+            <Text className="text-xs text-lightgray">{city}</Text>
           </View>
 
           <View className="flex flex-col justify-end items-end">
@@ -425,7 +396,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
             </View>
-            <Text className="text-xs text-lightgray text-l "> {date.split("T")[0]}</Text>
+            <Text className="text-xs text-lightgray text-l ">{date.split("T")[0]}</Text>
           </View>
         </View>
       </View>
@@ -436,7 +407,7 @@ const TextPostCard: React.FC<Props> = (props) => {
               <View className="flex-row items-center justify-between">
               <View className="flex-1 ml-2 pt-4">
                 <Text className="font-bold">{username}</Text>
-                <Text className="text-xs text-lightgray"> {city}</Text>
+                <Text className="text-xs text-lightgray">{city}</Text>
               </View>
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
@@ -446,7 +417,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
               </View>
-              <Text className="text-xs text-lightgray text-l mt-[-14] mb-1"> {date.split("T")[0]}</Text>
+              <Text className="text-xs text-lightgray text-l mt-[-14] mb-1">{date.split("T")[0]}</Text>
             <View
             className="w-full bg-white rounded-full p-4 z-10 relative"
             style={{ ...SHADOWS.small }}
@@ -460,7 +431,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 <View className="ml-2">
                   <Text className="align-center font-bold">{repostAuthor}</Text>
                   <Text className="text-xs text-lightgray"> {city}</Text>
-                  <Text className="text-xs text-lightgray text-l mt-[-15]"> {date.split("T")[0]}</Text>
+                  <Text className="text-xs text-lightgray text-l mt-[-15]">{date.split("T")[0]}</Text>
                 </View>
             </View>
           </View>
@@ -498,7 +469,7 @@ const TextPostCard: React.FC<Props> = (props) => {
               )}
               {comments.length === 0 ? (
                 <Text className="text-center text-lightgray mt-4">
-                  No Comments available
+                  There are no comments yet.
                 </Text>
               ) : (
                 comments.map((comment) => (
@@ -535,22 +506,18 @@ const TextPostCard: React.FC<Props> = (props) => {
                 className="bg-brigtBlue p-3 rounded-full"
                 onPress={addComment}
               >
-                <Text className="font-bold text-sm">Posten</Text>
+                <Text className="font-bold text-sm">Post</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
         )}
       </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={loginPopupVisible}
-        onRequestClose={() => setLoginPopupVisible(false)}
-      >
-        <LoginPopup/>
-      </Modal>
+      {isLoginPopupVisible && (
+        <LoginPopup setIsLoginPopupVisible={setIsLoginPopupVisible}/>
+      )}
     </View>
+    
   );
   }
 };
