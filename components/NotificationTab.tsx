@@ -65,7 +65,7 @@ const {
     push("GeneralProfile", { username: username });
   }
 
-  const  ignoreNotification =  () => {
+  const ignoreNotification =  () => {
     deleteNotification();
     onRefresh()
   }
@@ -80,7 +80,7 @@ const {
    if (notificationType == "follow") {
         return(
             <View
-            className="flex-row bg-white py-2 my-2 mx-4 border-t"
+            className="flex-row bg-white py-2 my-2 mx-4 border-t border-lightgray"
           >
             <TouchableOpacity className="flex-1 flex-row items-center"
             onPress={pressNotification}>
@@ -95,7 +95,7 @@ const {
                 <Text className="text-xs text-lightgray">{timestamp.split("T")[0]}</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className="mt-1" onPress={ignoreNotification}>
+            <TouchableOpacity className="mt-1 justify-center" onPress={ignoreNotification}>
                 <Ionicons name="close-outline" size={17} color={COLORS.red} />
               </TouchableOpacity>
           </View>
