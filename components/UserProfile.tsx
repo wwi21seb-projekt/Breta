@@ -17,6 +17,8 @@ import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
+import CommentIcon from "./CommentIcon";
+import LikeIcon from "./LikeIcon";
 
 type Props = {
   personal: boolean;
@@ -323,17 +325,21 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           >
             <View className="flex-row">
               
-                <View className="flex items-start w-1/2">
+                <View className="flex items-start w-1/2 flex-col">
                 {item.repost !== null && (
                   <Text className="font-semibold text-md text-darkgray italic">Repost</Text>)}
                   <Text className="text-xs">
                 {item.creationDate.split("T")[0]}
               </Text>
                   </View>
-                  <View className="flex items-end justify-center w-1/2">
-                  <Text className="text-xs">
-                Kommentare und Likes
-              </Text>
+                  <View className="flex-row w-1/2 items-start justify-end">
+                  <CommentIcon onPress={()=>{}}/>
+              <LikeIcon
+                isLiked={true}
+                likes={1}
+                handleLikePress={()=>{}}
+                formatLikes={(likes: number) => ""}
+              />
                   </View>
             </View>
             <Text className="my-5 text-base font-semibold text-center">
