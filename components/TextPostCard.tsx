@@ -9,7 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
-  Pressable,
+  Pressable
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -468,15 +468,16 @@ const TextPostCard: React.FC<Props> = (props) => {
         {commentError !== "" ? (<ErrorComp errorText={commentError}></ErrorComp>) : (
         <View className="flex-1 justify-end">
           <View className="h-3/4 bg-white rounded-t-3xl p-4 shadow-lg">
-            <View className="flex-row justify-between items-center pb-3 border-b border-darkgray">
+            <View className="flex-row justify-between items-center pb-3 border-b border-lightgray">
               <Text className="text-lg font-bold">Comments</Text>
               <Pressable onPress={closeCommentModal}>
                 <Ionicons name="close" size={24} color="black" />
               </Pressable>
             </View>
-            <ScrollView>
+            <ScrollView
+            alwaysBounceVertical={false} >
               {commentError && (
-                <Text className="text-red-500">{commentError}</Text>
+                <Text className="text-red">{commentError}</Text>
               )}
               {comments.length === 0 ? (
                 <Text className="text-center text-darkgray mt-4">
@@ -486,7 +487,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 comments.map((comment) => (
                   <View
                     key={comment.commentId}
-                    className="flex-row items-start py-3 border-b border-darkgray"
+                    className="flex-row items-start py-3 border-b border-lightgray"
                   >
                     <Image
                     // { uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }
@@ -494,10 +495,14 @@ const TextPostCard: React.FC<Props> = (props) => {
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
-                      <Text className="font-bold">
+                    <TouchableOpacity onPress={() => {closeCommentModal();
+          push("GeneralProfile", { username: comment.author.username !== null ?  comment.author.username : ""})
+        }}>
+             <Text className="text-md font-bold mb-1.5">
                         {comment.author.username}
                       </Text>
-                      <Text>{comment.content}</Text>
+          </TouchableOpacity>
+                      <Text className="text-sm mb-0.5">{comment.content}</Text>
                       <Text className="text-xs text-darkgray">
                         {new Date(comment.creationDate).toLocaleString()}
                       </Text>
@@ -506,21 +511,21 @@ const TextPostCard: React.FC<Props> = (props) => {
                 ))
               )}
             </ScrollView>
-            <View className="flex-row items-center border-t border-darkgray p-4">
-              <TextInput
-                className="flex-1 mr-4 bg-darkgray rounded-full p-3 text-sm"
-                placeholder="Schreiben Sie einen Kommentar..."
+            <View className="p-2 bg-white">
+          <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>
+            <TextInput
+              className="flex-1 p-2 mr-2"
+              placeholder="Write a comment..."
+              placeholderTextColor={COLORS.darkgray}
                 onChangeText={setCommentText}
                 value={commentText}
                 multiline
-              />
-              <TouchableOpacity
-                className="bg-primary p-3 rounded-full"
-                onPress={addComment}
-              >
-                <Text className="font-bold text-sm">Post</Text>
-              </TouchableOpacity>
-            </View>
+            />
+            <TouchableOpacity className="bg-primary py-2 px-4 rounded-full" onPress={addComment}>
+              <Text className="text-white">Post</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
           </View>
         </View>
         )}
