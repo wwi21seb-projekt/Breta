@@ -86,7 +86,12 @@ const SearchScreen = () => {
                 profilePic={item.author.profilePictureUrl}
                 date={item.creationDate}
                 postContent={item.content}
-                city={""}
+                repostAuthor={(item.repost && item.repost.author) ? item.repost.author.username : ""}
+                isRepost={item.repost !== null}
+                postId={item.postId}
+                initialLiked={item.liked}
+                initialLikes={item.likes}
+                isOwnPost={false}
               />
             )}
             showsVerticalScrollIndicator={false}

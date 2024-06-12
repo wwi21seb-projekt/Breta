@@ -328,7 +328,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               profilePic={""}
               date={item.creationDate}
               postContent={item.content}
-              //city={item.city}
               postId={item.postId}
               repostAuthor={(item.repost && item.repost.author) ? item.repost.author.username : ""}
               isRepost={item.repost !== null}
