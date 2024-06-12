@@ -318,6 +318,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
             style={{ ...SHADOWS.small }}
             disabled={!personal}
+            activeOpacity={1}
             onLongPress={() => {
               setCurrentPostId(item.postId);
               setModalVisible(true);
