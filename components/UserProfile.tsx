@@ -17,8 +17,7 @@ import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
-import CommentIcon from "./CommentIcon";
-import LikeIcon from "./LikeIcon";
+import TextPostCard from "./TextPostCard";
 
 type Props = {
   personal: boolean;
@@ -315,37 +314,28 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         keyExtractor={(item) => item.postId}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
-            style={{ ...SHADOWS.small }}
+            className="mx-2"
             disabled={!personal}
-            activeOpacity={1}
+            //activeOpacity={1}
             onLongPress={() => {
               setCurrentPostId(item.postId);
               setModalVisible(true);
             }}
           >
-            <View className="flex-row">
-              
-                <View className="flex items-start w-1/2 flex-col">
-                {item.repost !== null && (
-                  <Text className="font-semibold text-md text-darkgray italic">Repost</Text>)}
-                  <Text className="text-xs">
-                {item.creationDate.split("T")[0]}
-              </Text>
-                  </View>
-                  <View className="flex-row w-1/2 items-start justify-end">
-                  <CommentIcon onPress={()=>{}}/>
-              <LikeIcon
-                isLiked={true}
-                likes={1}
-                handleLikePress={()=>{}}
-                formatLikes={(likes: number) => ""}
-              />
-                  </View>
-            </View>
-            <Text className="my-5 text-base font-semibold text-center">
-              {item.content}
-            </Text>
+            <TextPostCard
+              username={""}
+              // post.author.picture.url
+              profilePic={""}
+              date={item.creationDate}
+              postContent={item.content}
+              //city={item.city}
+              postId={item.postId}
+              repostAuthor={(item.repost && item.repost.author) ? item.repost.author.username : ""}
+              isRepost={item.repost !== null}
+              initialLikes={item.likes}
+              initialLiked={item.liked}
+              isOwnPost={true}
+            />
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}

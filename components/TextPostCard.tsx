@@ -31,11 +31,12 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
-  city: string;
+  city?: string;
   postId: string;
   repostAuthor: string;
   isRepost: boolean;
   initialLiked: boolean;
+  isOwnPost: boolean;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
@@ -50,7 +51,8 @@ const TextPostCard: React.FC<Props> = (props) => {
     initialLiked,
     postId,
     repostAuthor,
-    isRepost
+    isRepost,
+    isOwnPost
     } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -368,7 +370,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       >
         
         <View className="flex-row items-center justify-between">
-          <Image
+          {!isOwnPost ? (<><Image
             source={require("../assets/images/Max.jpeg")}
             className="w-10 h-10 rounded-full"
             alt="PB"
@@ -378,17 +380,19 @@ const TextPostCard: React.FC<Props> = (props) => {
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{username}</Text>
             <Text className="text-xs text-darkgray">{city}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity></>) : (<View className="flex-col"><Text className="text-xs text-darkgray ml-1 font-semibold">{city}</Text><Text className="text-xs text-darkgray ml-1">{date.split("T")[0]}</Text>
+        </View>)}
+          
 
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
-            <TouchableOpacity className="mr-1" onPress={repostConfirm}>
+              {!isOwnPost && (<TouchableOpacity className="mr-1" onPress={repostConfirm}>
                 <Ionicons
                   name="repeat-outline"
                   size={20}
                   color={COLORS.black}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity>)}
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
                 isLiked={isLiked}
@@ -397,7 +401,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
             </View>
-            <Text className="text-xs text-darkgray mr-1">{date.split("T")[0]}</Text>
+            {!isOwnPost && (<Text className="text-xs text-darkgray mr-1">{date.split("T")[0]}</Text>)}
           </View>
         </View>
       </View>
@@ -406,7 +410,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         <View className="w-full bg-white rounded-xl p-2" style={{ ...SHADOWS.small }}>
           <View className="flex flex-col justify-end items-end z-20 relative" >
               <View className="flex-row items-center justify-between">
-            <Image
+              {!isOwnPost ? (<><Image
               source={require("../assets/images/Max.jpeg")}
             className="w-10 h-10 rounded-full"
             alt="PB"
@@ -416,7 +420,8 @@ const TextPostCard: React.FC<Props> = (props) => {
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{username}</Text>
             <Text className="text-xs text-darkgray">{city}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity></>) : (<Text className="mb-1.5 text-xs flex-1 ml-1"><Text className="font-semibold italic text-darkgray text-sm">Reposted</Text> on {date.split("T")[0]}</Text>)}
+           
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
                 isLiked={isLiked}
@@ -425,7 +430,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
               </View>
-              <Text className="text-xs text-darkgray mt-[-10] mb-1.5">{date.split("T")[0]}</Text>
+              {!isOwnPost && (<Text className="text-xs text-darkgray mt-[-10] mb-1.5">{date.split("T")[0]}</Text>)}
             <View
             className="w-full bg-white rounded-full p-2 z-10 relative"
             style={{ ...SHADOWS.small }}
@@ -440,12 +445,12 @@ const TextPostCard: React.FC<Props> = (props) => {
           push("GeneralProfile", { username: repostAuthor })
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{repostAuthor}</Text>
-            <Text className="text-xs text-darkgray">{city}</Text>
+            {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
           </TouchableOpacity>) : (<View className="flex-1 ml-2">
                   <Text className="align-center font-bold">{repostAuthor}</Text>
-                  <Text className="text-xs text-darkgray">{city}</Text>
+                  {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
                 </View>)}
-                <Text className="text-xs text-darkgray mt-[-12] mr-1">{date.split("T")[0]}</Text>
+                {!isOwnPost && (<Text className="text-xs text-darkgray mt-[-12] mr-1">{date.split("T")[0]}</Text>)}
             </View>
           </View>
         </View>

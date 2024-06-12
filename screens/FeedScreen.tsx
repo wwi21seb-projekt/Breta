@@ -166,6 +166,7 @@ const FeedScreen = () => {
               isRepost={post.repost !== null}
               initialLikes={post.likes}
               initialLiked={post.liked}
+              isOwnPost={false}
             />
           ))}
           {loadingPersonalFeed && (
@@ -199,6 +200,7 @@ const FeedScreen = () => {
             isRepost={post.repost !== null}
             initialLikes={post.likes}
             initialLiked={post.liked}
+            isOwnPost={false}
           />
         ))}
         {hasMoreGlobalPosts && (
