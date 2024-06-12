@@ -1,5 +1,6 @@
 export interface OwnPost {
   postId: string;
+  repost: Object;
   creationDate: string;
   content: string;
   location: {

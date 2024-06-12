@@ -46,7 +46,7 @@ const FeedScreen = () => {
 
     if (type === "global") {
       url += `&limit=${globalLimit}`;
-      if (lastGlobalPostId) {
+      if (lastGlobalPostId !== "") {
         url += `&postId=${lastGlobalPostId}`;
       }
     } 
@@ -70,7 +70,7 @@ const FeedScreen = () => {
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
           setLastGlobalPostId(data.pagination.lastPostId);
-          setHasMoreGlobalPosts(postsGlobal.length < data.pagination.records)
+          setHasMoreGlobalPosts(postsGlobal.length < data.pagination.records);
         }
       } else {
         setErrorText("Something went wrong, please try again later.");

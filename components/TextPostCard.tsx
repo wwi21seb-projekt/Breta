@@ -9,7 +9,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
-  Pressable
+  Pressable,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -511,7 +513,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                 ))
               )}
             </ScrollView>
-            <View className="p-2 bg-white">
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 220 : 0} className="p-2 bg-white">
           <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>
             <TextInput
               className="flex-1 p-2 mr-2"
@@ -521,11 +523,15 @@ const TextPostCard: React.FC<Props> = (props) => {
                 value={commentText}
                 multiline
             />
-            <TouchableOpacity className="bg-primary py-2 px-4 rounded-full" onPress={addComment}>
+            <TouchableOpacity className="bg-primary py-2 px-4 rounded-full" style={{
+                backgroundColor: commentText
+                  ? COLORS.primary
+                  : COLORS.lightgray,
+              }} onPress={addComment} disabled={!commentText}>
               <Text className="text-white">Post</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
           </View>
         </View>
         )}
