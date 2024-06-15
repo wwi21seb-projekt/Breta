@@ -329,7 +329,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               date={item.creationDate}
               postContent={item.content}
               postId={item.postId}
-              repostAuthor={(item.repost && item.repost.author) ? item.repost.author.username : ""}
+              repostAuthor={item.repost?.author?.username || ""}
               isRepost={item.repost !== null}
               initialLikes={item.likes}
               initialLiked={item.liked}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Comment from "../components/types/Comment";
 import {
@@ -12,7 +12,8 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  NativeScrollEvent
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -24,7 +25,6 @@ import LikeIcon from "./LikeIcon";
 import LoginPopup from "./LoginPopup";
 import { useFocusEffect } from "@react-navigation/native";
 import { push } from "../navigation/NavigationService";
-import { NativeScrollEvent } from "react-native";
 
 
 interface Props {

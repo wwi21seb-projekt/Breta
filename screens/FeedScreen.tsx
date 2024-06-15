@@ -154,8 +154,9 @@ const FeedScreen = () => {
       {token ? (
         <>
           <Text className="font-bold m-6 text-lg">Personal Feed</Text>
-          {postsPersonal.map((post) => (
+          {postsPersonal.map((post, index) => (
             <TextPostCard
+              key={`personal-${index}`}
               username={post.author.username}
               // post.author.picture.url
               profilePic={"url"}
@@ -163,7 +164,7 @@ const FeedScreen = () => {
               postContent={post.content}
               city={post.city}
               postId={post.postId}
-              repostAuthor={(post.repost && post.repost.author) ? post.repost.author.username : ""}
+              repostAuthor={post.repost?.author?.username || ""}
               isRepost={post.repost !== null}
               initialLikes={post.likes}
               initialLiked={post.liked}
@@ -188,8 +189,9 @@ const FeedScreen = () => {
         </View>
       )}
     <Text className="font-bold m-6 text-lg">Global Feed</Text>
-        {postsGlobal.map((post) => (
+        {postsGlobal.map((post, index) => (
           <TextPostCard
+            key={`global-${index}`}
             username={post.author.username}
             // post.author.picture.url
             profilePic={""}
@@ -197,7 +199,7 @@ const FeedScreen = () => {
             postContent={post.content}
             city={post.city}
             postId={post.postId}
-            repostAuthor={(post.repost && post.repost.author) ? post.repost.author.username : ""}
+            repostAuthor={post.repost?.author?.username || ""}
             isRepost={post.repost !== null}
             initialLikes={post.likes}
             initialLiked={post.liked}

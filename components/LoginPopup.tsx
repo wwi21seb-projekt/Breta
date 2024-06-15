@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
 import { COLORS, SHADOWS } from "../theme";
 import { useFocusEffect } from "@react-navigation/native";
 import { navigate } from "../navigation/NavigationService";
-import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   setIsLoginPopupVisible?: Dispatch<SetStateAction<boolean>>
