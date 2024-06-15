@@ -77,7 +77,9 @@ const {
     }, [])
   );
 
-   if (notificationType == "follow") {
+  if (errorText !== "") {
+    return <ErrorComp errorText={errorText} />;
+  } else {
         return(
             <View
             className="flex-row bg-white py-2 my-2 mx-4 border-t border-lightgray"
@@ -91,7 +93,8 @@ const {
                 alt="Picture"
               />
               <View className="ml-3">
-                <Text className="text-base">{username + " now follows you."}</Text>
+                {notificationType == "follow" && (<Text className="text-base">{username + " now follows you."}</Text>)}
+                {notificationType == "repost" && (<Text className="text-base">{username +  " has reposted you."}</Text>)}
                 <Text className="text-xs text-darkgray">{timestamp.split("T")[0]}</Text>
               </View>
             </TouchableOpacity>
@@ -102,29 +105,7 @@ const {
           
         )
    
-  } else if (errorText !== "") {
-    return <ErrorComp errorText={errorText} />;
   }
-  else if (notificationType == "repost") {
-    return(
-   <View
-    className="flex-row items-center bg-white py-2 my-2 mx-4 border-t"
-    >
-            <TouchableOpacity
-                className="flex-1 flex-row items-center"
-                onPress={pressNotification}
-            >
-            <Image
-              source={require("../assets/images/Max.jpeg")}
-              // source={profilePictureUrl} sobald Bilder da sind
-              className="aspect-square rounded-full w-10"
-              alt="Picture"
-            />
-            <Text className="text-base ml-3">{username +  " has reposted you."}</Text>
-          </TouchableOpacity>
-          </View>
-            )
-  } 
 };
 
 export default NotificationTab;
