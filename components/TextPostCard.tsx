@@ -11,7 +11,8 @@ import {
   Modal,
   Pressable,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ActivityIndicator
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -23,6 +24,7 @@ import LikeIcon from "./LikeIcon";
 import LoginPopup from "./LoginPopup";
 import { useFocusEffect } from "@react-navigation/native";
 import { push } from "../navigation/NavigationService";
+import { NativeScrollEvent } from "react-native";
 
 
 interface Props {
@@ -64,12 +66,10 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [repostError, setRepostError] = useState("");
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [isLoginPopupVisible, setIsLoginPopupVisible] = useState(false);
-
-  useEffect(() => {
-    if(token) {
-      fetchComments();
-    }
-  }, []);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [offset, setOffset] = useState(0);
+  
 
   useFocusEffect(
     React.useCallback(() => {
@@ -79,9 +79,23 @@ const TextPostCard: React.FC<Props> = (props) => {
     }, []),
   );
 
+  const handleCommentScroll = ({
+    nativeEvent,
+  }: {
+    nativeEvent: NativeScrollEvent;
+  }) => {
+    if (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+        nativeEvent.contentSize.height - 20 && hasMoreComments
+    ) {
+      fetchComments(true);
+    }
+  };
 
-  const fetchComments = async () => {
-    const url = `${baseUrl}posts/${postId}/comments?limit=10&offset=0`;
+  const fetchComments = async (loadMore: boolean) => {
+    setLoadingComments(true);
+    let newOffset = loadMore ? offset + 8 : 0;
+    const url = `${baseUrl}posts/${postId}/comments?limit=8&offset=${newOffset}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -94,8 +108,11 @@ const TextPostCard: React.FC<Props> = (props) => {
       switch (response.status) {
         case 200:
           if (data) {
-            setComments(data.records || []);
+            setComments(loadMore ? [...comments, ...data.records] : data.records || []);
+            setOffset(newOffset);
+            setHasMoreComments(data.pagination.records - data.pagination.offset > 8);
             setCommentError("");
+            break;
           } else {
             setComments([]);
             setCommentError("");
@@ -114,6 +131,8 @@ const TextPostCard: React.FC<Props> = (props) => {
       setCommentError(
         "There are issues communicating with the server, please try again later.",
       );
+    } finally {
+      setLoadingComments(false);
     }
   };
 
@@ -274,6 +293,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       setIsLoginPopupVisible(true);
       return;
     }
+    fetchComments(false);
     setCommentModalVisible(true);
   };
 
@@ -482,6 +502,8 @@ const TextPostCard: React.FC<Props> = (props) => {
               </Pressable>
             </View>
             <ScrollView
+            onScroll={handleCommentScroll}
+            scrollEventThrottle={16}
             alwaysBounceVertical={false} >
               {commentError && (
                 <Text className="text-red">{commentError}</Text>
@@ -517,6 +539,9 @@ const TextPostCard: React.FC<Props> = (props) => {
                   </View>
                 ))
               )}
+              {loadingComments && (
+          <ActivityIndicator className="mb-2" size="small" />
+        )}
             </ScrollView>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 220 : 0} className="p-2 bg-white">
           <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>

@@ -83,6 +83,7 @@ const FeedScreen = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
+    setErrorText("");
     if (token) {
       fetchPosts("personal");
     }
