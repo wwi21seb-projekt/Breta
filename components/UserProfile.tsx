@@ -17,6 +17,7 @@ import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
+import TextPostCard from "./TextPostCard";
 
 type Props = {
   personal: boolean;
@@ -127,6 +128,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
 
   const createChat = async () => {
     let response;
+    let data;
     try {
       response = await fetch(`${baseUrl}chats`, {
         method: "POST",
@@ -136,19 +138,27 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         },
         body: JSON.stringify({
           username: userInfo.username,
-          content: "Start of the chat"
+          content: ""
         })
       });
-
-      const data = await response.json();
-  
-      if (response.ok) {
-        navigate("ChatDetail", { chatId: data.chatId });
+      data = await response.json();
+      switch (response.status) {
+        case 201:
+          navigate("ChatDetail", { chatId: data.chatId });
+          break;
+        case 400:
+        case 401:
+        case 404:
+        case 409:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      
-      navigate("Chat");
-      setErrorText("Failed to create a new chat");
+      setErrorText(
+        "There are issues communicating with the server, please try again later."
+      );
     }
   };
   
@@ -208,7 +218,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           {personal && (
             <TouchableOpacity
               style={{ ...SHADOWS.small }}
-              className="bg-white mb-10 px-12 py-3 rounded-2xl"
+              className="bg-white mb-6 px-12 py-3 rounded-2xl"
               onPress={() => navigate("EditProfile", { user: userInfo })}
             >
               <Text>Edit profile</Text>
@@ -247,7 +257,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             </View>
           )}
 
-          <View className="justify-center flex-row space-around">
+          <View className="justify-center flex-row space-around mx-10">
             <View className="items-center justify-center p-3 flex-1">
               <Text className="font-bold text-base">{userInfo.posts}</Text>
               <Text>Posts</Text>
@@ -276,18 +286,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <Text className="font-bold text-base">{userInfo.following}</Text>
               <Text>Following</Text>
             </TouchableOpacity>
-            {personal === true && (
-              <TouchableOpacity
-                className="items-center justify-center p-3 flex-1"
-                disabled={true}
-                onPress={() =>
-                  console.log("Freundschaftsanfragen: Wird noch implementiert")
-                }
-              >
-                <Text className="font-bold text-base">0</Text>
-                <Text>Requests</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </View>
         <Text className="font-bold text-xl ml-6">Posts</Text>
@@ -316,24 +314,27 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         keyExtractor={(item) => item.postId}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
-            style={{ ...SHADOWS.small }}
+            className="mx-2"
             disabled={!personal}
+            //activeOpacity={1}
             onLongPress={() => {
               setCurrentPostId(item.postId);
               setModalVisible(true);
             }}
           >
-            <View className="flex-row">
-              {/* view is placeholder for location */}
-              <View className="w-1/2" />
-              <Text className="w-1/2 text-xs text-right">
-                {item.creationDate.split("T")[0]}
-              </Text>
-            </View>
-            <Text className="my-5 text-lg font-semibold text-center">
-              {item.content}
-            </Text>
+            <TextPostCard
+              username={""}
+              // post.author.picture.url
+              profilePic={""}
+              date={item.creationDate}
+              postContent={item.content}
+              postId={item.postId}
+              repostAuthor={item.repost?.author?.username || ""}
+              isRepost={item.repost !== null}
+              initialLikes={item.likes}
+              initialLiked={item.liked}
+              isOwnPost={true}
+            />
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}

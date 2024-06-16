@@ -9,12 +9,11 @@ interface CommentIconProps {
 const CommentIcon: React.FC<CommentIconProps> = ({ onPress }) => {
 
     return (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onPress} className="mr-1">
                         <Ionicons
                           name="chatbox-ellipses-outline"
-                          size={18}
+                          size={20}
                           color={COLORS.black}
-                          className="mr-1"
                         />
         </TouchableOpacity> 
         )

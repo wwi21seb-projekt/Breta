@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../theme";
-import { useRoute, useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useRoute, useNavigation, useFocusEffect} from "@react-navigation/native";
 import { useAuth } from "../authentification/AuthContext";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import {
@@ -24,7 +24,6 @@ const AppTopBar = () => {
   const { logout } = useAuth();
   const isAuthenticated = useCheckAuthentication();
   const [notificationCount, setNotificationCount] = useState(0)
-  const isFocused = useIsFocused();
 
   let headerTitle: string;
 
@@ -47,7 +46,6 @@ const AppTopBar = () => {
   } else {
     headerTitle = "";
   }
-  //set new Headertitle "Notifications"
 
   const handleBack = () => {
     if (route.name === "Authentification") {
@@ -63,12 +61,6 @@ const AppTopBar = () => {
 
     return () => clearInterval(intervalId);
   }, [token]); 
-
-  useEffect(() => {
-    if (isFocused) {
-      updateNotifications();
-    }
-  }, [isFocused, token]); 
 
   useFocusEffect(
     useCallback(() => {
@@ -115,33 +107,34 @@ const AppTopBar = () => {
       }}
     >
       <View className="flex-row px-3 h-12 items-center mb-2">
+        <View className="flex-1">
         {canGoBack ? (
-          <TouchableOpacity className="w-6" onPress={() => handleBack()}>
-            <Ionicons name="arrow-back" size={26} color={COLORS.black} />
+          <TouchableOpacity onPress={() => handleBack()}>
+            <Ionicons name="arrow-back" size={28} color={COLORS.black} />
           </TouchableOpacity>
         ) : (
           <></>
         )}
-        {isAuthenticated && headerTitle === "" ? (
+        {isAuthenticated && headerTitle === "" && !canGoBack ? (
           <TouchableOpacity
-            className="w-6"
             onPress={() => navigate("Notifications")}
           >
-            <Ionicons name="notifications-outline" size={27} />
+            <Ionicons name="notifications-outline" size={28} />
             {notificationCount > 0 && (
-            <View className="absolute top-0 right-0 bg-red-600 rounded-full w-[21] h-6 flex items-center justify-center">
+            <View className="absolute left-0 top-0 w-7 h-7 items-center justify-center">
               {notificationCount < 10 ? (
-              <Text className="text-primary text-sm font-bold">{notificationCount}</Text>
+              <Text className="text-primary text-[8px] font-bold">{notificationCount}</Text>
                ) : 
-               <Text className="text-primary text-[10px] font-bold">9+</Text>}
+               <Text className="text-primary text-[8px] font-bold">9+</Text>}
             </View>
             )}
           </TouchableOpacity>
         ) : (
-          <View className="w-6" />
+          <></>
         )}
+        </View>
 
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-2">
           {headerTitle !== "" ? (
             <Text className="text-xl font-bold">{headerTitle}</Text>
           ) : (
@@ -161,13 +154,15 @@ const AppTopBar = () => {
             </TouchableOpacity>
           )}
         </View>
-        {isAuthenticated && headerTitle === "" ? (
-          <TouchableOpacity className="w-6" onPress={logout}>
+        <View className="flex-1 items-end">
+        {isAuthenticated && headerTitle === "" && !canGoBack ? (
+          <TouchableOpacity onPress={logout}>
             <Ionicons name="log-out-outline" size={26} color={COLORS.black} />
           </TouchableOpacity>
         ) : (
           <></>
         )}
+        </View>
       </View>
     </SafeAreaView>
   );
