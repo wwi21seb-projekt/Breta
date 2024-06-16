@@ -112,7 +112,6 @@ const TextPostCard: React.FC<Props> = (props) => {
             setOffset(newOffset);
             setHasMoreComments(data.pagination.records - data.pagination.offset > 8);
             setCommentError("");
-            break;
           } else {
             setComments([]);
             setCommentError("");
