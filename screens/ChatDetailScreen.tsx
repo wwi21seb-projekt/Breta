@@ -13,7 +13,7 @@ interface RouteParams {
 }
 
 const ChatDetailScreen = () => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const route = useRoute();
   const { chatId, username } = route.params as RouteParams;
   const [messages, setMessages] = useState<Message[]>([]);
@@ -41,6 +41,21 @@ const ChatDetailScreen = () => {
     const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
     return formattedDate;
   }
+
+  const getCurrentFormattedDate = () => {
+    const date = new Date();
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+    const microseconds = '000'; 
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}Z`;
+  
+    return formattedDate;
+  };
 
   const fetchMessages = async (newOffset = 0) => {
     setLoading(true);
@@ -93,7 +108,8 @@ const ChatDetailScreen = () => {
       const data = await response.json();
       switch (response.status) {
         case 201:
-          setMessages(data.message.content);
+          console.log(data.message)
+          //setMessages(data.message);
           break;
         case 400:
         case 401:
@@ -128,10 +144,9 @@ const ChatDetailScreen = () => {
       createChat();
     } else {
       const newMessage: Message = {
-        id: `${Date.now()}`, 
         content: messageText,
-        sender: { username: 'Ich' },
-        creationDate: new Date().toLocaleString(),
+        creationDate: getCurrentFormattedDate(),
+        username: user || "",
       };
       setMessages([...messages, newMessage]);
       setMessageText('');
@@ -167,23 +182,20 @@ const ChatDetailScreen = () => {
         >
           {/* {loading && <Text>Loading...</Text>}
           {errorText && <Text className="text-red">{errorText}</Text>} */}
-          {messages?.map((message) => {
-            const isMyMessage = message.sender && message.sender.username === 'Ich';
-            return (
+          {messages?.map((message) => (
               <View
-                key={`${message.id}-${message.creationDate}`}
-                className={`mb-4 ${isMyMessage ? 'items-end self-end' : 'items-start self-start'} max-w-[50%]`}
+                key={`${message.creationDate}`}
+                className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[50%]`}
               >
                 <View
-                  className={`rounded-lg px-3 py-2 ${isMyMessage ? 'bg-secondary' : 'bg-lightgray'} 
+                  className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} 
                     ${message.content.length > 50 ? 'px-5 py-3' : 'px-3 py-2'}`}
                 >
                   <Text className='text-sm mb-0.5'>{message.content}</Text>
                   <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
                 </View>
               </View>
-            );
-          })}
+          ))}
         </ScrollView>
         <View className="px-4 py-5 bg-white">
           <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>
@@ -196,6 +208,7 @@ const ChatDetailScreen = () => {
               multiline
               onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
+            {/* disabled={disableSendButton || messageText === ""} */}
             <TouchableOpacity className="bg-primary py-2 px-3 rounded-full" onPress={sendMessage}>
               <Text className="text-white">Send</Text>
             </TouchableOpacity>
