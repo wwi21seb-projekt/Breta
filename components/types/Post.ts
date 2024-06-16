@@ -1,20 +1,50 @@
 interface Post {
   postId: string;
-  author: Author;
+  author: {
+    username: string;
+    nickname: string;
+    picture: {
+      url: string;
+      width: number;
+      height: number;
+    }
+  },
   creationDate: string;
   content: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
-  city?: any;
+  picture: {
+      url: string;
+      width: number;
+      height: number;
+  },
   likes: number;
   liked: boolean;
-}
-
-interface Author {
-  username: string;
-  profilePictureUrl: string;
+  repost: {
+    author: {
+      username: string;
+      nickname: string;
+      picture: {
+        url: string;
+        width: number;
+        height: number;
+      }
+    },
+    content: string;
+    picture: {
+      url: string;
+      width: number;
+      height: number;
+    },
+    creationDate: string;
+    location: {
+      latitude: number;
+      longitude: number;
+    },
+  },
+  location: {
+    latitude: number;
+    longitude: number;
+  },
+  city: string;
 }
 
 export default Post;

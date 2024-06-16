@@ -5,6 +5,8 @@ export interface Post {
     nickname: string;
     profilePictureUrl: string;
   };
+  likes: number;
+  liked: boolean;
   creationDate: string;
   content: string;
   location: {
@@ -12,6 +14,11 @@ export interface Post {
     latitude: string;
     accuracy: number;
   };
+  repost: {
+    author: {
+      username: string;
+    }
+  }
 }
 
 export interface PostRecords {

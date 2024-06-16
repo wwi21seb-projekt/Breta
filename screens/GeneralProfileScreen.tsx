@@ -18,31 +18,25 @@ const GeneralProfileScreen = () => {
   const username = params.username;
   const [userInfo, setUserInfo] = useState<User>();
   const [errorText, setErrorText] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      setLoading(true);
       if (username && token) {
         loadUser(username, setUserInfo, setErrorText, token);
       }
-      setLoading(false);
     }, []),
   );
 
-  if (loading) {
+  if (errorText) {
+    return <ErrorComp errorText={errorText} />;
+  } else if (userInfo !== undefined) {
+    return <UserProfile personal={false} userInfo={userInfo} />;
+  } 
+  else {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
-    );
-  } else if (errorText !== "") {
-    return <ErrorComp errorText={errorText} />;
-  } else if (userInfo !== undefined) {
-    return <UserProfile personal={false} userInfo={userInfo} />;
-  } else {
-    return (
-      <ErrorComp errorText="Something went wrong, please try again later." />
     );
   }
 };

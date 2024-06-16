@@ -25,15 +25,6 @@ const UserListItem: React.FC<Props> = ({
   );
   const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
 
-  // Nur relevant für Freundschaftsanfragen
-  // const handleAccept = () => {
-  //   console.log("Nutzer akzeptiert.");
-  // };
-
-  // const handleReject = () => {
-  //   console.log("Nutzer abgelehnt.");
-  // };
-
   return (
     <View
       className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
@@ -54,26 +45,6 @@ const UserListItem: React.FC<Props> = ({
         <Text className="text-base ml-3">{username}</Text>
       </TouchableOpacity>
 
-      {/* Das wäre für eine Freundschaftsanfrage
-                <TouchableOpacity
-                  className="mr-2"
-                  onPress={() => handleAccept()}
-                >
-                  <Icon
-                    as={Ionicons}
-                    name="checkmark-outline"
-                    size="md"
-                    color={COLORS.green}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleReject()}>
-                  <Icon
-                    as={Ionicons}
-                    name="close-outline"
-                    size="md"
-                    color={COLORS.red}
-                  />
-                </TouchableOpacity> */}
       {user !== username && followingId !== "searchResult" && (
         <TouchableOpacity
           className="py-1 px-2 rounded-3xl border"

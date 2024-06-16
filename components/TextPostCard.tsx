@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Comment from "../components/types/Comment";
 import {
@@ -6,22 +6,25 @@ import {
   Text,
   Image,
   TextInput,
-  Dimensions,
   ScrollView,
   TouchableOpacity,
   Modal,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  NativeScrollEvent
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
-import LoginPopup from "./LoginPopup";
 import { useAuth } from "../authentification/AuthContext";
 import { useCheckAuthentication } from "../authentification/CheckAuthentification";
 import ErrorComp from "./ErrorComp";
 import CommentIcon from "./CommentIcon";
 import LikeIcon from "./LikeIcon";
-
-const windowHeight = Dimensions.get("window").height;
+import LoginPopup from "./LoginPopup";
+import { useFocusEffect } from "@react-navigation/native";
+import { push } from "../navigation/NavigationService";
 
 
 interface Props {
@@ -30,12 +33,12 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
-  style?: React.CSSProperties;
-  city: string;
+  city?: string;
   postId: string;
-  repostAuthor?: string;
+  repostAuthor: string;
   isRepost: boolean;
   initialLiked: boolean;
+  isOwnPost: boolean;
 }
 
 const TextPostCard: React.FC<Props> = (props) => {
@@ -50,7 +53,8 @@ const TextPostCard: React.FC<Props> = (props) => {
     initialLiked,
     postId,
     repostAuthor,
-    isRepost
+    isRepost,
+    isOwnPost
     } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -59,19 +63,39 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
-  const [loginPopupVisible, setLoginPopupVisible] = useState(false);
-  const [repostError, setRepostError] = useState("")
-  const [confirmationVisible, setConfirmationVisible] = useState(false)
+  const [repostError, setRepostError] = useState("");
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [isLoginPopupVisible, setIsLoginPopupVisible] = useState(false);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [offset, setOffset] = useState(0);
+  
 
-  useEffect(() => {
-    if(token) {
-      fetchComments();
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoginPopupVisible(false);
+      setCommentError("");
+      setRepostError("");
+    }, []),
+  );
+
+  const handleCommentScroll = ({
+    nativeEvent,
+  }: {
+    nativeEvent: NativeScrollEvent;
+  }) => {
+    if (
+      nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+        nativeEvent.contentSize.height - 20 && hasMoreComments
+    ) {
+      fetchComments(true);
     }
-  }, []);
+  };
 
-
-  const fetchComments = async () => {
-    const url = `${baseUrl}posts/${postId}/comments?limit=10&offset=0`;
+  const fetchComments = async (loadMore: boolean) => {
+    setLoadingComments(true);
+    let newOffset = loadMore ? offset + 8 : 0;
+    const url = `${baseUrl}posts/${postId}/comments?limit=8&offset=${newOffset}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -84,7 +108,9 @@ const TextPostCard: React.FC<Props> = (props) => {
       switch (response.status) {
         case 200:
           if (data) {
-            setComments(data.records || []);
+            setComments(loadMore ? [...comments, ...data.records] : data.records || []);
+            setOffset(newOffset);
+            setHasMoreComments(data.pagination.records - data.pagination.offset > 8);
             setCommentError("");
           } else {
             setComments([]);
@@ -104,12 +130,14 @@ const TextPostCard: React.FC<Props> = (props) => {
       setCommentError(
         "There are issues communicating with the server, please try again later.",
       );
+    } finally {
+      setLoadingComments(false);
     }
   };
 
   const addComment = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
     if (commentText.trim()) {
@@ -164,7 +192,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const likePost = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
 
@@ -201,7 +229,7 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const unlikePost = async () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
 
@@ -224,8 +252,8 @@ const TextPostCard: React.FC<Props> = (props) => {
         case 401:
         case 404:
         case 409:{
-          const data = await response.json()
-          setRepostError(data.error.message)
+          const data = await response.json();
+          setRepostError(data.error.message);
           break;
         }
         default:
@@ -261,9 +289,10 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   const openCommentModal = () => {
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
+    fetchComments(false);
     setCommentModalVisible(true);
   };
 
@@ -294,8 +323,8 @@ const TextPostCard: React.FC<Props> = (props) => {
         case 400:
         case 401:
         case 404:{
-          const data = await response.json()
-          setRepostError(data.error.message)
+          const data = await response.json();
+          setRepostError(data.error.message);
           break;
         }
         default:
@@ -312,45 +341,10 @@ const TextPostCard: React.FC<Props> = (props) => {
   const repostConfirm = async () => {
 
     if (!isAuthenticated) {
-      setLoginPopupVisible(true);
+      setIsLoginPopupVisible(true);
       return;
     }
-    setConfirmationVisible(true)
-    return(
-      <Modal
-          animationType="none"
-          transparent={true}
-          visible={confirmationVisible}
-          onRequestClose={() => {
-            setConfirmationVisible(false);
-          }}
-        >
-          <View
-            className="flex-1 justify-center items-center"
-            style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
-          >
-            <View className="bg-white rounded-3xl px-8 py-4">
-              <Text className="text-lg mb-10">
-                Do you really want to delete this post?
-              </Text>
-              <View className="flex-row">
-                <TouchableOpacity onPress={() => repostPost}>
-                  <Text className="text-red text-base font-bold">Delete</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="ml-auto"
-                  onPress={() => {
-                    setConfirmationVisible(false);
-                  }}
-                >
-                  <Text className="text-black text-base font-bold">Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-    )
+    setConfirmationVisible(true);
   }    
   if(repostError !== ""){
       return <ErrorComp errorText={repostError}></ErrorComp>;
@@ -374,17 +368,15 @@ const TextPostCard: React.FC<Props> = (props) => {
                 Do you really want to repost this post?
               </Text>
               <View className="flex-row">
-                <TouchableOpacity onPress={() => repostPost()}>
-                  <Text className="text-red text-base font-bold">Repost</Text>
+                <TouchableOpacity onPress={() => setConfirmationVisible(false)}>
+                  <Text className="text-red text-base font-bold">Cancel</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   className="ml-auto"
-                  onPress={() => {
-                    setConfirmationVisible(false);
-                  }}
+                  onPress={repostPost}
                 >
-                  <Text className="text-black text-base font-bold">Cancel</Text>
+                  <Text className="text-black text-base font-bold">Repost</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -392,31 +384,34 @@ const TextPostCard: React.FC<Props> = (props) => {
         </Modal>
       {!isRepost ? (
       <View
-        className="w-full bg-white rounded-full p-4 z-20 relative"
+        className="w-full bg-white rounded-full p-2 z-20 relative"
         style={{ ...SHADOWS.small }}
       >
         
         <View className="flex-row items-center justify-between">
-          <Image
-            source={{ uri: profilePic || "defaultProfilePicUrl" }}
+          {!isOwnPost ? (<><Image
+            source={require("../assets/images/Max.jpeg")}
             className="w-10 h-10 rounded-full"
             alt="PB"
           />
-          <View className="flex-1 ml-2">
-            <Text className="font-bold">{username}</Text>
-            <Text className="text-xs text-lightgray"> {city}</Text>
-          </View>
+          <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: username })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{username}</Text>
+            <Text className="text-xs text-darkgray">{city}</Text>
+          </TouchableOpacity></>) : (<View className="flex-col"><Text className="text-xs text-darkgray ml-1 font-semibold">{city}</Text><Text className="text-xs text-darkgray ml-1">{date.split("T")[0]}</Text>
+        </View>)}
+          
 
           <View className="flex flex-col justify-end items-end">
             <View className="flex flex-row">
-            <TouchableOpacity onPress={repostConfirm}>
+              {!isOwnPost && (<TouchableOpacity className="mr-1" onPress={repostConfirm}>
                 <Ionicons
                   name="repeat-outline"
-                  size={18}
+                  size={20}
                   color={COLORS.black}
-                  className="mr-1"
                 />
-              </TouchableOpacity>
+              </TouchableOpacity>)}
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
                 isLiked={isLiked}
@@ -425,19 +420,27 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
             </View>
-            <Text className="text-xs text-lightgray text-l "> {date.split("T")[0]}</Text>
+            {!isOwnPost && (<Text className="text-xs text-darkgray mr-1">{date.split("T")[0]}</Text>)}
           </View>
         </View>
       </View>
       
       ) : (
-        <View className="w-full bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
+        <View className="w-full bg-white rounded-xl p-2" style={{ ...SHADOWS.small }}>
           <View className="flex flex-col justify-end items-end z-20 relative" >
               <View className="flex-row items-center justify-between">
-              <View className="flex-1 ml-2 pt-4">
-                <Text className="font-bold">{username}</Text>
-                <Text className="text-xs text-lightgray"> {city}</Text>
-              </View>
+              {!isOwnPost ? (<><Image
+              source={require("../assets/images/Max.jpeg")}
+            className="w-10 h-10 rounded-full"
+            alt="PB"
+          />
+          <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: username })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{username}</Text>
+            <Text className="text-xs text-darkgray">{city}</Text>
+          </TouchableOpacity></>) : (<Text className="mb-1.5 text-xs flex-1 ml-1"><Text className="font-semibold italic text-darkgray text-sm">Reposted</Text> on {date.split("T")[0]}</Text>)}
+           
               <CommentIcon onPress={openCommentModal}/>
               <LikeIcon
                 isLiked={isLiked}
@@ -446,32 +449,37 @@ const TextPostCard: React.FC<Props> = (props) => {
                 formatLikes={formatLikes}
               />
               </View>
-              <Text className="text-xs text-lightgray text-l mt-[-14] mb-1"> {date.split("T")[0]}</Text>
+              {!isOwnPost && (<Text className="text-xs text-darkgray mt-[-10] mb-1.5">{date.split("T")[0]}</Text>)}
             <View
-            className="w-full bg-white rounded-full p-4 z-10 relative"
+            className="w-full bg-white rounded-full p-2 z-10 relative"
             style={{ ...SHADOWS.small }}
             >
               <View className="w-full flex-row items-center">
                 <Image
-                  source={{ uri: profilePic|| "defaultProfilePicUrl" }}
+                  source={require("../assets/images/Max.jpeg")}
                   className="w-10 h-10 rounded-full"
                   alt="PB"
                 />
-                <View className="ml-2">
+                {repostAuthor !== "" ? ( <TouchableOpacity onPress={() => {
+          push("GeneralProfile", { username: repostAuthor })
+        }} className="flex-1 ml-2">
+            <Text className="font-semibold text-base">{repostAuthor}</Text>
+            {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
+          </TouchableOpacity>) : (<View className="flex-1 ml-2">
                   <Text className="align-center font-bold">{repostAuthor}</Text>
-                  <Text className="text-xs text-lightgray"> {city}</Text>
-                  <Text className="text-xs text-lightgray text-l mt-[-15]"> {date.split("T")[0]}</Text>
-                </View>
+                  {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
+                </View>)}
+                {!isOwnPost && (<Text className="text-xs text-darkgray mt-[-12] mr-1">{date.split("T")[0]}</Text>)}
             </View>
           </View>
         </View>
-        <View className="m-1.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
+        <View className="m-2.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
             <Text>{postContent}</Text>
           </View>
         </View>
       ) }
     {!isRepost ? (
-      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10 relative">
+      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10">
         <Text>{postContent}</Text>
       </View>
     ) : (<></>) }
@@ -492,13 +500,16 @@ const TextPostCard: React.FC<Props> = (props) => {
                 <Ionicons name="close" size={24} color="black" />
               </Pressable>
             </View>
-            <ScrollView>
+            <ScrollView
+            onScroll={handleCommentScroll}
+            scrollEventThrottle={16}
+            alwaysBounceVertical={false} >
               {commentError && (
-                <Text className="text-red-500">{commentError}</Text>
+                <Text className="text-red">{commentError}</Text>
               )}
               {comments.length === 0 ? (
-                <Text className="text-center text-lightgray mt-4">
-                  No Comments available
+                <Text className="text-center text-darkgray mt-4">
+                  There are no comments yet.
                 </Text>
               ) : (
                 comments.map((comment) => (
@@ -507,50 +518,58 @@ const TextPostCard: React.FC<Props> = (props) => {
                     className="flex-row items-start py-3 border-b border-lightgray"
                   >
                     <Image
-                      source={{ uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }}
+                    // { uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }
+                      source={require("../assets/images/Max.jpeg")}
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">
-                      <Text className="font-bold">
+                    <TouchableOpacity onPress={() => {closeCommentModal();
+          push("GeneralProfile", { username: comment.author.username !== null ?  comment.author.username : ""})
+        }}>
+             <Text className="text-md font-bold mb-1.5">
                         {comment.author.username}
                       </Text>
-                      <Text>{comment.content}</Text>
-                      <Text className="text-xs text-lightgray">
+          </TouchableOpacity>
+                      <Text className="text-sm mb-0.5">{comment.content}</Text>
+                      <Text className="text-xs text-darkgray">
                         {new Date(comment.creationDate).toLocaleString()}
                       </Text>
                     </View>
                   </View>
                 ))
               )}
+              {loadingComments && (
+          <ActivityIndicator className="mb-2" size="small" />
+        )}
             </ScrollView>
-            <View className="flex-row items-center border-t border-lightgray p-4">
-              <TextInput
-                className="flex-1 mr-4 bg-lightgray rounded-full p-3 text-sm"
-                placeholder="Schreiben Sie einen Kommentar..."
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 220 : 0} className="p-2 bg-white">
+          <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>
+            <TextInput
+              className="flex-1 p-2 mr-2"
+              placeholder="Write a comment..."
+              placeholderTextColor={COLORS.darkgray}
                 onChangeText={setCommentText}
                 value={commentText}
                 multiline
-              />
-              <TouchableOpacity
-                className="bg-brigtBlue p-3 rounded-full"
-                onPress={addComment}
-              >
-                <Text className="font-bold text-sm">Posten</Text>
-              </TouchableOpacity>
-            </View>
+            />
+            <TouchableOpacity className="bg-primary py-2 px-4 rounded-full" style={{
+                backgroundColor: commentText
+                  ? COLORS.primary
+                  : COLORS.lightgray,
+              }} onPress={addComment} disabled={!commentText}>
+              <Text className="text-white">Post</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
           </View>
         </View>
         )}
       </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={loginPopupVisible}
-        onRequestClose={() => setLoginPopupVisible(false)}
-      >
-        <LoginPopup/>
-      </Modal>
+      {isLoginPopupVisible && (
+        <LoginPopup setIsLoginPopupVisible={setIsLoginPopupVisible}/>
+      )}
     </View>
+    
   );
   }
 };
