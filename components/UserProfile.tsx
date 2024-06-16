@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Modal,
@@ -17,6 +17,8 @@ import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
+import { loadChats } from "./functions/LoadChats";
+import Chat from '../components/types/Chat';
 
 type Props = {
   personal: boolean;
@@ -39,6 +41,19 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [loading, setLoading] = useState(false);
   const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
   const [currentPostId, setCurrentPostId] = useState("");
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [areNoChats, setAreNoChats] = useState(false);
+
+  useEffect(() => {
+    if (chats.length > 0) {
+      const existedChat = chats.find(chat => chat.user.username === userInfo.username);
+      if (areNoChats || !existedChat) {
+        navigate("ChatDetail", { chatId: "", username: userInfo.username });
+      } else {
+        navigate("ChatDetail", { chatId: existedChat.chatId, username: userInfo.username });
+      }
+    }
+  }, [chats, areNoChats]);
 
   const fetchPosts = async (loadMore: boolean) => {
     setLoading(true);
@@ -111,6 +126,10 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
+  const startChat = () => {
+    loadChats(setChats, setErrorText, setAreNoChats, token);
+  };
+
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
       setLoadingMore(true);
@@ -124,33 +143,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       fetchPosts(false);
     }, [])
   );
-
-  const createChat = async () => {
-    let response;
-    try {
-      response = await fetch(`${baseUrl}chats`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          username: userInfo.username,
-          content: "Start of the chat"
-        })
-      });
-
-      const data = await response.json();
-  
-      if (response.ok) {
-        navigate("ChatDetail", { chatId: data.chatId });
-      }
-    } catch (error) {
-      
-      navigate("Chat");
-      setErrorText("Failed to create a new chat");
-    }
-  };
   
 
   const renderHeader = () => {
@@ -219,7 +211,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
                 className="bg-white py-3 rounded-2xl flex-1"
-                onPress={createChat}
+                onPress={startChat}
               >
                 <Text className="text-center">Chat</Text>
               </TouchableOpacity>
