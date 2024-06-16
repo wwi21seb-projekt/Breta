@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../authentification/AuthContext';
 import { COLORS, SHADOWS } from '../theme';
 import { baseUrl } from '../env';
 import Message from '../components/types/Message';
+import { navigate } from '../navigation/NavigationService';
 
 interface RouteParams {
   username: string,
@@ -17,15 +18,29 @@ const ChatDetailScreen = () => {
   const { chatId, username } = route.params as RouteParams;
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errorText, setErrorText] = useState('');
   const [messageText, setMessageText] = useState('');
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    fetchMessages();
+    if(chatId !== ""){
+      fetchMessages();
+    }
   }, [chatId]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1; 
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
+    return formattedDate;
+  }
 
   const fetchMessages = async (newOffset = 0) => {
     setLoading(true);
@@ -47,17 +62,53 @@ const ChatDetailScreen = () => {
         throw new Error('Invalid response format');
       }
 
+      console.log(data);
       setMessages((prevMessages) => newOffset === 0 ? data.records : [...prevMessages, ...data.records]);
       setOffset(newOffset + data.pagination.records);
       setHasMore(data.pagination.records === 10);
 
     
     } catch (error) {
-      setError('Failed to load messages');
+      setErrorText('Failed to load messages');
     } finally {
       setLoading(false);
     }
   };
+
+  const createChat = async () => {
+    let response;
+    try {
+      response = await fetch(`${baseUrl}chats`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: username,
+          content: messageText
+        })
+      });
+
+      const data = await response.json();
+      switch (response.status) {
+        case 201:
+          setMessages(data.message.content);
+          break;
+        case 400:
+        case 401:
+        case 404:
+        case 409:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong, please try again later.");
+      }
+    } catch (error) {
+      setErrorText("There are issues communicating with the server, please try again later.");
+    }
+  };
+
 
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -72,27 +123,34 @@ const ChatDetailScreen = () => {
   };
 
   const sendMessage = () => {
-    if (!messageText.trim()) return;
-
-    const newMessage: Message = {
-      id: `${Date.now()}`, 
-      content: messageText,
-      sender: { username: 'Ich' },
-      date: new Date().toLocaleString(),
-    };
-    setMessages([...messages, newMessage]);
-    setMessageText('');
+    //if (!messageText.trim()) return;
+    if(messages.length == 0){
+      createChat();
+    } else {
+      const newMessage: Message = {
+        id: `${Date.now()}`, 
+        content: messageText,
+        sender: { username: 'Ich' },
+        creationDate: new Date().toLocaleString(),
+      };
+      setMessages([...messages, newMessage]);
+      setMessageText('');
+    }
   };
 
   return (
     <View className="flex-1 bg-white">
-      <View className="flex-row items-center bg-white p-4">
+      <TouchableOpacity className="flex-row items-center bg-white px-4 py-2"
+      onPress={() => {
+        navigate("GeneralProfile", { username: username });
+      }}>
         <Image
-          source={{ uri: "defaultProfilePicUrl" }}
-          className="w-10 h-10 rounded-full"
+        // { uri: "defaultProfilePicUrl" }
+          source={require("../assets/images/Max.jpeg")}
+          className="w-11 h-11 rounded-full"
         />
-        <Text className="ml-4 font-bold text-lg">{username}</Text> 
-      </View>
+        <Text className="ml-3 font-bold text-lg">{username}</Text> 
+      </TouchableOpacity>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
@@ -107,39 +165,39 @@ const ChatDetailScreen = () => {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {loading && <Text>Loading...</Text>}
-          {error && <Text className="text-red">{error}</Text>}
+          {/* {loading && <Text>Loading...</Text>}
+          {errorText && <Text className="text-red">{errorText}</Text>} */}
           {messages?.map((message) => {
             const isMyMessage = message.sender && message.sender.username === 'Ich';
             return (
               <View
-                key={`${message.id}-${message.date}`}
+                key={`${message.id}-${message.creationDate}`}
                 className={`mb-4 ${isMyMessage ? 'items-end self-end' : 'items-start self-start'} max-w-[50%]`}
               >
                 <View
                   className={`rounded-lg px-3 py-2 ${isMyMessage ? 'bg-secondary' : 'bg-lightgray'} 
                     ${message.content.length > 50 ? 'px-5 py-3' : 'px-3 py-2'}`}
                 >
-                  <Text className='text-md'>{message.content}</Text>
-                  <Text className="text-darkgray text-xs">{message.date}</Text>
+                  <Text className='text-sm mb-0.5'>{message.content}</Text>
+                  <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
                 </View>
               </View>
             );
           })}
         </ScrollView>
-        <View className="p-4 bg-white">
+        <View className="px-4 py-5 bg-white">
           <View className="flex-row items-center bg-white rounded-xl p-2" style={SHADOWS.small}>
             <TextInput
               className="flex-1 p-2 mr-2"
-              placeholder="Schreibe eine Nachricht..."
+              placeholder="Send a message ..."
               placeholderTextColor={COLORS.darkgray}
               value={messageText}
               onChangeText={setMessageText}
               multiline
               onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
-            <TouchableOpacity className="bg-primary p-2 rounded-full" onPress={sendMessage}>
-              <Text className="text-white">Senden</Text>
+            <TouchableOpacity className="bg-primary py-2 px-3 rounded-full" onPress={sendMessage}>
+              <Text className="text-white">Send</Text>
             </TouchableOpacity>
           </View>
         </View>

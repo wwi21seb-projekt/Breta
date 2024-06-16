@@ -4,7 +4,7 @@ interface Message {
     sender: {
       username: string;
     };
-    date: string;
+    creationDate: string;
   }
 
   export default Message;
