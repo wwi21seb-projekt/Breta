@@ -24,7 +24,6 @@ const ChatScreen = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     setErrorText("");
-    setAreNoChats(false);
     await loadChats(setChats, setErrorText, setAreNoChats, token);
     setTimeout(() => {
       setRefreshing(false);
@@ -56,7 +55,7 @@ const ChatScreen = () => {
         }
       >
         <Text className="text-2xl font-bold mb-4">Chats</Text>
-        {areNoChats && (<Text className="m-2 text-darkgray">There are no chats so far.</Text>)}
+        {areNoChats && (<Text className="text-lightgray text-base">You do not have any chats so far.</Text>)}
         {chats.map((chat) => (
           <TouchableOpacity
             key={chat.chatId}
@@ -73,12 +72,12 @@ const ChatScreen = () => {
               <Text className="font-bold text-md">{chat.user.username}</Text>
               <Text className="text-darkgray text-sm">{shortenMessage(chat.lastMessage)}</Text>
             </View>
-            {chat.unreadMessages > 0 && (
+            {/* {chat.unreadMessages > 0 && (
               <View className="bg-primary w-6 h-6 rounded-full flex items-center justify-center mx-1">
                 <Text className="text-white text-xs">{chat.unreadMessages}</Text>
               </View>
             )}
-            <Text className="text-darkgray text-xs mx-1">{chat.date}</Text>
+            <Text className="text-darkgray text-xs mx-1">{chat.date}</Text> */}
           </TouchableOpacity>
         ))}
         <View className="mt-8"></View>

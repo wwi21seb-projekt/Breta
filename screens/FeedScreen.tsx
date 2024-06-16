@@ -153,7 +153,7 @@ const FeedScreen = () => {
     >
       {token ? (
         <>
-          <Text className="font-bold m-6 text-lg">Personal Feed</Text>
+        {postsPersonal.length !== 0 && (<Text className="font-bold m-6 text-lg">Personal Feed</Text>)}
           {postsPersonal.map((post, index) => (
             <TextPostCard
               key={`personal-${index}`}

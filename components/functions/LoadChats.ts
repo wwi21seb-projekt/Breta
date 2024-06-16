@@ -22,7 +22,7 @@ export const loadChats = async (
       data = await response.json();
       switch (response.status) {
         case 200:
-          if (data.records) {
+          if (data.records.length !== 0) {
             setChats(data.records);
           } else {
             setAreNoChats(true);
