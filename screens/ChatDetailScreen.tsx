@@ -91,22 +91,22 @@ const ChatDetailScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch messages');
-      }
-  
       const data = await response.json();
-      if (!data?.records || !data?.pagination) {
-        throw new Error('Invalid response format');
+      switch (response.status) {
+        case 200:
+          setMessages((prevMessages) => newOffset === 0 ? data.records : [...prevMessages, ...data.records]);
+          setOffset(newOffset + data.pagination.records);
+          setHasMore(data.pagination.records === 10);
+          break;
+        case 401:
+        case 404:
+          setErrorText(data.error.message);
+          break;
+        default:
+          setErrorText("Something went wrong, please try again later.");
       }
-      setMessages((prevMessages) => newOffset === 0 ? data.records : [...prevMessages, ...data.records]);
-      setOffset(newOffset + data.pagination.records);
-      setHasMore(data.pagination.records === 10);
-
-    
     } catch (error) {
-      setErrorText('Failed to load messages');
+      setErrorText("There are issues communicating with the server, please try again later.");
     } finally {
       setLoading(false);
     }

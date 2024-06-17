@@ -34,13 +34,6 @@ const ChatScreen = () => {
     navigate("ChatDetail", { chatId, username });
   };
 
-  const shortenMessage = (message: string) => {
-    if (message === undefined || message.length <= 12) {
-      return message;
-    }
-    return message.substring(0, 12) + '...';
-  };
-
   if (errorText) {
     return (
       <ErrorComp errorText={errorText} />
@@ -68,16 +61,7 @@ const ChatScreen = () => {
               source={require("../assets/images/Max.jpeg")}
               className="w-11 h-11 rounded-full"
             />
-            <View className="flex-1 ml-3">
-              <Text className="font-bold text-md">{chat.user.username}</Text>
-              <Text className="text-darkgray text-sm">{shortenMessage(chat.lastMessage)}</Text>
-            </View>
-            {/* {chat.unreadMessages > 0 && (
-              <View className="bg-primary w-6 h-6 rounded-full flex items-center justify-center mx-1">
-                <Text className="text-white text-xs">{chat.unreadMessages}</Text>
-              </View>
-            )}
-            <Text className="text-darkgray text-xs mx-1">{chat.date}</Text> */}
+              <Text className="flex-1 ml-3 font-bold">{chat.user.username}</Text>
           </TouchableOpacity>
         ))}
         <View className="mt-8"></View>
