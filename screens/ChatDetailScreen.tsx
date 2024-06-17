@@ -94,7 +94,8 @@ const ChatDetailScreen = () => {
       const data = await response.json();
       switch (response.status) {
         case 200:
-          setMessages((prevMessages) => newOffset === 0 ? data.records : [...prevMessages, ...data.records]);
+          const records = data.records.reverse();
+          setMessages((prevMessages) => newOffset === 0 ? records : [...prevMessages, ...records]);
           setOffset(newOffset + data.pagination.records);
           setHasMore(data.pagination.records === 10);
           break;
