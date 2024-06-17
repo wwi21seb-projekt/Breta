@@ -53,7 +53,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       } else {
         navigate("ChatDetail", { chatId: "", username: userInfo.username });
       }
-    } if (areNoChats) {
+    } 
+    if (areNoChats) {
       navigate("ChatDetail", { chatId: "", username: userInfo.username });
     }
   }, [chats, areNoChats]);

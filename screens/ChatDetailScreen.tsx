@@ -1,13 +1,12 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ActivityIndicator, Keyboard } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../authentification/AuthContext';
 import { COLORS, SHADOWS } from '../theme';
-import { baseUrl } from '../env';
+import { baseUrl, baseSocketUrl } from '../env';
 import Message from '../components/types/Message';
 import { navigate } from '../navigation/NavigationService';
 import ErrorComp from '../components/ErrorComp';
-import { baseSocketUrl } from '../env';
 
 interface RouteParams {
   username: string,
@@ -21,7 +20,7 @@ const ChatDetailScreen = () => {
   const [currentChatId, setCurrentChatId] = useState(chatId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [disableSendButton, setDisabledSendButton] = useState(true);
+  const [disableSendButton, setDisableSendButton] = useState(true);
   const [errorText, setErrorText] = useState("");
   const [messageText, setMessageText] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
@@ -29,20 +28,20 @@ const ChatDetailScreen = () => {
 
   useEffect(() => {
     if (chatId === ""){
-      setDisabledSendButton(false);
+      setDisableSendButton(false);
     };
     if(token && currentChatId !== ""){
       fetchMessages();
       ws.current = new WebSocket(`${baseSocketUrl}chat?chatId=${currentChatId}`, token);
       ws.current.onopen = () => {
-        setDisabledSendButton(false);
+        setDisableSendButton(false);
       };
       ws.current.onmessage = (e: MessageEvent) => {
         const message: Message = JSON.parse(e.data);
         setMessages((prevMessages) => [...prevMessages, message]);
       };
       ws.current.onclose = () => {
-        setDisabledSendButton(true);
+        setDisableSendButton(true);
       };
       return () => {
         if (ws.current) {
