@@ -40,7 +40,6 @@ const SearchScreen = () => {
     />
   );
 
-  //components for tabs in TabView -> in future gonna be UserList and own SearchPostFeed comps
   const userList = () => {
     if (userSearchError !== "") {
       return <ErrorComp errorText={userSearchError}></ErrorComp>;

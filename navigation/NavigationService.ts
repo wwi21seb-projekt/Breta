@@ -18,6 +18,7 @@ export type RootStackParamList = {
   RequestReset: undefined;
   SetReset: undefined;
   Notifications: undefined;
+  Profile: undefined;
 };
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();

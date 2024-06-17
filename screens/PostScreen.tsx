@@ -6,6 +6,8 @@ import {
   Text,
   Keyboard,
   TouchableWithoutFeedback,
+  Button,
+  Image
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -13,6 +15,9 @@ import { useAuth } from "../authentification/AuthContext";
 import * as Location from "expo-location";
 import { navigate } from "../navigation/NavigationService";
 import ErrorComp from "../components/ErrorComp";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+
 
 const PostScreen: React.FC = () => {
   const { token } = useAuth();
@@ -38,6 +43,7 @@ const PostScreen: React.FC = () => {
         },
         body: JSON.stringify({
           content: postText,
+          picture: "",
           location: {
             longitude: longitude,
             latitude: latitude,
@@ -48,7 +54,7 @@ const PostScreen: React.FC = () => {
       switch (response.status) {
         case 201:
           setPostError("");
-          navigate("Feed");
+          navigate("Profile");
           break;
         case 400:
           setPostError(
@@ -86,6 +92,26 @@ const PostScreen: React.FC = () => {
     }
   };
 
+  const [image, setImage] = useState('');
+  const [base64Image, setBase64Image] = useState('')
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      setBase64Image(await FileSystem.readAsStringAsync(image, { encoding: FileSystem.EncodingType.Base64 }))
+      console.log(base64Image)
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View className="bg-white flex-1">
@@ -105,6 +131,20 @@ const PostScreen: React.FC = () => {
         <View className="mt-1.5 ml-2.5 justify-start flex-row">
           <Text className="text-black text-xs">{postText.length} / 256</Text>
         </View>
+        {/* {image && 
+          <View className="mt-10 mb-10 items-center">
+            <TouchableOpacity onPress={pickImage}>
+              <Image className="h-3/4 w-3/4 mb-10" source={{ uri: image }}/>
+            </TouchableOpacity>
+          </View>
+        } */}
+        {!image && 
+          <View className="mt-10 mb-10 items-center">
+            <TouchableOpacity onPress={pickImage}>
+              <Image className="h-3/4 w-3/4 mb-10" source={require("../assets/images/image_placeholder.jpeg")}/>
+            </TouchableOpacity>
+          </View>
+        }
         <View>
           {postError.length !== 0 && <ErrorComp errorText={postError} />}
         </View>
@@ -115,7 +155,7 @@ const PostScreen: React.FC = () => {
                 postText === "" ? COLORS.lightgray : COLORS.primary,
               ...SHADOWS.small,
             }}
-            className="flex-1 mt-[50px] mx-[120px] p-3 items-center rounded-[18px]"
+            className="flex-1  mx-[120px] p-3 items-center rounded-[18px]"
             disabled={postText === ""}
             onPress={() => {
               createPost();
