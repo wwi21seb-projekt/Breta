@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../authentification/AuthContext';
 import { COLORS, SHADOWS } from '../theme';
 import { baseUrl } from '../env';
 import Message from '../components/types/Message';
 import { navigate } from '../navigation/NavigationService';
+import ErrorComp from '../components/ErrorComp';
 
 interface RouteParams {
   username: string,
@@ -16,45 +17,41 @@ const ChatDetailScreen = () => {
   const { token, user } = useAuth();
   const route = useRoute();
   const { chatId, username } = route.params as RouteParams;
+  const [currentChatId, setCurrentChatId] = useState(chatId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [errorText, setErrorText] = useState('');
-  const [messageText, setMessageText] = useState('');
+  const [disableSendButton, setDisabledSendButton] = useState(true);
+  const [errorText, setErrorText] = useState("");
+  const [messageText, setMessageText] = useState("");
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if(chatId !== ""){
+    if (chatId === ""){
+      setDisabledSendButton(false);
+    };
+    if(token && currentChatId !== ""){
       fetchMessages();
-    }
-  }, [chatId]);
-
-  useEffect(() => {
-    if(token) {
-      ws.current = new WebSocket(`wss://server-beta.de/api/chat?chatId=${chatId}`, token);
+      ws.current = new WebSocket(`wss://server-beta.de/api/chat?chatId=${currentChatId}`, token);
       ws.current.onopen = () => {
-        console.log('WebSocket connection opened');
+        setDisabledSendButton(false);
       };
-  
       ws.current.onmessage = (e: MessageEvent) => {
         const message: Message = JSON.parse(e.data);
         setMessages((prevMessages) => [...prevMessages, message]);
       };
-  
       ws.current.onclose = () => {
-        console.log('WebSocket connection closed');
+        setDisabledSendButton(true);
       };
-  
       return () => {
         if (ws.current) {
           ws.current.close();
         }
       };
-    }
-    
-  }, []);
+    } 
+  }, [currentChatId]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -86,7 +83,7 @@ const ChatDetailScreen = () => {
   const fetchMessages = async (newOffset = 0) => {
     setLoading(true);
     try {
-      const response = await fetch(`${baseUrl}chats/${chatId}?offset=${newOffset}&limit=10`, {
+      const response = await fetch(`${baseUrl}chats/${currentChatId}?offset=${newOffset}&limit=10`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -102,8 +99,6 @@ const ChatDetailScreen = () => {
       if (!data?.records || !data?.pagination) {
         throw new Error('Invalid response format');
       }
-
-      console.log(data);
       setMessages((prevMessages) => newOffset === 0 ? data.records : [...prevMessages, ...data.records]);
       setOffset(newOffset + data.pagination.records);
       setHasMore(data.pagination.records === 10);
@@ -134,8 +129,9 @@ const ChatDetailScreen = () => {
       const data = await response.json();
       switch (response.status) {
         case 201:
-          console.log(data.message)
-          //setMessages(data.message);
+          setMessages((prevMessages) => [...prevMessages, data.message]);
+          setCurrentChatId(data.chatId);
+          setMessageText("");
           break;
         case 400:
         case 401:
@@ -152,11 +148,11 @@ const ChatDetailScreen = () => {
   };
 
 
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (scrollViewRef.current) {
+  //     scrollViewRef.current.scrollToEnd({ animated: true });
+  //   }
+  // }, [messages]);
 
   const handleScroll = (event: any) => {
     if (event.nativeEvent.contentOffset.y === 0 && hasMore && !loading) {
@@ -165,7 +161,6 @@ const ChatDetailScreen = () => {
   };
 
   const sendMessage = () => {
-   // if (!messageText.trim()) return;
     if(messages.length == 0){
       createChat();
     } else {
@@ -177,12 +172,19 @@ const ChatDetailScreen = () => {
       if (ws.current) {
         ws.current.send(JSON.stringify(newMessage));
       }
-      // setMessages([...messages, newMessage]);
-      // setMessageText('');
+      setMessageText("");
     }
   };
 
-  return (
+  if (loading) {
+    return (
+      <View className="bg-white flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  } else if (errorText) {
+    return <ErrorComp errorText={errorText} />;
+  } else return (
     <View className="flex-1 bg-white">
       <TouchableOpacity className="flex-row items-center bg-white px-4 py-2"
       onPress={() => {
@@ -209,16 +211,13 @@ const ChatDetailScreen = () => {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {/* {loading && <Text>Loading...</Text>}
-          {errorText && <Text className="text-red">{errorText}</Text>} */}
-          {messages?.map((message) => (
+          {messages.map((message) => (
               <View
                 key={`${message.creationDate}`}
                 className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}
               >
                 <View
-                  className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} 
-                    ${message.content.length > 50 ? 'px-5 py-3' : 'px-3 py-2'}`}
+                  className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}
                 >
                   <Text className='text-sm mb-0.5'>{message.content}</Text>
                   <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
@@ -237,8 +236,12 @@ const ChatDetailScreen = () => {
               multiline
               onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
-            {/* disabled={disableSendButton || messageText === ""} */}
-            <TouchableOpacity className="bg-primary py-2 px-3 rounded-full" onPress={sendMessage}>
+            <TouchableOpacity style={{
+          backgroundColor:
+            !disableSendButton && messageText !== ""
+              ? COLORS.primary
+              : COLORS.lightgray,
+        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === ""}>
               <Text className="text-white">Send</Text>
             </TouchableOpacity>
           </View>

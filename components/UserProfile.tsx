@@ -48,11 +48,13 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   useEffect(() => {
     if (chats.length > 0) {
       const existedChat = chats.find(chat => chat.user.username === userInfo.username);
-      if (areNoChats || !existedChat) {
-        navigate("ChatDetail", { chatId: "", username: userInfo.username });
-      } else {
+      if (existedChat) {
         navigate("ChatDetail", { chatId: existedChat.chatId, username: userInfo.username });
+      } else {
+        navigate("ChatDetail", { chatId: "", username: userInfo.username });
       }
+    } if (areNoChats) {
+      navigate("ChatDetail", { chatId: "", username: userInfo.username });
     }
   }, [chats, areNoChats]);
 
