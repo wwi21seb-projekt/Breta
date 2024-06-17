@@ -23,12 +23,38 @@ const ChatDetailScreen = () => {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
+  const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     if(chatId !== ""){
       fetchMessages();
     }
   }, [chatId]);
+
+  useEffect(() => {
+    if(token) {
+      ws.current = new WebSocket(`wss://server-beta.de/api/chat?chatId=${chatId}`, token);
+      ws.current.onopen = () => {
+        console.log('WebSocket connection opened');
+      };
+  
+      ws.current.onmessage = (e: MessageEvent) => {
+        const message: Message = JSON.parse(e.data);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      };
+  
+      ws.current.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+  
+      return () => {
+        if (ws.current) {
+          ws.current.close();
+        }
+      };
+    }
+    
+  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -139,7 +165,7 @@ const ChatDetailScreen = () => {
   };
 
   const sendMessage = () => {
-    //if (!messageText.trim()) return;
+   // if (!messageText.trim()) return;
     if(messages.length == 0){
       createChat();
     } else {
@@ -148,8 +174,11 @@ const ChatDetailScreen = () => {
         creationDate: getCurrentFormattedDate(),
         username: user || "",
       };
-      setMessages([...messages, newMessage]);
-      setMessageText('');
+      if (ws.current) {
+        ws.current.send(JSON.stringify(newMessage));
+      }
+      // setMessages([...messages, newMessage]);
+      // setMessageText('');
     }
   };
 
@@ -185,7 +214,7 @@ const ChatDetailScreen = () => {
           {messages?.map((message) => (
               <View
                 key={`${message.creationDate}`}
-                className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[50%]`}
+                className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}
               >
                 <View
                   className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} 
