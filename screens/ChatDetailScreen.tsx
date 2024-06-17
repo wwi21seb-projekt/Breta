@@ -7,6 +7,7 @@ import { baseUrl } from '../env';
 import Message from '../components/types/Message';
 import { navigate } from '../navigation/NavigationService';
 import ErrorComp from '../components/ErrorComp';
+import { baseSocketUrl } from '../env';
 
 interface RouteParams {
   username: string,
@@ -34,7 +35,7 @@ const ChatDetailScreen = () => {
     };
     if(token && currentChatId !== ""){
       fetchMessages();
-      ws.current = new WebSocket(`wss://server-beta.de/api/chat?chatId=${currentChatId}`, token);
+      ws.current = new WebSocket(`${baseSocketUrl}chat?chatId=${currentChatId}`, token);
       ws.current.onopen = () => {
         setDisabledSendButton(false);
       };
