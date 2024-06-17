@@ -161,6 +161,12 @@ const ChatDetailScreen = () => {
     }
   };
 
+  const handleMessageChange = (text: string) => {
+    if (text.length <= 256) {
+      setMessageText(text);
+    }
+  };
+
   const sendMessage = () => {
     if(messages.length == 0){
       createChat();
@@ -233,7 +239,7 @@ const ChatDetailScreen = () => {
               placeholder="Send a message ..."
               placeholderTextColor={COLORS.darkgray}
               value={messageText}
-              onChangeText={setMessageText}
+              onChangeText={handleMessageChange}
               multiline
               onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
@@ -242,7 +248,7 @@ const ChatDetailScreen = () => {
             !disableSendButton && messageText !== ""
               ? COLORS.primary
               : COLORS.lightgray,
-        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === ""}>
+        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === "" || messageText.length > 256}>
               <Text className="text-white">Send</Text>
             </TouchableOpacity>
           </View>
