@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ActivityIndicator, Keyboard } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useAuth } from '../authentification/AuthContext';
 import { COLORS, SHADOWS } from '../theme';
@@ -24,8 +24,6 @@ const ChatDetailScreen = () => {
   const [disableSendButton, setDisabledSendButton] = useState(true);
   const [errorText, setErrorText] = useState("");
   const [messageText, setMessageText] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
   const ws = useRef<WebSocket | null>(null);
 
@@ -54,6 +52,20 @@ const ChatDetailScreen = () => {
     } 
   }, [currentChatId]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100); 
+    return () => clearTimeout(timeout);
+  }, [messages]);
+
+  const handleMessageChange = (text: string) => {
+    if (text.length <= 256) {
+      setMessageText(text);
+    }
+  };
+  
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = date.getUTCDate();
@@ -81,10 +93,10 @@ const ChatDetailScreen = () => {
     return formattedDate;
   };
 
-  const fetchMessages = async (newOffset = 0) => {
+  const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${baseUrl}chats/${currentChatId}?offset=${newOffset}&limit=10`, {
+      const response = await fetch(`${baseUrl}chats/${currentChatId}?offset=0&limit=50`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -94,10 +106,7 @@ const ChatDetailScreen = () => {
       const data = await response.json();
       switch (response.status) {
         case 200:
-          const records = data.records.reverse();
-          setMessages((prevMessages) => newOffset === 0 ? records : [...prevMessages, ...records]);
-          setOffset(newOffset + data.pagination.records);
-          setHasMore(data.pagination.records === 10);
+          setMessages(data.records.reverse());
           break;
         case 401:
         case 404:
@@ -149,25 +158,6 @@ const ChatDetailScreen = () => {
     }
   };
 
-
-  // useEffect(() => {
-  //   if (scrollViewRef.current) {
-  //     scrollViewRef.current.scrollToEnd({ animated: true });
-  //   }
-  // }, [messages]);
-
-  const handleScroll = (event: any) => {
-    if (event.nativeEvent.contentOffset.y === 0 && hasMore && !loading) {
-      fetchMessages(offset);
-    }
-  };
-
-  const handleMessageChange = (text: string) => {
-    if (text.length <= 256) {
-      setMessageText(text);
-    }
-  };
-
   const sendMessage = () => {
     if(messages.length == 0){
       createChat();
@@ -181,6 +171,7 @@ const ChatDetailScreen = () => {
         ws.current.send(JSON.stringify(newMessage));
       }
       setMessageText("");
+      Keyboard.dismiss(); 
     }
   };
 
@@ -216,8 +207,6 @@ const ChatDetailScreen = () => {
           automaticallyAdjustKeyboardInsets={true}
           alwaysBounceVertical={false}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
         >
           {messages.map((message) => (
               <View
@@ -242,14 +231,13 @@ const ChatDetailScreen = () => {
               value={messageText}
               onChangeText={handleMessageChange}
               multiline
-              onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             />
             <TouchableOpacity style={{
           backgroundColor:
             !disableSendButton && messageText !== ""
               ? COLORS.primary
               : COLORS.lightgray,
-        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === "" || messageText.length > 256}>
+        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === ""}>
               <Text className="text-white">Send</Text>
             </TouchableOpacity>
           </View>
