@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { useAuth } from '../authentification/AuthContext';
 import {  SHADOWS } from '../theme';
@@ -6,6 +6,7 @@ import { navigate } from '../navigation/NavigationService';
 import Chat from '../components/types/Chat';
 import ErrorComp from "../components/ErrorComp";
 import { loadChats } from '../components/functions/LoadChats';
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const ChatScreen = () => {
@@ -15,11 +16,13 @@ const ChatScreen = () => {
   const [areNoChats, setAreNoChats] = useState(false);
   const [errorText, setErrorText] = useState('');
 
-  useEffect(() => {
-    setErrorText("");
-    setAreNoChats(false);
-    loadChats(setChats, setErrorText, setAreNoChats, token);
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setErrorText("");
+      setAreNoChats(false);
+      loadChats(setChats, setErrorText, setAreNoChats, token);
+    }, [])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

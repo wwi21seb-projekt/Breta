@@ -162,7 +162,7 @@ const ChatDetailScreen = () => {
       createChat();
     } else {
       const newMessage: Message = {
-        content: messageText,
+        content: messageText.trim(),
         creationDate: getCurrentFormattedDate(),
         username: user || "",
       };
@@ -215,7 +215,7 @@ const ChatDetailScreen = () => {
                 <View
                   className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}
                 >
-                  <Text className='text-sm mb-0.5'>{message.content}</Text>
+                  <Text className='text-sm mb-0.5'>{message.content.trim()}</Text>
                   <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
                 </View>
               </View>
