@@ -1,10 +1,7 @@
 interface Message {
-    id: string;
-    content: string;
-    sender: {
-      username: string;
-    };
-    date: string;
+    content: string,
+    creationDate: string,
+    username: string,
   }
 
   export default Message;

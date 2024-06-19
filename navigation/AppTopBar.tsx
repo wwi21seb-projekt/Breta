@@ -43,7 +43,9 @@ const AppTopBar = () => {
     headerTitle = "Notifications";
   } else if (route.name === "SetReset") {
     headerTitle = "Reset password";
-  } else {
+  } else if (route.name === "ChatDetail") {
+    headerTitle = "Chat";}
+    else {
     headerTitle = "";
   }
 

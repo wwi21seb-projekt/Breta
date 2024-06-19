@@ -3,7 +3,7 @@ import { View, Image, Text, TouchableOpacity } from "react-native";
 import { baseUrl } from "../env";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";
-import { push } from "../navigation/NavigationService";
+import { push, navigate } from "../navigation/NavigationService";
 import { useFocusEffect } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../theme";
@@ -62,7 +62,11 @@ const {
 
   const pressNotification =  () => {
     deleteNotification();
-    push("GeneralProfile", { username: username });
+    if(notificationType === "message") {
+      navigate("Chat");
+    } else {
+      push("GeneralProfile", { username: username });
+    }
   }
 
   const ignoreNotification =  () => {
@@ -95,6 +99,7 @@ const {
               <View className="ml-3">
                 {notificationType == "follow" && (<Text className="text-base">{username + " now follows you."}</Text>)}
                 {notificationType == "repost" && (<Text className="text-base">{username +  " has reposted you."}</Text>)}
+                {notificationType == "message" && (<Text className="text-base">{username +  " has sent you a message."}</Text>)}
                 <Text className="text-xs text-darkgray">{timestamp.split("T")[0]}</Text>
               </View>
             </TouchableOpacity>
