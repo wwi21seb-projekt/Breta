@@ -198,8 +198,8 @@ const FeedScreen = () => {
             postContent={post.content}
             city={post.city}
             postId={post.postId}
-            repostAuthor={post.repost?.author?.username || ""}
             repostPicture={post.repost?.author?.picture?.url  || ""}
+            repostAuthor={post.repost?.author?.username || ""}
             isRepost={post.repost !== null}
             initialLikes={post.likes}
             initialLiked={post.liked}
