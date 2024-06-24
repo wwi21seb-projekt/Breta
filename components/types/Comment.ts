@@ -4,7 +4,9 @@ interface Comment {
     author: {
       username: string | null;
       nickname: string;
-      profilePictureURL: string;
+      picture: {
+        url: string
+      }
     };
     creationDate: string;
     pagination?: {

@@ -27,7 +27,7 @@ const UserListItem: React.FC<Props> = ({
 
   return (
     <View
-      className="flex-row items-center rounded-3xl bg-white py-2 px-4 my-2 mx-6"
+      className="flex-row items-center rounded-3xl bg-white p-2 my-2 mx-6"
       style={{ ...SHADOWS.small }}
     >
       <TouchableOpacity
@@ -37,8 +37,7 @@ const UserListItem: React.FC<Props> = ({
         className="flex-1 flex-row items-center"
       >
         <Image
-          source={require("../assets/images/Max.jpeg")}
-          // source={profilePictureUrl} sobald Bilder da sind
+          source={{uri: profilePictureUrl || "defaultProfilePic"}}
           className="aspect-square rounded-full w-10"
           alt="Picture"
         />

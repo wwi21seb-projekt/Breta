@@ -33,8 +33,11 @@ const ChatScreen = () => {
     }, 1000);
   };
 
-  const handleChatPress = (chatId: string, username: string) => {
-    navigate("ChatDetail", { chatId, username });
+  const handleChatPress = (chatId: string, username: string, pictureUrl: string) => {
+    if(pictureUrl === undefined) {
+      pictureUrl = "";
+    }
+    navigate("ChatDetail", { chatId, username, pictureUrl });
   };
 
   if (errorText) {
@@ -57,11 +60,10 @@ const ChatScreen = () => {
             key={chat.chatId}
             className="flex-row items-center justify-between p-1.5 mb-4 rounded-full bg-white"
             style={SHADOWS.small}
-            onPress={() => handleChatPress(chat.chatId, chat.user.username)}
+            onPress={() => handleChatPress(chat.chatId, chat.user.username, chat.user?.picture?.url)}
           >
             <Image
-            // { uri: chat.user.profilePictureUrl || "defaultProfilePicUrl" }
-              source={require("../assets/images/Max.jpeg")}
+              source={{ uri: chat.user?.picture?.url || "defaultProfilePicUrl" }}
               className="w-11 h-11 rounded-full"
             />
               <Text className="flex-1 ml-3 font-bold">{chat.user.username}</Text>

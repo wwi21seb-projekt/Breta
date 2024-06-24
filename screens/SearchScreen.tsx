@@ -53,7 +53,7 @@ const SearchScreen = () => {
             renderItem={({ item }) => (
               <UserListItem
                 username={item.username}
-                profilePictureUrl={item.profilePictureUrl}
+                profilePictureUrl={item.picture?.url}
                 followingId={"searchResult"}
                 setErrorText={setUserSearchError}
               />
@@ -83,10 +83,11 @@ const SearchScreen = () => {
               <TextPostCard
                 key={item.postId}
                 username={item.author.username}
-                profilePic={item.author.profilePictureUrl}
+                profilePic={item.author?.picture?.url || ""}
                 date={item.creationDate}
                 postContent={item.content}
                 repostAuthor={item.repost?.author?.username || ""}
+                repostPicture={item.repost?.author?.picture?.url  || ""}
                 isRepost={item.repost !== null}
                 postId={item.postId}
                 initialLiked={item.liked}

@@ -10,13 +10,14 @@ import ErrorComp from '../components/ErrorComp';
 
 interface RouteParams {
   username: string,
-  chatId: string
+  chatId: string,
+  pictureUrl: string,
 }
 
 const ChatDetailScreen = () => {
   const { token, user } = useAuth();
   const route = useRoute();
-  const { chatId, username } = route.params as RouteParams;
+  const { chatId, username, pictureUrl } = route.params as RouteParams;
   const [currentChatId, setCurrentChatId] = useState(chatId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -188,11 +189,10 @@ const ChatDetailScreen = () => {
       onPress={() => {
         navigate("GeneralProfile", { username: username });
       }}>
-        <Image
-        // { uri: "defaultProfilePicUrl" }
-          source={require("../assets/images/Max.jpeg")}
+        {pictureUrl !== "" && (<Image
+          source={{ uri: pictureUrl || "defaultProfilePicUrl" }}
           className="w-11 h-11 rounded-full"
-        />
+        />)}
         <Text className="ml-3 font-bold text-lg">{username}</Text> 
       </TouchableOpacity>
       <KeyboardAvoidingView

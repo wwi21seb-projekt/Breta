@@ -158,13 +158,13 @@ const FeedScreen = () => {
             <TextPostCard
               key={`personal-${index}`}
               username={post.author.username}
-              // post.author.picture.url
-              profilePic={"url"}
+              profilePic={post.author?.picture?.url || ""}
               date={post.creationDate}
               postContent={post.content}
               city={post.city}
               postId={post.postId}
               repostAuthor={post.repost?.author?.username || ""}
+              repostPicture={post.repost?.author?.picture?.url  || ""}
               isRepost={post.repost !== null}
               initialLikes={post.likes}
               initialLiked={post.liked}
@@ -193,12 +193,12 @@ const FeedScreen = () => {
           <TextPostCard
             key={`global-${index}`}
             username={post.author.username}
-            // post.author.picture.url
-            profilePic={""}
+            profilePic={post.author?.picture?.url || ""}
             date={post.creationDate}
             postContent={post.content}
             city={post.city}
             postId={post.postId}
+            repostPicture={post.repost?.author?.picture?.url  || ""}
             repostAuthor={post.repost?.author?.username || ""}
             isRepost={post.repost !== null}
             initialLikes={post.likes}
