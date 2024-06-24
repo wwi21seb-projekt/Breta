@@ -14,7 +14,7 @@ import { COLORS } from "../theme";
 import { ListUser, UserRecords } from "../components/types/UserListTypes";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import UserListItem from "../components/UserListItem";
-import { Post, PostRecords } from "../components/types/PostSearchTypes";
+import { Post, PostRecords } from "../components/types/Post";
 import TextPostCard from "../components/TextPostCard";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";

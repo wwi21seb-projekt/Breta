@@ -1,4 +1,4 @@
-interface Post {
+export interface Post {
   postId: string;
   author: {
     username: string;
@@ -53,4 +53,15 @@ interface Post {
   city: string;
 }
 
-export default Post;
+export interface PostRecords {
+  records: Post[];
+  pagination: {
+    lastPostId: string;
+    limit: number;
+    records: number;
+  };
+  error: {
+    message: string;
+    code: string;
+  };
+}

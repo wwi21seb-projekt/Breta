@@ -14,7 +14,7 @@ import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
 import { NativeScrollEvent } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Post from "../components/types/Post";
+import { Post } from "../components/types/Post";
 
 const FeedScreen = () => {
   const { token } = useAuth();

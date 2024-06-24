@@ -12,7 +12,7 @@ import { SHADOWS } from "../theme";
 import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
-import Post from "./types/Post";
+import { Post } from "./types/Post";
 import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
