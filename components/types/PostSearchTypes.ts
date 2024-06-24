@@ -3,7 +3,9 @@ export interface Post {
   author: {
     username: string;
     nickname: string;
-    profilePictureUrl: string;
+    picture: {
+      url: string
+    } 
   };
   likes: number;
   liked: boolean;
@@ -17,6 +19,9 @@ export interface Post {
   repost: {
     author: {
       username: string;
+      picture: {
+        url: string;
+      }
     }
   }
 }

@@ -36,6 +36,7 @@ interface Props {
   city?: string;
   postId: string;
   repostAuthor: string;
+  repostPicture: string
   isRepost: boolean;
   initialLiked: boolean;
   isOwnPost: boolean;
@@ -53,6 +54,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     initialLiked,
     postId,
     repostAuthor,
+    repostPicture,
     isRepost,
     isOwnPost
     } = props;
@@ -165,7 +167,9 @@ const TextPostCard: React.FC<Props> = (props) => {
                   author: {
                     username: user,
                     nickname: "",
-                    profilePictureURL: "",
+                    picture: {
+                      url: ""
+                    }
                   },
                   creationDate: new Date().toISOString(),
                 };
@@ -389,11 +393,11 @@ const TextPostCard: React.FC<Props> = (props) => {
       >
         
         <View className="flex-row items-center justify-between">
-          {!isOwnPost ? (<><Image
-            source={require("../assets/images/Max.jpeg")}
+          {!isOwnPost ? (<>{profilePic !== "" && <Image
+            source={{uri: profilePic || "defaultProfilePic"}}
             className="w-10 h-10 rounded-full"
             alt="PB"
-          />
+          />}
           <TouchableOpacity onPress={() => {
           push("GeneralProfile", { username: username })
         }} className="flex-1 ml-2">
@@ -429,11 +433,11 @@ const TextPostCard: React.FC<Props> = (props) => {
         <View className="w-full bg-white rounded-xl p-2" style={{ ...SHADOWS.small }}>
           <View className="flex flex-col justify-end items-end z-20 relative" >
               <View className="flex-row items-center justify-between">
-              {!isOwnPost ? (<><Image
-              source={require("../assets/images/Max.jpeg")}
+              {!isOwnPost ? (<>{profilePic !== "" && <Image
+            source={{uri: profilePic || "defaultProfilePic"}}
             className="w-10 h-10 rounded-full"
             alt="PB"
-          />
+          />}
           <TouchableOpacity onPress={() => {
           push("GeneralProfile", { username: username })
         }} className="flex-1 ml-2">
@@ -455,11 +459,11 @@ const TextPostCard: React.FC<Props> = (props) => {
             style={{ ...SHADOWS.small }}
             >
               <View className="w-full flex-row items-center">
-                <Image
-                  source={require("../assets/images/Max.jpeg")}
-                  className="w-10 h-10 rounded-full"
-                  alt="PB"
-                />
+              {repostPicture !== "" && <Image
+            source={{uri: repostPicture || "defaultProfilePic"}}
+            className="w-10 h-10 rounded-full"
+            alt="PB"
+          />}
                 {repostAuthor !== "" ? ( <TouchableOpacity onPress={() => {
           push("GeneralProfile", { username: repostAuthor })
         }} className="flex-1 ml-2">
@@ -518,8 +522,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                     className="flex-row items-start py-3 border-b border-lightgray"
                   >
                     <Image
-                    // { uri: comment.author.profilePictureURL || "defaultProfilePicUrl" }
-                      source={require("../assets/images/Max.jpeg")}
+                      source={{ uri: comment.author?.picture?.url || "defaultProfilePicUrl" }}
                       className="w-8 h-8 rounded-full mr-3"
                     />
                     <View className="flex-1">

@@ -12,7 +12,8 @@ import { SHADOWS } from "../theme";
 import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
-import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
+//import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
+import Post from "./types/Post";
 import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -34,7 +35,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [subscriptionId, setSubscriptionId] = useState<string | null>(
     userInfo.subscriptionId
   );
-  const [posts, setPosts] = useState<OwnPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -62,7 +63,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const fetchPosts = async (loadMore: boolean) => {
     setLoading(true);
     let response;
-    let data!: ResponseOwnPost;
+    let data;
     let newOffset = loadMore ? offset + 3 : 0;
     const urlWithParams = `${baseUrl}users/${userInfo.username}/feed?offset=${newOffset}&limit=3`;
     try {
@@ -310,12 +311,12 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           >
             <TextPostCard
               username={""}
-              // post.author.picture.url
-              profilePic={""}
+              profilePic={item.author?.picture?.url || ""}
               date={item.creationDate}
               postContent={item.content}
               postId={item.postId}
               repostAuthor={item.repost?.author?.username || ""}
+              repostPicture={item.repost?.author?.picture?.url  || ""}
               isRepost={item.repost !== null}
               initialLikes={item.likes}
               initialLiked={item.liked}
