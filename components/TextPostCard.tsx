@@ -33,6 +33,7 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
+  repostPostContent: string;
   picture: string;
   repostPostPicture: string;
   city?: string;
@@ -60,7 +61,8 @@ const TextPostCard: React.FC<Props> = (props) => {
     isRepost,
     isOwnPost,
     picture,
-    repostPostPicture
+    repostPostPicture,
+    repostPostContent
     } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -489,12 +491,13 @@ const TextPostCard: React.FC<Props> = (props) => {
         className="h-64  mt-[-20px] "
             /> 
             </View> )}
-            {postContent != "" && (<Text className="my-3 mx-5">{postContent}</Text>)}
-            {picture != "" && (<Image
-        source={{ uri: picture || "defaultProfilePic" }}
-        className="h-64 mt-[-20px]"
-            /> )}
+            {repostPostContent != "" && (<Text className="my-3 mx-5">{repostPostContent}</Text>)}
           </View>
+            {picture != "" && (<Image
+              source={{ uri: picture || "defaultProfilePic" }}
+              className="h-64 mt-5 "
+            /> )}
+          {postContent != "" && (<Text className="my-3 mx-5">{postContent}</Text>)}
         </View>
       ) }
     {!isRepost && (

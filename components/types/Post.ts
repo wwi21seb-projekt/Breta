@@ -11,6 +11,7 @@ interface Post {
   },
   creationDate: string;
   content: string;
+  repostPostContent: string;
   picture: {
       url: string;
       width: number;

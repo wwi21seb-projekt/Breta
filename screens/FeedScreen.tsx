@@ -171,8 +171,9 @@ const FeedScreen = () => {
               initialLikes={post.likes}
               initialLiked={post.liked}
               isOwnPost={false}
-              picture={post.picture?.url ||  ""}
               repostPostPicture={post.repost?.picture?.url || ""}
+              picture={post.picture?.url ||  ""}
+              repostPostContent={post.repost?.content}
             />
           ))}
           {loadingPersonalFeed && (
@@ -208,8 +209,10 @@ const FeedScreen = () => {
             initialLikes={post.likes}
             initialLiked={post.liked}
             isOwnPost={false}
-            picture={post.picture?.url  || ""}
             repostPostPicture={post.repost?.picture?.url || ""}
+            picture={post.picture?.url  || ""}
+            repostPostContent={post.repost?.content}
+            
 
           />
         ))}
