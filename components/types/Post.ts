@@ -16,6 +16,11 @@ interface Post {
       width: number;
       height: number;
   },
+  repostPostPicture: {
+    url: string;
+    width: number;
+    height: number;
+  },
   likes: number;
   liked: boolean;
   repost: {

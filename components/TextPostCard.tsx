@@ -33,6 +33,8 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
+  picture: string;
+  repostPostPicture: string;
   city?: string;
   postId: string;
   repostAuthor: string;
@@ -56,7 +58,9 @@ const TextPostCard: React.FC<Props> = (props) => {
     repostAuthor,
     repostPicture,
     isRepost,
-    isOwnPost
+    isOwnPost,
+    picture,
+    repostPostPicture
     } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -477,16 +481,36 @@ const TextPostCard: React.FC<Props> = (props) => {
             </View>
           </View>
         </View>
-        <View className="m-2.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
-            <Text>{postContent}</Text>
+        <View className="m-2.5 bg-secondary rounded-3xl pt-8 mt-[-20px] z-10">
+        {picture != "" && (
+      <View > 
+     <Image
+        source={{ uri: repostPostPicture || "defaultProfilePic" }}
+        className="h-64  mt-[-20px] "
+            /> 
+            </View> )}
+            {postContent != "" && (<Text className="my-3 mx-5">{postContent}</Text>)}
+            {picture != "" && (<Image
+        source={{ uri: picture || "defaultProfilePic" }}
+        className="h-64 mt-[-20px]"
+            /> )}
           </View>
         </View>
       ) }
-    {!isRepost ? (
-      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10">
-        <Text>{postContent}</Text>
-      </View>
-    ) : (<></>) }
+    {!isRepost && (
+  <View className="bg-secondary w-11/12 rounded-3xl pt-8 mt-[-20px] z-10">
+    {picture != "" && (
+      <View > 
+      <Image
+        source={{ uri: picture || "defaultProfilePic" }}
+        className="h-64 mt-[-20px]"
+            /> 
+            </View> )}
+            {postContent != "" && (<Text className="my-3 mx-5">{postContent}</Text>)}
+    
+    
+  </View>
+)}
 
 
 <Modal

@@ -28,6 +28,7 @@ const FeedScreen = () => {
   const globalLimit = 5;
 
   useEffect(() => {
+    
     setErrorText("");
     if (token) {
       fetchPosts("personal");
@@ -39,6 +40,7 @@ const FeedScreen = () => {
     React.useCallback(() => {
       setErrorText("");
     }, []),
+    
   );
 
   const fetchPosts = async (type: string) => {
@@ -169,6 +171,8 @@ const FeedScreen = () => {
               initialLikes={post.likes}
               initialLiked={post.liked}
               isOwnPost={false}
+              picture={post.picture?.url ||  ""}
+              repostPostPicture={post.repost?.picture?.url || ""}
             />
           ))}
           {loadingPersonalFeed && (
@@ -204,6 +208,9 @@ const FeedScreen = () => {
             initialLikes={post.likes}
             initialLiked={post.liked}
             isOwnPost={false}
+            picture={post.picture?.url  || ""}
+            repostPostPicture={post.repost?.picture?.url || ""}
+
           />
         ))}
         {hasMoreGlobalPosts && (
