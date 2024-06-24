@@ -21,29 +21,26 @@ const FeedScreen = () => {
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
-  const [loadingPersonalFeed, setLoadingPersonalFeed] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
   const [lastGlobalPostId, setLastGlobalPostId] = useState("");
+  const [loading, setLoading] = useState(false);
   const globalLimit = 5;
 
-  useEffect(() => {
-    
-    setErrorText("");
-    if (token) {
-      fetchPosts("personal");
-    }
-    fetchPosts("global");
+  useEffect(() => {    
+    onRefresh();
   }, [token]);
 
   useFocusEffect(
     React.useCallback(() => {
-      setErrorText("");
+      onRefresh();
     }, []),
     
   );
 
   const fetchPosts = async (type: string) => {
+    if (loading && type === "global") return;
+    setLoading(true);
     let url = `${baseUrl}feed?feedType=${type}`;
 
     if (type === "global") {
@@ -64,10 +61,8 @@ const FeedScreen = () => {
       if (response.ok) {
         const data = await response.json();
         if (type === "personal") {
-          setLoadingPersonalFeed(true);
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
           setPostsPersonal(updatedPersonalPosts);
-          setLoadingPersonalFeed(false);
         } else{
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
@@ -80,6 +75,8 @@ const FeedScreen = () => {
     } catch (error) {
       setErrorText(
         "There are issues communicating with the server, please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,7 +99,8 @@ const FeedScreen = () => {
   }) => {
     if (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-        nativeEvent.contentSize.height - 20 && hasMoreGlobalPosts
+        nativeEvent.contentSize.height - 20 && 
+        hasMoreGlobalPosts && !loading
     ) {
       fetchPosts("global");
     }
@@ -176,9 +174,6 @@ const FeedScreen = () => {
               repostPostContent={post.repost?.content}
             />
           ))}
-          {loadingPersonalFeed && (
-          <ActivityIndicator className="mb-8" size="small" />
-        )}
         </>
       ) : (
         <View className="flex items-center justify-center">
