@@ -53,7 +53,7 @@ const SearchScreen = () => {
             renderItem={({ item }) => (
               <UserListItem
                 username={item.username}
-                profilePictureUrl={item.profilePictureUrl}
+                profilePictureUrl={item.picture?.url}
                 followingId={"searchResult"}
                 setErrorText={setUserSearchError}
               />

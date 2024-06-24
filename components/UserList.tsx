@@ -97,7 +97,7 @@ const UserList: React.FC<Props> = ({ type }) => {
           renderItem={({ item }) => (
             <UserListItem
               username={item.username}
-              profilePictureUrl={item.profilePictureUrl}
+              profilePictureUrl={item.picture?.url}
               followingId={item.followingId}
               setErrorText={setErrorText}
             />
