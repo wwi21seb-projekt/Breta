@@ -4,26 +4,53 @@ export interface Post {
     username: string;
     nickname: string;
     picture: {
-      url: string
-    } 
-  };
-  likes: number;
-  liked: boolean;
+      url: string;
+      width: number;
+      height: number;
+    }
+  },
   creationDate: string;
   content: string;
-  location: {
-    longitude: string;
-    latitude: string;
-    accuracy: number;
-  };
+  repostPostContent: string;
+  picture: {
+      url: string;
+      width: number;
+      height: number;
+  },
+  repostPostPicture: {
+    url: string;
+    width: number;
+    height: number;
+  },
+  likes: number;
+  liked: boolean;
   repost: {
     author: {
       username: string;
+      nickname: string;
       picture: {
         url: string;
+        width: number;
+        height: number;
       }
-    }
-  }
+    },
+    content: string;
+    picture: {
+      url: string;
+      width: number;
+      height: number;
+    },
+    creationDate: string;
+    location: {
+      latitude: number;
+      longitude: number;
+    },
+  },
+  location: {
+    latitude: number;
+    longitude: number;
+  },
+  city: string;
 }
 
 export interface PostRecords {

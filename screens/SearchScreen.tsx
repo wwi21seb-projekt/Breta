@@ -93,6 +93,9 @@ const SearchScreen = () => {
                 initialLiked={item.liked}
                 initialLikes={item.likes}
                 isOwnPost={false}
+                repostPostPicture={item.repost?.picture?.url || ""}
+                picture={item.picture?.url  || ""}
+                repostPostContent={item.repost?.content}
               />
             )}
             showsVerticalScrollIndicator={false}

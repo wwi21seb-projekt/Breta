@@ -320,6 +320,9 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               initialLikes={item.likes}
               initialLiked={item.liked}
               isOwnPost={true}
+              repostPostPicture={item.repost?.picture?.url || ""}
+            picture={item.picture?.url  || ""}
+            repostPostContent={item.repost?.content}
             />
           </TouchableOpacity>
         )}
