@@ -2,7 +2,9 @@ export interface User {
   username: string;
   nickname: string;
   status: string;
-  profilePictureUrl: string;
+  picture: {
+    url: string
+  };
   follower: number;
   following: number;
   posts: number;

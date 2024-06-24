@@ -12,7 +12,6 @@ import { SHADOWS } from "../theme";
 import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
-//import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
 import Post from "./types/Post";
 import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
@@ -45,6 +44,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [currentPostId, setCurrentPostId] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
   const [areNoChats, setAreNoChats] = useState(false);
+  const profilePictureUrl = userInfo.picture?.url || "";
 
   useEffect(() => {
     if (chats.length > 0) {
@@ -188,12 +188,11 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             </View>
           </View>
         </Modal>
-        <Image
-          source={require("../assets/images/Max.jpeg")}
+        {profilePictureUrl !== "" && (<Image
+          source={{uri: profilePictureUrl || "defaultProfilePic"}}
           className="w-full h-48"
           alt="Picture"
-        />
-        {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
+        />)}
         <View className="items-center p-6">
           {userInfo.nickname && (
             <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>
