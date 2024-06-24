@@ -87,6 +87,26 @@ const TextPostCard: React.FC<Props> = (props) => {
     }, []),
   );
 
+  
+const checkForHashtag = (text: string) => {
+  const hashtagRegex = /#(\w+)/g;
+  const segments = text.split(hashtagRegex);
+
+  const coloredText = segments.map((segment, index) => {
+    if (index % 2 === 1) {
+      return (
+        <Text key={index} className="text-brigtBlue">
+          #{segment}
+        </Text>
+      );
+    } else {
+      return segment;
+    }
+  });
+  return <>{coloredText}</>;
+};
+  
+
   const handleCommentScroll = ({
     nativeEvent,
   }: {
@@ -493,7 +513,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     </View>
   ) : null}
   {repostPostContent !== "" && (
-    <Text className="my-3 mx-5">{repostPostContent}</Text>
+    <Text className="my-3 mx-5">{checkForHashtag(repostPostContent)}</Text>
   )}
 </View>
 <View style={{ ...SHADOWS.small }} className="w-40 h-1 rounded-full my-4 ml-28 bg-lightgray"></View>
@@ -505,7 +525,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     />
   ) : null}
   {postContent !== "" && (
-    <Text className="my-3 mx-5">{postContent}</Text>
+    <Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>
   )}
 </View>
 
@@ -521,7 +541,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         className={`h-72 mt-[-20px] ${postContent === "" ? "rounded-b-3xl" : "rounded-t-3xl"}`}
             /> 
             </View> )}
-            {postContent != "" && (<Text className="my-3 mx-5">{postContent}</Text>)}
+            {postContent != "" && (<Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>)}
     
     
   </View>
@@ -572,7 +592,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                         {comment.author.username}
                       </Text>
           </TouchableOpacity>
-                      <Text className="text-sm mb-0.5">{comment.content}</Text>
+                      <Text className="text-sm mb-0.5">{checkForHashtag(comment.content)}</Text>
                       <Text className="text-xs text-darkgray">
                         {new Date(comment.creationDate).toLocaleString()}
                       </Text>

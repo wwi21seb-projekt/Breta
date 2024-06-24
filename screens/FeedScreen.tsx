@@ -28,12 +28,16 @@ const FeedScreen = () => {
   const globalLimit = 5;
 
   useEffect(() => {    
-    onRefresh();
+    setErrorText("");
+    if (token) {
+      fetchPosts("personal");
+    }
+    fetchPosts("global");
   }, [token]);
 
   useFocusEffect(
     React.useCallback(() => {
-      onRefresh();
+      setErrorText("");
     }, []),
     
   );
