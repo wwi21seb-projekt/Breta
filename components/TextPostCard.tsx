@@ -398,7 +398,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             className="w-10 h-10 rounded-full"
             alt="PB"
           />}
-          <TouchableOpacity onPress={() => {
+          <TouchableOpacity disabled={!isAuthenticated} onPress={() => {
           push("GeneralProfile", { username: username })
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{username}</Text>
@@ -438,7 +438,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             className="w-10 h-10 rounded-full"
             alt="PB"
           />}
-          <TouchableOpacity onPress={() => {
+          <TouchableOpacity disabled={!isAuthenticated} onPress={() => {
           push("GeneralProfile", { username: username })
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{username}</Text>
@@ -464,7 +464,7 @@ const TextPostCard: React.FC<Props> = (props) => {
             className="w-10 h-10 rounded-full"
             alt="PB"
           />}
-                {repostAuthor !== "" ? ( <TouchableOpacity onPress={() => {
+                {repostAuthor !== "" ? ( <TouchableOpacity disabled={!isAuthenticated} onPress={() => {
           push("GeneralProfile", { username: repostAuthor })
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{repostAuthor}</Text>
