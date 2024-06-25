@@ -33,6 +33,9 @@ interface Props {
   date: string; 
   initialLikes: number;
   postContent: string;
+  repostPostContent: string;
+  picture: string;
+  repostPostPicture: string;
   city?: string;
   postId: string;
   repostAuthor: string;
@@ -56,7 +59,10 @@ const TextPostCard: React.FC<Props> = (props) => {
     repostAuthor,
     repostPicture,
     isRepost,
-    isOwnPost
+    isOwnPost,
+    picture,
+    repostPostPicture,
+    repostPostContent
     } = props;
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -80,6 +86,26 @@ const TextPostCard: React.FC<Props> = (props) => {
       setRepostError("");
     }, []),
   );
+
+  
+const checkForHashtag = (text: string) => {
+  const hashtagRegex = /#(\w+)/g;
+  const segments = text.split(hashtagRegex);
+
+  const coloredText = segments.map((segment, index) => {
+    if (index % 2 === 1) {
+      return (
+        <Text key={index} className="text-brigtBlue">
+          #{segment}
+        </Text>
+      );
+    } else {
+      return segment;
+    }
+  });
+  return <>{coloredText}</>;
+};
+  
 
   const handleCommentScroll = ({
     nativeEvent,
@@ -477,16 +503,49 @@ const TextPostCard: React.FC<Props> = (props) => {
             </View>
           </View>
         </View>
-        <View className="m-2.5 bg-secondary rounded-3xl p-5 pt-8 mt-[-20px] z-10">
-            <Text>{postContent}</Text>
-          </View>
+        <View className="m-2.5 bg-secondary rounded-3xl pt-8 mt-[-20px] z-10">
+  {repostPostPicture !== "" ? (
+    <View> 
+      <Image
+        source={{ uri: repostPostPicture || "defaultProfilePic" }}
+        className="h-72 mt-[-20px] rounded-t-3xl"
+      />
+    </View>
+  ) : null}
+  {repostPostContent !== "" && (
+    <Text className="my-3 mx-5">{checkForHashtag(repostPostContent)}</Text>
+  )}
+</View>
+<View style={{ ...SHADOWS.small }} className="w-40 h-1 rounded-full my-4 ml-28 bg-lightgray"></View>
+<View className="bg-secondary rounded-3xl z-10">
+  {picture !== "" ? (
+    <Image
+      source={{ uri: picture || "defaultProfilePic" }}
+      className={`h-72 ${postContent === "" ? "rounded-3xl" : "rounded-t-3xl"}`}
+    />
+  ) : null}
+  {postContent !== "" && (
+    <Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>
+  )}
+</View>
+
+
         </View>
       ) }
-    {!isRepost ? (
-      <View className="bg-secondary w-11/12 rounded-3xl p-5 pt-8 mt-[-20px] z-10">
-        <Text>{postContent}</Text>
-      </View>
-    ) : (<></>) }
+    {!isRepost && (
+  <View className="bg-secondary w-11/12 rounded-3xl pt-8 mt-[-20px] z-10">
+    {picture != "" && (
+      <View > 
+      <Image
+        source={{ uri: picture || "defaultProfilePic" }}
+        className={`h-72 mt-[-20px] ${postContent === "" ? "rounded-b-3xl" : "rounded-t-3xl"}`}
+            /> 
+            </View> )}
+            {postContent != "" && (<Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>)}
+    
+    
+  </View>
+)}
 
 
 <Modal
@@ -533,7 +592,7 @@ const TextPostCard: React.FC<Props> = (props) => {
                         {comment.author.username}
                       </Text>
           </TouchableOpacity>
-                      <Text className="text-sm mb-0.5">{comment.content}</Text>
+                      <Text className="text-sm mb-0.5">{checkForHashtag(comment.content)}</Text>
                       <Text className="text-xs text-darkgray">
                         {new Date(comment.creationDate).toLocaleString()}
                       </Text>

@@ -14,20 +14,20 @@ import { useAuth } from "../authentification/AuthContext";
 import { navigate } from "../navigation/NavigationService";
 import { NativeScrollEvent } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import Post from "../components/types/Post";
+import { Post } from "../components/types/Post";
 
 const FeedScreen = () => {
   const { token } = useAuth();
   const [postsPersonal, setPostsPersonal] = useState<Post[]>([]);
   const [postsGlobal, setPostsGlobal] = useState<Post[]>([]);
   const [errorText, setErrorText] = useState("");
-  const [loadingPersonalFeed, setLoadingPersonalFeed] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMoreGlobalPosts, setHasMoreGlobalPosts] = useState(true);
   const [lastGlobalPostId, setLastGlobalPostId] = useState("");
+  const [loading, setLoading] = useState(false);
   const globalLimit = 5;
 
-  useEffect(() => {
+  useEffect(() => {    
     setErrorText("");
     if (token) {
       fetchPosts("personal");
@@ -39,9 +39,12 @@ const FeedScreen = () => {
     React.useCallback(() => {
       setErrorText("");
     }, []),
+    
   );
 
   const fetchPosts = async (type: string) => {
+    if (loading && type === "global") return;
+    setLoading(true);
     let url = `${baseUrl}feed?feedType=${type}`;
 
     if (type === "global") {
@@ -62,10 +65,8 @@ const FeedScreen = () => {
       if (response.ok) {
         const data = await response.json();
         if (type === "personal") {
-          setLoadingPersonalFeed(true);
           const updatedPersonalPosts = await loadCitiesForPosts(data.records);
           setPostsPersonal(updatedPersonalPosts);
-          setLoadingPersonalFeed(false);
         } else{
           const updatedGlobalPosts = await loadCitiesForPosts(data.records);
           setPostsGlobal((prev) => [...prev, ...updatedGlobalPosts]);
@@ -78,6 +79,8 @@ const FeedScreen = () => {
     } catch (error) {
       setErrorText(
         "There are issues communicating with the server, please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,7 +103,8 @@ const FeedScreen = () => {
   }) => {
     if (
       nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-        nativeEvent.contentSize.height - 20 && hasMoreGlobalPosts
+        nativeEvent.contentSize.height - 20 && 
+        hasMoreGlobalPosts && !loading
     ) {
       fetchPosts("global");
     }
@@ -169,11 +173,11 @@ const FeedScreen = () => {
               initialLikes={post.likes}
               initialLiked={post.liked}
               isOwnPost={false}
+              repostPostPicture={post.repost?.picture?.url || ""}
+              picture={post.picture?.url ||  ""}
+              repostPostContent={post.repost?.content}
             />
           ))}
-          {loadingPersonalFeed && (
-          <ActivityIndicator className="mb-8" size="small" />
-        )}
         </>
       ) : (
         <View className="flex items-center justify-center">
@@ -204,6 +208,11 @@ const FeedScreen = () => {
             initialLikes={post.likes}
             initialLiked={post.liked}
             isOwnPost={false}
+            repostPostPicture={post.repost?.picture?.url || ""}
+            picture={post.picture?.url  || ""}
+            repostPostContent={post.repost?.content}
+            
+
           />
         ))}
         {hasMoreGlobalPosts && (
