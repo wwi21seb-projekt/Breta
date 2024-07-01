@@ -131,20 +131,19 @@ const PostScreen: React.FC = () => {
         <View className="mt-1.5 ml-2.5 justify-start flex-row">
           <Text className="text-black text-xs">{postText.length} / 256</Text>
         </View>
-        {/* {image && 
-          <View className="mt-10 mb-10 items-center">
-            <TouchableOpacity onPress={pickImage}>
-              <Image className="h-3/4 w-3/4 mb-10" source={{ uri: image }}/>
-            </TouchableOpacity>
-          </View>
-        } */}
-        {!image && 
-          <View className="mt-10 mb-10 items-center">
-            <TouchableOpacity onPress={pickImage}>
-              <Image className="h-3/4 w-3/4 mb-10" source={require("../assets/images/image_placeholder.jpeg")}/>
-            </TouchableOpacity>
-          </View>
-        }
+        {image !== '' ? (
+          <TouchableOpacity className="mt-10 items-center" onPress={pickImage}>
+            <View>
+              <Image className="h-7/8 w-7/8 mb-10" source={{ uri: image }}/>
+            </View>
+          </TouchableOpacity> 
+        ) : ( 
+          <TouchableOpacity className="mt-10 items-center" onPress={pickImage}> 
+            <View>
+              <Image className="h-7/8 w-7/8 mb-10" source={require("../assets/images/image_placeholder.jpeg")}/>
+            </View>
+          </TouchableOpacity>
+        )} 
         <View>
           {postError.length !== 0 && <ErrorComp errorText={postError} />}
         </View>
