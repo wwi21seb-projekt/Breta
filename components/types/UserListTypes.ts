@@ -2,7 +2,9 @@
 export interface ListUser {
   username: string;
   nickname: string;
-  profilePictureUrl: string;
+  picture: {
+    url: string
+  }
 }
 
 // For the abo display
@@ -11,7 +13,9 @@ export interface AboRecords {
   followingId: string;
   username: string;
   nickname: string;
-  profilePictureUrl: string;
+  picture: {
+    url: string
+  }
 }
 
 // For the search function

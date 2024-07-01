@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Modal,
@@ -12,11 +12,14 @@ import { SHADOWS } from "../theme";
 import { User } from "../components/types/User";
 import { handleSubscription } from "./functions/HandleSubscription";
 import { baseUrl } from "../env";
-import { OwnPost, ResponseOwnPost } from "./types/OwnPost";
+import { Post } from "./types/Post";
 import { navigate, push } from "../navigation/NavigationService";
 import { useAuth } from "../authentification/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import ErrorComp from "./ErrorComp";
+import TextPostCard from "./TextPostCard";
+import { loadChats } from "./functions/LoadChats";
+import Chat from '../components/types/Chat';
 
 type Props = {
   personal: boolean;
@@ -31,7 +34,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [subscriptionId, setSubscriptionId] = useState<string | null>(
     userInfo.subscriptionId
   );
-  const [posts, setPosts] = useState<OwnPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [offset, setOffset] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -39,11 +42,28 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [loading, setLoading] = useState(false);
   const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
   const [currentPostId, setCurrentPostId] = useState("");
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [areNoChats, setAreNoChats] = useState(false);
+  const profilePictureUrl = userInfo.picture?.url || "";
+
+  useEffect(() => {
+    if (chats.length > 0) {
+      const existedChat = chats.find(chat => chat.user.username === userInfo.username);
+      if (existedChat) {
+        navigate("ChatDetail", { chatId: existedChat.chatId, username: userInfo.username, pictureUrl: userInfo.picture?.url || ""});
+      } else {
+        navigate("ChatDetail", { chatId: "", username: userInfo.username, pictureUrl: userInfo.picture?.url || ""});
+      }
+    } 
+    if (areNoChats) {
+      navigate("ChatDetail", { chatId: "", username: userInfo.username, pictureUrl: userInfo.picture?.url || ""});
+    }
+  }, [chats, areNoChats]);
 
   const fetchPosts = async (loadMore: boolean) => {
     setLoading(true);
     let response;
-    let data!: ResponseOwnPost;
+    let data;
     let newOffset = loadMore ? offset + 3 : 0;
     const urlWithParams = `${baseUrl}users/${userInfo.username}/feed?offset=${newOffset}&limit=3`;
     try {
@@ -111,6 +131,10 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
+  const startChat = () => {
+    loadChats(setChats, setErrorText, setAreNoChats, token);
+  };
+
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
       setLoadingMore(true);
@@ -124,33 +148,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
       fetchPosts(false);
     }, [])
   );
-
-  const createChat = async () => {
-    let response;
-    try {
-      response = await fetch(`${baseUrl}chats`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          username: userInfo.username,
-          content: "Start of the chat"
-        })
-      });
-
-      const data = await response.json();
-  
-      if (response.ok) {
-        navigate("ChatDetail", { chatId: data.chatId });
-      }
-    } catch (error) {
-      
-      navigate("Chat");
-      setErrorText("Failed to create a new chat");
-    }
-  };
   
 
   const renderHeader = () => {
@@ -191,12 +188,11 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             </View>
           </View>
         </Modal>
-        <Image
-          source={require("../assets/images/Max.jpeg")}
+        {profilePictureUrl !== "" && (<Image
+          source={{uri: profilePictureUrl || "defaultProfilePic"}}
           className="w-full h-48"
           alt="Picture"
-        />
-        {/* source={user.profilePictureUrl} sobald die Bilder verfügbar sind */}
+        />)}
         <View className="items-center p-6">
           {userInfo.nickname && (
             <Text className="text-2xl font-bold mb-2">{userInfo.nickname}</Text>
@@ -208,7 +204,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           {personal && (
             <TouchableOpacity
               style={{ ...SHADOWS.small }}
-              className="bg-white mb-10 px-12 py-3 rounded-2xl"
+              className="bg-white mb-6 px-12 py-3 rounded-2xl"
               onPress={() => navigate("EditProfile", { user: userInfo })}
             >
               <Text>Edit profile</Text>
@@ -219,7 +215,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <TouchableOpacity
                 style={{ ...SHADOWS.small }}
                 className="bg-white py-3 rounded-2xl flex-1"
-                onPress={createChat}
+                onPress={startChat}
               >
                 <Text className="text-center">Chat</Text>
               </TouchableOpacity>
@@ -247,7 +243,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
             </View>
           )}
 
-          <View className="justify-center flex-row space-around">
+          <View className="justify-center flex-row space-around mx-10">
             <View className="items-center justify-center p-3 flex-1">
               <Text className="font-bold text-base">{userInfo.posts}</Text>
               <Text>Posts</Text>
@@ -276,18 +272,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               <Text className="font-bold text-base">{userInfo.following}</Text>
               <Text>Following</Text>
             </TouchableOpacity>
-            {personal === true && (
-              <TouchableOpacity
-                className="items-center justify-center p-3 flex-1"
-                disabled={true}
-                onPress={() =>
-                  console.log("Freundschaftsanfragen: Wird noch implementiert")
-                }
-              >
-                <Text className="font-bold text-base">0</Text>
-                <Text>Requests</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </View>
         <Text className="font-bold text-xl ml-6">Posts</Text>
@@ -316,24 +300,30 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
         keyExtractor={(item) => item.postId}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className="bg-secondary w-5/6 self-center rounded-2xl justify-center items-center mb-5 px-3 py-1"
-            style={{ ...SHADOWS.small }}
+            className="mx-2"
             disabled={!personal}
+            //activeOpacity={1}
             onLongPress={() => {
               setCurrentPostId(item.postId);
               setModalVisible(true);
             }}
           >
-            <View className="flex-row">
-              {/* view is placeholder for location */}
-              <View className="w-1/2" />
-              <Text className="w-1/2 text-xs text-right">
-                {item.creationDate.split("T")[0]}
-              </Text>
-            </View>
-            <Text className="my-5 text-lg font-semibold text-center">
-              {item.content}
-            </Text>
+            <TextPostCard
+              username={""}
+              profilePic={item.author?.picture?.url || ""}
+              date={item.creationDate}
+              postContent={item.content}
+              postId={item.postId}
+              repostAuthor={item.repost?.author?.username || ""}
+              repostPicture={item.repost?.author?.picture?.url  || ""}
+              isRepost={item.repost !== null}
+              initialLikes={item.likes}
+              initialLiked={item.liked}
+              isOwnPost={true}
+              repostPostPicture={item.repost?.picture?.url || ""}
+            picture={item.picture?.url  || ""}
+            repostPostContent={item.repost?.content}
+            />
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}

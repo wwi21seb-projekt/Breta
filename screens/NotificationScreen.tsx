@@ -91,7 +91,7 @@ export async function registerForPushNotificationsAsync() {
   }
 }
 
-export default function App() {
+const NotificationScreen = () =>  {
   const { token} = useAuth();
   const [notification, setNotification] = useState<
    Notifications.Notification | undefined
@@ -185,6 +185,7 @@ export default function App() {
             notificationType={item.notificationType}
             username={item.user.username}
             profilePictureUrl={item.user.profilePictureUrl}
+            onRefresh={onRefresh}
           />
         )}
         showsVerticalScrollIndicator={false}
@@ -194,8 +195,8 @@ export default function App() {
       ></FlatList>
       ) : (
         <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}></RefreshControl>}>
-        <View className="flex-0 items-center justify-center">
-           <Text className="text-xl text-lightgray">You have no new notifications</Text>      
+        <View className="items-center justify-center">
+           <Text className="text-lg text-lightgray">You have no new notifications!</Text>      
         </View>
         </ScrollView>
         )}
@@ -204,3 +205,5 @@ export default function App() {
       );
 }
 }
+
+export default NotificationScreen;

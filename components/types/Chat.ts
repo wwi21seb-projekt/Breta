@@ -3,7 +3,9 @@ interface Chat {
     user: {
       username: string;
       nickname: string;
-      profilePictureUrl: string;
+      picture: {
+        url: string
+      } 
     };
     lastMessage: string;
     unreadMessages: number;

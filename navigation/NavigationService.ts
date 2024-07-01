@@ -6,7 +6,7 @@ import {
 export type RootStackParamList = {
   Feed: undefined;
   Chat: undefined;
-  ChatDetail: { chatId: string, username?: string};
+  ChatDetail: { chatId: string, username: string, pictureUrl: string};
   ConfirmCode: undefined;
   Imprint: undefined;
   Authentification: undefined;
