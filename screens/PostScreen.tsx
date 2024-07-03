@@ -7,7 +7,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Button,
-  Image
+  Image,
+  StyleSheet
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -33,6 +34,25 @@ const PostScreen: React.FC = () => {
 
   const createPost = async () => {
     let response;
+    let base64;
+
+    if(image === ''){
+      base64 = await FileSystem.readAsStringAsync(image, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+    }
+
+    let body = JSON.stringify({
+      content: postText,
+      picture: image === '' ? "" : base64,
+      location: {
+        longitude: longitude,
+        latitude: latitude,
+        accuracy: accuracy === null ? "" : Math.floor(accuracy),
+      },
+    })
+
+    console.log(body)
 
     try {
       response = await fetch(`${baseUrl}posts`, {
@@ -41,16 +61,10 @@ const PostScreen: React.FC = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          content: postText,
-          picture: "",
-          location: {
-            longitude: longitude,
-            latitude: latitude,
-            accuracy: accuracy === null ? "" : Math.floor(accuracy),
-          },
-        }),
+        body: body
       });
+      console.log("response: ", response)
+
       switch (response.status) {
         case 201:
           setPostError("");
@@ -107,10 +121,13 @@ const PostScreen: React.FC = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setBase64Image(await FileSystem.readAsStringAsync(image, { encoding: FileSystem.EncodingType.Base64 }))
-      console.log(base64Image)
     }
   };
+
+  const removeImage = () => {
+    setImage('');
+    console.log("Image has been Removed")
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -131,30 +148,26 @@ const PostScreen: React.FC = () => {
         <View className="mt-1.5 ml-2.5 justify-start flex-row">
           <Text className="text-black text-xs">{postText.length} / 256</Text>
         </View>
-        {image !== '' ? (
-          <TouchableOpacity className="mt-10 items-center" onPress={pickImage}>
-            <View>
-              <Image className="h-7/8 w-7/8 mb-10" source={{ uri: image }}/>
-            </View>
-          </TouchableOpacity> 
-        ) : ( 
-          <TouchableOpacity className="mt-10 items-center" onPress={pickImage}> 
-            <View>
-              <Image className="h-7/8 w-7/8 mb-10" source={require("../assets/images/image_placeholder.jpeg")}/>
-            </View>
+        <View className="mt-10 items-center">
+          <TouchableOpacity onPress={pickImage}>
+            {image !== '' ? (
+              <Image className="w-96 h-96 mb-5"source={{ uri: image }}/>
+            ) : (
+              <Image className="w-96 h-96 mb-5" source={require("../assets/images/image_placeholder.jpeg")}/>
+            )}
           </TouchableOpacity>
-        )} 
+        </View>
         <View>
           {postError.length !== 0 && <ErrorComp errorText={postError} />}
         </View>
-        <View className="bg-white justify-center flex-row">
+        <View className="bg-white justify-center items-center flex-row">
           <TouchableOpacity
             style={{
               backgroundColor:
                 postText === "" ? COLORS.lightgray : COLORS.primary,
               ...SHADOWS.small,
             }}
-            className="flex-1  mx-[120px] p-3 items-center rounded-[18px]"
+            className="flex-1 mx-7  p-3 items-center rounded-[18px]"
             disabled={postText === ""}
             onPress={() => {
               createPost();
@@ -162,6 +175,22 @@ const PostScreen: React.FC = () => {
           >
             <Text className="text-black text-xs">Create Post</Text>
           </TouchableOpacity>
+          {image !== '' && (
+            <TouchableOpacity
+            style={{
+              backgroundColor:
+                COLORS.lightgray,
+              ...SHADOWS.small,
+            }}
+            className="flex-1 mx-7 p-3 items-center rounded-[18px]"
+            disabled={postText === ""}
+            onPress={() => {
+              removeImage();
+            }}
+          >
+            <Text className="text-black text-xs">Remove Image</Text>
+          </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
