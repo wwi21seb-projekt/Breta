@@ -6,9 +6,7 @@ import {
   Text,
   Keyboard,
   TouchableWithoutFeedback,
-  Button,
   Image,
-  StyleSheet
 } from "react-native";
 import { SHADOWS, COLORS } from "../theme";
 import { baseUrl } from "../env";
@@ -106,7 +104,7 @@ const PostScreen: React.FC = () => {
   const [image, setImage] = useState('');
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -143,11 +141,7 @@ const PostScreen: React.FC = () => {
         </View>
         <View className="mt-10 items-center">
           <TouchableOpacity onPress={pickImage}>
-            {image !== '' ? (
-              <Image className="w-96 h-96 mb-5"source={{ uri: image }}/>
-            ) : (
-              <Image className="w-96 h-96 mb-5" source={require("../assets/images/image_placeholder.jpeg")}/>
-            )}
+            <Image className="w-96 h-96 mb-5" source={image === '' ? require("../assets/images/image_placeholder.jpeg") : { uri: image }}/>
           </TouchableOpacity>
         </View>
         <View>

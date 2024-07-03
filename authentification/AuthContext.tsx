@@ -33,6 +33,7 @@ interface AuthContextType {
     password: string,
     nickname: string,
     email: string,
+    profilePicture: string,
     setServerError: Dispatch<SetStateAction<string>>,
     setUsernameErrorText: Dispatch<SetStateAction<string>>,
     setEmailErrorText: Dispatch<SetStateAction<string>>,
@@ -237,7 +238,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         data = await response.json();
         switch (response.status) {
           case 200:
-            setToken(data.token);
+            console.log(data)
             setRefreshToken(data.refreshToken);
             setUser(username);
             await AsyncStorage.setItem("token", data.token);
@@ -273,6 +274,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       password,
       nickname,
       email,
+      profilePicture,
       setServerError,
       setUsernameErrorText,
       setEmailErrorText,
@@ -290,6 +292,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             password: password,
             nickname: nickname,
             email: email,
+            profilePicture: profilePicture
           }),
         });
         data = await response.json();
