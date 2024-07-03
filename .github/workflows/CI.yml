@@ -1,5 +1,4 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them and run tests across different versions of node
-
 name: Pull Request into main
 
 on:
