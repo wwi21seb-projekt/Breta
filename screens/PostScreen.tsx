@@ -36,7 +36,7 @@ const PostScreen: React.FC = () => {
     let response;
     let base64;
 
-    if(image === ''){
+    if(image !== ''){
       base64 = await FileSystem.readAsStringAsync(image, {
         encoding: FileSystem.EncodingType.Base64,
       });
