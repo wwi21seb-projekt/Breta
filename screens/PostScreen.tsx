@@ -52,8 +52,6 @@ const PostScreen: React.FC = () => {
       },
     })
 
-    console.log(body)
-
     try {
       response = await fetch(`${baseUrl}posts`, {
         method: "POST",
@@ -63,7 +61,6 @@ const PostScreen: React.FC = () => {
         },
         body: body
       });
-      console.log("response: ", response)
 
       switch (response.status) {
         case 201:
@@ -107,7 +104,6 @@ const PostScreen: React.FC = () => {
   };
 
   const [image, setImage] = useState('');
-  const [base64Image, setBase64Image] = useState('')
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -117,7 +113,6 @@ const PostScreen: React.FC = () => {
       quality: 1,
     });
 
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -126,7 +121,6 @@ const PostScreen: React.FC = () => {
 
   const removeImage = () => {
     setImage('');
-    console.log("Image has been Removed")
   }
 
   return (
