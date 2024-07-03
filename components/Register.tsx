@@ -4,7 +4,6 @@ import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
 import { useAuth } from "../authentification/AuthContext";
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 
@@ -139,7 +138,6 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
-  const [profilePicture, setProfilePicture] = useState('');
   const [image, setImage] = useState('');
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -152,9 +150,6 @@ const Register: React.FC<Props> = ({ setServerError }) => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setProfilePicture(await FileSystem.readAsStringAsync(image, {
-        encoding: FileSystem.EncodingType.Base64,
-      }))
     }
   };
 
@@ -253,7 +248,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
             password,
             nickname,
             email,
-            profilePicture,
+            image,
             setServerError,
             setUsernameErrorText,
             setEmailErrorText,
