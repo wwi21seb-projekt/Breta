@@ -174,7 +174,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
           <TouchableOpacity
             className="absolute top-0 right-0 rounded-full bg-white"
             onPress={removeImage}
-            style={{ transform: [{ translateX: 1 }, { translateY: -0 }] }} // Optional: Feineinstellung der Position
+            style={{ transform: [{ translateX: 1 }, { translateY: -0 }] }}
           >
             <Ionicons
               name="trash-outline"
