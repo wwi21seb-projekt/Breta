@@ -28,8 +28,6 @@ const SearchScreen = () => {
   const [userSearchError, setUserSearchError] = useState("");
   const [postSearchError, setPostSearchError] = useState("");
 
-  //style own TabBar since materials isn't fitting
-  //any type since the types come directly from react-native-tab-view libary
   const customTabBar: React.FC<any> = (props) => (
     <TabBar
       {...props}
@@ -76,6 +74,7 @@ const SearchScreen = () => {
       return (
         <View>
           <FlatList
+          className="py-5"
             data={posts}
             keyExtractor={(item) => item.postId}
             renderItem={({ item }) => (
@@ -125,8 +124,7 @@ const SearchScreen = () => {
   const [userOffset, setUserOffset] = useState(0);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
   const [hasMoreUsers, setHasMoreUsers] = useState(true);
-  //limit noch auf 10 ändern!‚
-  let userLimit = 2;
+  let userLimit = 10;
 
   const fetchUsers = async (loadingMore: boolean) => {
     if (!hasMoreUsers || !searchInput.trim()) {
@@ -172,7 +170,6 @@ const SearchScreen = () => {
   };
 
   const loadMoreUsers = () => {
-    //console.log("loading more Users: ", loadingMoreUsers, "\nhas more users: ", hasMoreUsers )
     if (!loadingMoreUsers && hasMoreUsers) {
       setLoadingMoreUsers(true);
       fetchUsers(true);
@@ -182,8 +179,7 @@ const SearchScreen = () => {
   const [lastPostId, setLastPostId] = useState("");
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  //limit noch auf 10 ändern!‚
-  let postLimit = 2;
+  let postLimit = 10;
   const [posts, setPosts] = useState<Post[]>([]);
 
   const fetchPosts = async () => {
@@ -204,14 +200,11 @@ const SearchScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (response.ok) {
         data = await response.json();
         setPosts([...posts, ...data.records]);
         setLastPostId(data.pagination.lastPostId);
-        console.log(data.pagination.lastPostId);
         setHasMorePosts(data.records.length === postLimit);
-        console.log(hasMorePosts);
       } else {
         switch (response.status) {
           case 401:
@@ -233,8 +226,6 @@ const SearchScreen = () => {
   };
 
   const loadMorePosts = () => {
-    console.log("loadingMorePosts: ", loadMorePosts);
-    console.log("hasMorePOsts: ", hasMorePosts);
     if (!loadingMorePosts && hasMorePosts) {
       setLoadingMorePosts(true);
       fetchPosts();
@@ -257,7 +248,6 @@ const SearchScreen = () => {
     }
     fetchUsers(false);
     fetchPosts();
-    console.log(debouncedSearchInput);
   }, [debouncedSearchInput]);
 
   const handleSearchInputChange = (searchInput: string) => {
