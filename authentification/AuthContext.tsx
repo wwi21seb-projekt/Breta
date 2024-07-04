@@ -14,6 +14,7 @@ import { navigate, reset } from "../navigation/NavigationService";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
 import { registerForPushNotificationsAsync } from "../screens/NotificationScreen";
+import * as FileSystem from 'expo-file-system';
 
 interface AuthContextType {
   token: string | null;
@@ -33,6 +34,7 @@ interface AuthContextType {
     password: string,
     nickname: string,
     email: string,
+    profilePicture: string,
     setServerError: Dispatch<SetStateAction<string>>,
     setUsernameErrorText: Dispatch<SetStateAction<string>>,
     setEmailErrorText: Dispatch<SetStateAction<string>>,
@@ -273,24 +275,37 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       password,
       nickname,
       email,
+      profilePicture,
       setServerError,
       setUsernameErrorText,
       setEmailErrorText,
     ) => {
       let response;
       let data;
+      let base64;
+
+      if(profilePicture !== ''){
+        base64 = await FileSystem.readAsStringAsync(profilePicture, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+      }
+
+      const body = JSON.stringify({
+        username: username,
+        password: password,
+        nickname: nickname,
+        email: email,
+        profilePicture: base64
+      })
+      
+
       try {
         response = await fetch(`${baseUrl}users`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            username: username,
-            password: password,
-            nickname: nickname,
-            email: email,
-          }),
+          body: body,
         });
         data = await response.json();
         switch (response.status) {

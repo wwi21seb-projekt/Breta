@@ -1,8 +1,11 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import FloatingLabelInput from "./FloatingLabelInput";
 import { COLORS } from "../theme";
 import { useAuth } from "../authentification/AuthContext";
+import * as ImagePicker from 'expo-image-picker';
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 
 interface Props {
   setServerError: Dispatch<SetStateAction<string>>;
@@ -135,6 +138,25 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  const [image, setImage] = useState('');
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const removeImage = () => {
+    setImage('');
+  }
+
   return (
     <ScrollView
       className="bg-white px-10"
@@ -142,6 +164,27 @@ const Register: React.FC<Props> = ({ setServerError }) => {
       alwaysBounceVertical={false}
       showsVerticalScrollIndicator={false}
     >
+      <View className="flex-row items-center justify-center mb-5 mt-1">
+        <View className="relative">
+          <TouchableOpacity 
+            className="h-20 w-20 rounded-full overflow-hidden border-lightgray border-2 items-center justify-center" 
+            onPress={pickImage}>
+            <Image source={image === '' ? require('../assets/images/default_profile_picture.jpeg') : { uri: image }} className="h-20 w-20 rounded-full"/>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="absolute top-0 right-0 rounded-full bg-white"
+            onPress={removeImage}
+            style={{ transform: [{ translateX: 1 }, { translateY: -0 }] }}
+          >
+            <Ionicons
+              name="trash-outline"
+              size={20}
+              color={COLORS.red}
+            />  
+        </TouchableOpacity>
+        </View>
+      </View>
+
       <FloatingLabelInput
         label="Email address"
         errorText={emailErrorText}
@@ -205,6 +248,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
             password,
             nickname,
             email,
+            image,
             setServerError,
             setUsernameErrorText,
             setEmailErrorText,
