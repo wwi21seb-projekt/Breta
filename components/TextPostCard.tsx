@@ -89,6 +89,9 @@ const TextPostCard: React.FC<Props> = (props) => {
 
   
 const checkForHashtag = (text: string) => {
+  if(!text){
+    return
+  }
   const hashtagRegex = /#(\w+)/g;
   const segments = text.split(hashtagRegex);
 
@@ -541,7 +544,7 @@ const checkForHashtag = (text: string) => {
         className={`h-72 mt-[-20px] ${postContent === "" ? "rounded-b-3xl" : "rounded-t-3xl"}`}
             /> 
             </View> )}
-            {postContent != "" && (<Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>)}
+            {postContent !== "" && (<Text className="my-3 mx-5">{checkForHashtag(postContent)}</Text>)}
     
     
   </View>
