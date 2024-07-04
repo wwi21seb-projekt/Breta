@@ -53,14 +53,22 @@ const FeedScreen = () => {
         url += `&postId=${lastGlobalPostId}`;
       }
     } 
+    let header;
+    if (token){
+      header = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    } else {
+      header = {
+        "Content-Type": "application/json",
+      }
+    }
   
     try {
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: header,
       });
       if (response.ok) {
         const data = await response.json();
