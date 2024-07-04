@@ -239,6 +239,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         data = await response.json();
         switch (response.status) {
           case 200:
+            setToken(data.token);
             setRefreshToken(data.refreshToken);
             setUser(username);
             await AsyncStorage.setItem("token", data.token);
