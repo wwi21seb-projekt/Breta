@@ -74,6 +74,7 @@ const SearchScreen = () => {
       return (
         <View>
           <FlatList
+          className="py-5"
             data={posts}
             keyExtractor={(item) => item.postId}
             renderItem={({ item }) => (
