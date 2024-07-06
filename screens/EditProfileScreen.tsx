@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,10 @@ import { checkConfirmNewPassword } from "../components/functions/CheckConfirmNew
 import { handleNewPasswordChange } from "../components/functions/HandleNewPasswordChange";
 import { handleConfirmNewPasswordChange } from "../components/functions/HandleConfirmNewPasswordChange";
 import { updateFormValidity } from "../components/functions/FormValidity";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+
+
 
 type RouteParams = {
   user: User;
@@ -48,13 +52,32 @@ const EditProfileScreen = () => {
   const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] =
     useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isImagePicked, setIsImagePicked] = useState(false)
+  const [image, setImage] = useState('');
+  const [imageError, setImageError] = useState("")
+  
 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
 
+  useEffect(() => {
+    if (isImagePicked) {
+      handleTrivialInfoChange();
+      setIsImagePicked(false);
+    }
+  }, [isImagePicked]);
+
   const handleTrivialInfoChange = async () => {
     let response;
     let data;
+    let base64;
+    if(image !== ''){
+          base64 = await FileSystem.readAsStringAsync(image, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      
+    }
+
     try {
       response = await fetch(`${baseUrl}users`, {
         method: "PUT",
@@ -65,6 +88,7 @@ const EditProfileScreen = () => {
         body: JSON.stringify({
           nickname: nickname,
           status: status,
+          picture: image === '' ? "" : base64
         }),
       });
       data = await response.json();
@@ -133,6 +157,7 @@ const EditProfileScreen = () => {
           setTimeout(() => {
             setIsPasswordChangeSuccessful(false);
           }, 3000);
+          user.picture.url = image
           break;
         case 400:
         case 401:
@@ -163,6 +188,67 @@ const EditProfileScreen = () => {
     }, []),
   );
 
+  
+
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+
+    if (!result.canceled) {
+      await setImage(result.assets[0].uri);
+      setIsImagePicked(true);
+    }
+    
+  };
+
+  const uploadPicture = async () => {
+
+    let response;
+    let base64;
+
+
+    let body = JSON.stringify({
+      picture: image
+    })
+    try {
+      response = await fetch(`${baseUrl}users`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: body
+      });
+      switch (response.status) {
+        case 200:
+          
+          setImageError("");
+          break;
+        case 400:
+        case 401:
+          const data = await response.json();
+          setImageError(data.error.message);
+          break;
+        default:
+          setImageError("Something went wrong, please try again later.");
+      }
+    } catch (error) {
+      setImageError(
+        "There are issues communicating with the server, please try again later.",
+      );
+    }
+  }
+  // 
+  const removeImage = () => {
+    setImage('');
+  }
+
   if (errorText !== "") {
     return <ErrorComp errorText={errorText} />;
   } else if (user !== undefined) {
@@ -173,14 +259,17 @@ const EditProfileScreen = () => {
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
       >
-        <View className="items-center">
+        <TouchableOpacity 
+          className="items-center"
+          onPress={pickImage}>
           <Image
-            source={require("../assets/images/Max.jpeg")}
+            source={image === '' ? (user.picture ? { uri: user.picture.url } : require("../assets/images/image_placeholder.jpeg") ) : { uri: image }}
             // source={user?.profilePictureUrl} sobald die Bilder gehen
             className="w-3/5 h-36 rounded-full mt-8 mb-3"
             alt="Profilbild"
           />
-        </View>
+          
+        </TouchableOpacity>
         <Text className="italic text-lg text-darkgray self-center mb-4">
           @{user?.username}
         </Text>
@@ -259,8 +348,8 @@ const EditProfileScreen = () => {
             <Text className="ml-1 text-darkgray text-base">
               Change your password
             </Text>
-          </TouchableOpacity>
-          {isPasswordChangeSuccessful && (
+            </TouchableOpacity>
+            {isPasswordChangeSuccessful && (
             <Text className="mt-1 mx-8 text-xs text-green">
               Your password has been updated successfully!
             </Text>
@@ -332,3 +421,5 @@ const EditProfileScreen = () => {
 };
 
 export default EditProfileScreen;
+
+
