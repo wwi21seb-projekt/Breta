@@ -145,7 +145,7 @@ const FeedScreen = () => {
         );
         updatedPosts.push({ ...post, city });
       }
-      else if (post.repost && post.repost.location && post.repost.location.latitude && post.repost.location.longitude) {
+      else if (post.repost?.location?.latitude && post.repost?.location?.longitude) {
         const repostCity = await getCityFromCoordinates(
           post.repost.location.latitude,
           post.repost.location.longitude,
