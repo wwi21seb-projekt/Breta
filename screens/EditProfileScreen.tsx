@@ -207,48 +207,6 @@ const EditProfileScreen = () => {
     
   };
 
-  const uploadPicture = async () => {
-
-    let response;
-    let base64;
-
-
-    let body = JSON.stringify({
-      picture: image
-    })
-    try {
-      response = await fetch(`${baseUrl}users`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: body
-      });
-      switch (response.status) {
-        case 200:
-          
-          setImageError("");
-          break;
-        case 400:
-        case 401:
-          const data = await response.json();
-          setImageError(data.error.message);
-          break;
-        default:
-          setImageError("Something went wrong, please try again later.");
-      }
-    } catch (error) {
-      setImageError(
-        "There are issues communicating with the server, please try again later.",
-      );
-    }
-  }
-  // 
-  const removeImage = () => {
-    setImage('');
-  }
-
   if (errorText !== "") {
     return <ErrorComp errorText={errorText} />;
   } else if (user !== undefined) {
