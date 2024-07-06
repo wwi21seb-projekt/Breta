@@ -144,7 +144,15 @@ const FeedScreen = () => {
           post.location.longitude,
         );
         updatedPosts.push({ ...post, city });
-      } else {
+      }
+      else if (post.repost && post.repost.location && post.repost.location.latitude && post.repost.location.longitude) {
+        const repostCity = await getCityFromCoordinates(
+          post.repost.location.latitude,
+          post.repost.location.longitude,
+        );
+        updatedPosts.push({ ...post, repostCity });
+      }
+       else {
         updatedPosts.push(post);
       }
     }
@@ -174,6 +182,7 @@ const FeedScreen = () => {
               date={post.creationDate}
               postContent={post.content}
               city={post.city}
+              repostCity={post.repostCity}
               postId={post.postId}
               repostAuthor={post.repost?.author?.username || ""}
               repostPicture={post.repost?.author?.picture?.url  || ""}
@@ -209,6 +218,7 @@ const FeedScreen = () => {
             date={post.creationDate}
             postContent={post.content}
             city={post.city}
+            repostCity={post.repostCity}
             postId={post.postId}
             repostPicture={post.repost?.author?.picture?.url  || ""}
             repostAuthor={post.repost?.author?.username || ""}
