@@ -54,7 +54,6 @@ const EditProfileScreen = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isImagePicked, setIsImagePicked] = useState(false)
   const [image, setImage] = useState('');
-  const [imageError, setImageError] = useState("")
   
 
   const maxCharactersNickname = 25;
