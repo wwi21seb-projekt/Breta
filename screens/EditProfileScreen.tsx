@@ -59,6 +59,8 @@ const EditProfileScreen = () => {
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
 
+  const hasPictureSet =  user.picture ? { uri: user.picture.url } : require("../assets/images/image_placeholder.jpeg")
+
   useEffect(() => {
     if (isImagePicked) {
       handleTrivialInfoChange();
@@ -220,8 +222,7 @@ const EditProfileScreen = () => {
           className="items-center"
           onPress={pickImage}>
           <Image
-            source={image === '' ? (user.picture ? { uri: user.picture.url } : require("../assets/images/image_placeholder.jpeg") ) : { uri: image }}
-            // source={user?.profilePictureUrl} sobald die Bilder gehen
+            source={image === '' ? hasPictureSet : { uri: image }}
             className="w-3/5 h-36 rounded-full mt-8 mb-3"
             alt="Profilbild"
           />
