@@ -25,6 +25,8 @@ import LikeIcon from "./LikeIcon";
 import LoginPopup from "./LoginPopup";
 import { useFocusEffect } from "@react-navigation/native";
 import { push } from "../navigation/NavigationService";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 
 interface Props {
@@ -37,6 +39,7 @@ interface Props {
   picture: string;
   repostPostPicture: string;
   city?: string;
+  repostCity?: string;
   postId: string;
   repostAuthor: string;
   repostPicture: string
@@ -53,6 +56,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     profilePic,
     date,
     city,
+    repostCity,
     initialLikes,
     initialLiked,
     postId,
@@ -72,6 +76,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [commentError, setCommentError] = useState("");
   const isAuthenticated = useCheckAuthentication();
   const [repostError, setRepostError] = useState("");
+  const [repostText, setRepostText] = useState("");
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [isLoginPopupVisible, setIsLoginPopupVisible] = useState(false);
   const [hasMoreComments, setHasMoreComments] = useState(true);
@@ -336,6 +341,13 @@ const checkForHashtag = (text: string) => {
   const repostPost =  async () => {
     
     let response;
+    let base64;
+
+    if(image !== ''){
+      base64 = await FileSystem.readAsStringAsync(image, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+    }
 
     try {
       response = await fetch(`${baseUrl}posts`, {
@@ -346,7 +358,10 @@ const checkForHashtag = (text: string) => {
         },
         body: JSON.stringify({
           repostedPostId: postId,
-          content: postContent
+          content: repostText,
+          picture: picture === '' ? "" : base64,
+          repostPostPicture: image === '' ? "" : base64,
+
         }),
       });
       
@@ -379,6 +394,26 @@ const checkForHashtag = (text: string) => {
     }
     setConfirmationVisible(true);
   }    
+
+  const [image, setImage] = useState('');
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const removeImage = () => {
+    setImage('');
+  }
+
   if(repostError !== ""){
       return <ErrorComp errorText={repostError}></ErrorComp>;
   }  else{
@@ -392,15 +427,42 @@ const checkForHashtag = (text: string) => {
             setConfirmationVisible(false);
           }}
         >
+          <KeyboardAvoidingView
+                  behavior={Platform.OS === "ios" ? "padding" : "height"}
+                  className="flex-1">
           <View
             className="flex-1 justify-center items-center"
             style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
           >
             <View className="bg-white rounded-3xl px-8 py-4">
-              <Text className="text-lg mb-10">
+              <Text className="text-lg mb-4">
                 Do you really want to repost this post?
               </Text>
-              <View className="flex-row">
+              
+              <View className="bg-white justify-center flex-row">
+                  <TextInput
+                    className="flex-1 border-2 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2 "
+                    value={repostText}
+                    onChangeText={(post) => {
+                      setRepostText(post);
+                    }}
+                    multiline={true}
+                    numberOfLines={4}
+                    placeholder="Please put your text here..."
+                    placeholderTextColor={COLORS.lightgray}
+                    maxLength={256}
+                  />
+              </View>
+              <View className="mt-10 items-center">
+                <TouchableOpacity onPress={pickImage}>
+                  {image !== '' ? (
+              <Image className="w-96 h-96 mb-5"source={{ uri: image }}/>
+                ) : (
+              <Image className="w-96 h-96 mb-5" source={require("../assets/images/image_placeholder.jpeg")}/>
+            )}
+                </TouchableOpacity>
+              </View>
+              <View className="flex-row mt-4">
                 <TouchableOpacity onPress={() => setConfirmationVisible(false)}>
                   <Text className="text-red text-base font-bold">Cancel</Text>
                 </TouchableOpacity>
@@ -409,11 +471,24 @@ const checkForHashtag = (text: string) => {
                   className="ml-auto"
                   onPress={repostPost}
                 >
-                  <Text className="text-black text-base font-bold">Repost</Text>
+                  <Text className="text-black text-base font-bold">Create Repost</Text>
                 </TouchableOpacity>
+                {image !== '' && (
+                  <TouchableOpacity
+                  className="ml-auto"
+                  disabled={repostText === ""}
+                  onPress={() => {
+                    removeImage();
+                  }}
+                >
+                  <Text className="text-black text-base font-bold">Remove Image</Text>
+                </TouchableOpacity>
+                )}
+                
               </View>
             </View>
           </View>
+          </KeyboardAvoidingView>
         </Modal>
       {!isRepost ? (
       <View
@@ -497,10 +572,10 @@ const checkForHashtag = (text: string) => {
           push("GeneralProfile", { username: repostAuthor })
         }} className="flex-1 ml-2">
             <Text className="font-semibold text-base">{repostAuthor}</Text>
-            {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
+            {!isOwnPost ? (<Text className="text-xs text-darkgray">{repostCity}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
           </TouchableOpacity>) : (<View className="flex-1 ml-2">
                   <Text className="align-center font-bold">{repostAuthor}</Text>
-                  {!isOwnPost ? (<Text className="text-xs text-darkgray">{city}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
+                  {!isOwnPost ? (<Text className="text-xs text-darkgray">{repostCity}</Text>) : (<Text className="text-xs text-darkgray mt-[-2]">{date.split("T")[0]}</Text>)}
                 </View>)}
                 {!isOwnPost && (<Text className="text-xs text-darkgray mt-[-12] mr-1">{date.split("T")[0]}</Text>)}
             </View>

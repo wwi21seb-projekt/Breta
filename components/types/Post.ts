@@ -51,6 +51,7 @@ export interface Post {
     longitude: number;
   },
   city: string;
+  repostCity: string;
 }
 
 export interface PostRecords {
