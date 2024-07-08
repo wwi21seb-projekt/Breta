@@ -184,7 +184,7 @@ const NotificationScreen = () =>  {
             timestamp={item.timestamp}
             notificationType={item.notificationType}
             username={item.user.username}
-            profilePictureUrl={item.user.profilePictureUrl}
+            profilePictureUrl={item.user.picture.url}
             onRefresh={onRefresh}
           />
         )}
