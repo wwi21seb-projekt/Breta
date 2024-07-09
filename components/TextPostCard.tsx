@@ -427,21 +427,18 @@ const checkForHashtag = (text: string) => {
             setConfirmationVisible(false);
           }}
         >
-          <KeyboardAvoidingView
-                  behavior={Platform.OS === "ios" ? "padding" : "height"}
-                  className="flex-1">
           <View
             className="flex-1 justify-center items-center"
             style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
           >
-            <View className="bg-white rounded-3xl px-8 py-4">
-              <Text className="text-lg mb-4">
+            <View className="bg-white rounded-3xl">
+              <Text className="text-base my-3 mx-2.5">
                 Do you really want to repost this post?
               </Text>
               
               <View className="bg-white justify-center flex-row">
                   <TextInput
-                    className="flex-1 border-2 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2 "
+                    className="flex-1 border-2 mx-2.5 border-lightgray rounded-[8px] p-2 "
                     value={repostText}
                     onChangeText={(post) => {
                       setRepostText(post);
@@ -453,16 +450,26 @@ const checkForHashtag = (text: string) => {
                     maxLength={256}
                   />
               </View>
-              <View className="mt-10 items-center">
+              <View className="mt-6 items-center">
                 <TouchableOpacity onPress={pickImage}>
                   {image !== '' ? (
-              <Image className="w-96 h-96 mb-5"source={{ uri: image }}/>
+              <Image className="w-72 h-72 mb-1"source={{ uri: image }}/>
                 ) : (
-              <Image className="w-96 h-96 mb-5" source={require("../assets/images/image_placeholder.jpeg")}/>
+              <Image className="w-72 h-72 mb-1" source={require("../assets/images/image_placeholder.jpeg")}/>
             )}
                 </TouchableOpacity>
               </View>
-              <View className="flex-row mt-4">
+              {image !== '' && (
+                  <TouchableOpacity
+                  className="ml-2.5"
+                  onPress={() => {
+                    removeImage();
+                  }}
+                >
+                  <Text className="text-black text-sm">Remove Image</Text>
+                </TouchableOpacity>
+                )}
+              <View className="flex-row mt-5 mx-2.5 mb-3">
                 <TouchableOpacity onPress={() => setConfirmationVisible(false)}>
                   <Text className="text-red text-base font-bold">Cancel</Text>
                 </TouchableOpacity>
@@ -473,22 +480,9 @@ const checkForHashtag = (text: string) => {
                 >
                   <Text className="text-black text-base font-bold">Create Repost</Text>
                 </TouchableOpacity>
-                {image !== '' && (
-                  <TouchableOpacity
-                  className="ml-auto"
-                  disabled={repostText === ""}
-                  onPress={() => {
-                    removeImage();
-                  }}
-                >
-                  <Text className="text-black text-base font-bold">Remove Image</Text>
-                </TouchableOpacity>
-                )}
-                
               </View>
             </View>
           </View>
-          </KeyboardAvoidingView>
         </Modal>
       {!isRepost ? (
       <View
