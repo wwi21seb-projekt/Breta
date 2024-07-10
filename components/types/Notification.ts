@@ -5,6 +5,8 @@ export interface Notification {
     user: {
         username: string,
         nickname: string,
-        profilePictureUrl: string
+        picture: {
+            url: string
+        }
     }
 }

@@ -160,7 +160,7 @@ const PostScreen: React.FC = () => {
               createPost();
             }}
           >
-            <Text className="text-black text-xs">Create Post</Text>
+            <Text className="text-black text-sm">Create Post</Text>
           </TouchableOpacity>
           {image !== '' && (
             <TouchableOpacity

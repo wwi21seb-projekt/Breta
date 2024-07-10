@@ -302,7 +302,6 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
           <TouchableOpacity
             className="mx-2"
             disabled={!personal}
-            //activeOpacity={1}
             onLongPress={() => {
               setCurrentPostId(item.postId);
               setModalVisible(true);

@@ -7,8 +7,8 @@
 // Beta Websocket: wss://server-beta.de/api/
 
 // URL for development
-export const baseUrl = "https://alpha.c930.net/api/";
+export const baseUrl = "https://server-beta.de/api/";
 
 
 // Websocket for development
-export const baseSocketUrl = "wss://alpha.c930.net/api/";
+export const baseSocketUrl = "wss://server-beta.de/api/";

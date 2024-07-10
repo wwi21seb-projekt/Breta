@@ -24,6 +24,7 @@ const {
     timestamp,
     notificationType,
     username,
+    profilePictureUrl,
     onRefresh
     } = props;
   const { token } = useAuth();
@@ -91,8 +92,7 @@ const {
             <TouchableOpacity className="flex-1 flex-row items-center"
             onPress={pressNotification}>
               <Image
-                source={require("../assets/images/Max.jpeg")}
-                // source={profilePictureUrl} sobald Bilder da sind
+                source={{ uri: profilePictureUrl || "defaultPicture"}}
                 className="aspect-square rounded-full w-10"
                 alt="Picture"
               />

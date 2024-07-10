@@ -272,7 +272,7 @@ const EditProfileScreen = () => {
         </View>
         {isInfoChangeSuccessful && (
           <Text className="self-center mx-10 mt-1 text-xs text-green">
-            Your nickname and status have been updated successfully!
+            Your picture, nickname and status have been updated successfully!
           </Text>
         )}
         <View className="bg-white">
