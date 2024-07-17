@@ -17,7 +17,6 @@ import ErrorComp from "../components/ErrorComp";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
-
 const PostScreen: React.FC = () => {
   const { token } = useAuth();
   const [postText, setPostText] = useState("");
@@ -25,16 +24,19 @@ const PostScreen: React.FC = () => {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [accuracy, setAccuracy] = useState<number | null>(0);
+  const [image, setImage] = useState('');
 
+  // Fetch location on component mount
   useEffect(() => {
     getLocation();
-  });
+  }, []);
 
+  // Function to create a new post
   const createPost = async () => {
     let response;
     let base64;
 
-    if(image !== ''){
+    if (image !== '') {
       base64 = await FileSystem.readAsStringAsync(image, {
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -48,7 +50,7 @@ const PostScreen: React.FC = () => {
         latitude: latitude,
         accuracy: accuracy === null ? "" : Math.floor(accuracy),
       },
-    })
+    });
 
     try {
       response = await fetch(`${baseUrl}posts`, {
@@ -66,15 +68,10 @@ const PostScreen: React.FC = () => {
           navigate("Profile");
           break;
         case 400:
-          setPostError(
-            "The request body is invalid. Please check the request body and try again.",
-          );
-
+          setPostError("The request body is invalid. Please check the request body and try again.");
           break;
         case 401:
-          setPostError(
-            "The Request is unauthorized. Please login to your account",
-          );
+          setPostError("The Request is unauthorized. Please login to your account");
           break;
         default:
           setPostError(response.status.toString());
@@ -84,14 +81,13 @@ const PostScreen: React.FC = () => {
     }
   };
 
+  // Function to get the current location
   const getLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
-
       if (status !== "granted") {
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLatitude(location.coords.latitude);
       setLongitude(location.coords.longitude);
@@ -101,7 +97,7 @@ const PostScreen: React.FC = () => {
     }
   };
 
-  const [image, setImage] = useState('');
+  // Function to pick an image
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -110,16 +106,17 @@ const PostScreen: React.FC = () => {
       quality: 1,
     });
 
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
+  // Function to remove the selected image
   const removeImage = () => {
     setImage('');
-  }
+  };
 
+  // Main render
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View className="bg-white flex-1">
@@ -127,9 +124,7 @@ const PostScreen: React.FC = () => {
           <TextInput
             className="flex-1 border-2 mt-10 ml-2.5 mr-2.5 border-lightgray rounded-[8px] p-2"
             value={postText}
-            onChangeText={(post) => {
-              setPostText(post);
-            }}
+            onChangeText={(post) => setPostText(post)}
             multiline={true}
             numberOfLines={8}
             placeholder="Please put your text here..."
@@ -141,42 +136,36 @@ const PostScreen: React.FC = () => {
         </View>
         <View className="mt-10 items-center">
           <TouchableOpacity onPress={pickImage}>
-            <Image className="w-96 h-96 mb-5" source={image === '' ? require("../assets/images/image_placeholder.jpeg") : { uri: image }}/>
+            <Image
+              className="w-96 h-96 mb-5"
+              source={image === '' ? require("../assets/images/image_placeholder.jpeg") : { uri: image }}
+            />
           </TouchableOpacity>
         </View>
-        <View>
-          {postError.length !== 0 && <ErrorComp errorText={postError} />}
-        </View>
+        {postError.length !== 0 && <ErrorComp errorText={postError} />}
         <View className="bg-white justify-center items-center flex-row">
           <TouchableOpacity
             style={{
-              backgroundColor:
-                postText === "" ? COLORS.lightgray : COLORS.primary,
+              backgroundColor: postText === "" ? COLORS.lightgray : COLORS.primary,
               ...SHADOWS.small,
             }}
             className="flex-1 mx-7  p-3 items-center rounded-[18px]"
             disabled={postText === ""}
-            onPress={() => {
-              createPost();
-            }}
+            onPress={createPost}
           >
             <Text className="text-black text-sm">Create Post</Text>
           </TouchableOpacity>
           {image !== '' && (
             <TouchableOpacity
-            style={{
-              backgroundColor:
-                COLORS.lightgray,
-              ...SHADOWS.small,
-            }}
-            className="flex-1 mx-7 p-3 items-center rounded-[18px]"
-            disabled={postText === ""}
-            onPress={() => {
-              removeImage();
-            }}
-          >
-            <Text className="text-black text-xs">Remove Image</Text>
-          </TouchableOpacity>
+              style={{
+                backgroundColor: COLORS.lightgray,
+                ...SHADOWS.small,
+              }}
+              className="flex-1 mx-7 p-3 items-center rounded-[18px]"
+              onPress={removeImage}
+            >
+              <Text className="text-black text-xs">Remove Image</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>

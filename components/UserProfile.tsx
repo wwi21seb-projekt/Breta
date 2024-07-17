@@ -29,6 +29,8 @@ type Props = {
 const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const { token, user } = useAuth();
   const following = userInfo.username;
+
+  // State variables
   const [isFollowed, setIsFollowed] = useState(!!userInfo.subscriptionId);
   const [errorText, setErrorText] = useState("");
   const [subscriptionId, setSubscriptionId] = useState<string | null>(
@@ -46,6 +48,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
   const [areNoChats, setAreNoChats] = useState(false);
   const profilePictureUrl = userInfo.picture?.url || "";
 
+  // Effect to handle chat navigation
   useEffect(() => {
     if (chats.length > 0) {
       const existedChat = chats.find(chat => chat.user.username === userInfo.username);
@@ -60,6 +63,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   }, [chats, areNoChats]);
 
+  // Fetch user posts
   const fetchPosts = async (loadMore: boolean) => {
     setLoading(true);
     let response;
@@ -98,6 +102,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
+  // Delete a post
   const deletePost = async () => {
     let response;
     let data;
@@ -131,10 +136,12 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
+  // Start a chat
   const startChat = () => {
     loadChats(setChats, setErrorText, setAreNoChats, token);
   };
 
+  // Load more posts when scrolling
   const loadMorePosts = () => {
     if (!loadingMore && hasMoreData) {
       setLoadingMore(true);
@@ -142,6 +149,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }
   };
 
+  // Fetch posts when the component is focused
   useFocusEffect(
     React.useCallback(() => {
       setErrorText("");
@@ -149,7 +157,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     }, [])
   );
   
-
+  // Render the profile header
   const renderHeader = () => {
     return (
       <View className="bg-white pb-4">
@@ -284,6 +292,7 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     );
   };
 
+  // Main render
   if (loading && !loadingMore) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
@@ -320,8 +329,8 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
               initialLiked={item.liked}
               isOwnPost={true}
               repostPostPicture={item.repost?.picture?.url || ""}
-            picture={item.picture?.url  || ""}
-            repostPostContent={item.repost?.content}
+              picture={item.picture?.url  || ""}
+              repostPostContent={item.repost?.content}
             />
           </TouchableOpacity>
         )}
@@ -340,4 +349,5 @@ const UserProfile: React.FC<Props> = ({ userInfo, personal }) => {
     );
   }
 };
+
 export default UserProfile;

@@ -18,11 +18,16 @@ const UserListItem: React.FC<Props> = ({
   followingId,
   setErrorText,
 }) => {
+  // Get token and user info from authentication context
   const { token, user } = useAuth();
+
+  // State to manage follow/unfollow status
   const [isFollowed, setIsFollowed] = useState(followingId !== null);
   const [subscriptionId, setSubscriptionId] = useState(
     followingId !== undefined ? followingId : null,
   );
+
+  // State to manage subscription handling status
   const [isHandlingSubscription, setIsHandlingSubscription] = useState(false);
 
   return (
@@ -30,6 +35,7 @@ const UserListItem: React.FC<Props> = ({
       className="flex-row items-center rounded-3xl bg-white p-2 my-2 mx-6"
       style={{ ...SHADOWS.small }}
     >
+      {/* Touchable opacity to navigate to user profile */}
       <TouchableOpacity
         onPress={() => {
           push("GeneralProfile", { username: username });
@@ -37,10 +43,11 @@ const UserListItem: React.FC<Props> = ({
         className="flex-1 flex-row items-center"
       >
         <Image
-          source={{uri: profilePictureUrl || "defaultProfilePic"}}
+          source={{ uri: profilePictureUrl || "defaultProfilePic" }}
           className="aspect-square rounded-full w-10"
           alt="Picture"
         />
+
         <Text className="text-base ml-3">{username}</Text>
       </TouchableOpacity>
 

@@ -28,6 +28,7 @@ const SearchScreen = () => {
   const [userSearchError, setUserSearchError] = useState("");
   const [postSearchError, setPostSearchError] = useState("");
 
+  // Custom TabBar component for styling the TabView
   const customTabBar: React.FC<any> = (props) => (
     <TabBar
       {...props}
@@ -38,6 +39,7 @@ const SearchScreen = () => {
     />
   );
 
+  // Render user list
   const userList = () => {
     if (userSearchError !== "") {
       return <ErrorComp errorText={userSearchError}></ErrorComp>;
@@ -67,6 +69,7 @@ const SearchScreen = () => {
     }
   };
 
+  // Render post list
   const postList = () => {
     if (postSearchError !== "") {
       return <ErrorComp errorText={postSearchError}></ErrorComp>;
@@ -108,24 +111,26 @@ const SearchScreen = () => {
     }
   };
 
-  //index and routes with title for TabView
+  // Index and routes for TabView
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "Users" },
     { key: "second", title: "Posts" },
   ]);
 
-  //initialize SceneMap for Tabview
+  // Initialize SceneMap for TabView
   const renderScene = SceneMap({
     first: userList,
     second: postList,
   });
 
+  // State variables for user search
   const [userOffset, setUserOffset] = useState(0);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
   const [hasMoreUsers, setHasMoreUsers] = useState(true);
   let userLimit = 10;
 
+  // Fetch users from the server
   const fetchUsers = async (loadingMore: boolean) => {
     if (!hasMoreUsers || !searchInput.trim()) {
       return;
@@ -169,6 +174,7 @@ const SearchScreen = () => {
     }
   };
 
+  // Load more users when scrolling
   const loadMoreUsers = () => {
     if (!loadingMoreUsers && hasMoreUsers) {
       setLoadingMoreUsers(true);
@@ -176,12 +182,14 @@ const SearchScreen = () => {
     }
   };
 
+  // State variables for post search
   const [lastPostId, setLastPostId] = useState("");
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   let postLimit = 10;
   const [posts, setPosts] = useState<Post[]>([]);
 
+  // Fetch posts from the server
   const fetchPosts = async () => {
     if (!hasMorePosts || !searchInput.trim()) {
       return;
@@ -225,6 +233,7 @@ const SearchScreen = () => {
     }
   };
 
+  // Load more posts when scrolling
   const loadMorePosts = () => {
     if (!loadingMorePosts && hasMorePosts) {
       setLoadingMorePosts(true);
@@ -232,15 +241,16 @@ const SearchScreen = () => {
     }
   };
 
+  // Effect to handle debounced search input changes
   useEffect(() => {
     if (debouncedSearchInput === "") {
-      //user reset
+      // Reset user search
       setUserOffset(0);
       setLoadingMoreUsers(false);
       setHasMoreUsers(true);
       setUsers([]);
 
-      //post reset
+      // Reset post search
       setLastPostId("");
       setLoadingMorePosts(false);
       setHasMorePosts(true);
@@ -250,11 +260,13 @@ const SearchScreen = () => {
     fetchPosts();
   }, [debouncedSearchInput]);
 
+  // Handle search input change
   const handleSearchInputChange = (searchInput: string) => {
     setLastPostId("");
     setSearchInput(searchInput);
   };
 
+  // Render the main view
   return (
     <View className="flex flex-col h-full bg-white pb-4">
       <View className="flex flex-row  bg-lightgray rounded-full m-4">
@@ -279,4 +291,5 @@ const SearchScreen = () => {
     </View>
   );
 };
+
 export default SearchScreen;

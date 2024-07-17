@@ -18,20 +18,25 @@ const ChatDetailScreen = () => {
   const { token, user } = useAuth();
   const route = useRoute();
   const { chatId, username, pictureUrl } = route.params as RouteParams;
+
+  // State variables
   const [currentChatId, setCurrentChatId] = useState(chatId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [disableSendButton, setDisableSendButton] = useState(true);
   const [errorText, setErrorText] = useState("");
   const [messageText, setMessageText] = useState("");
+
+  // Refs for ScrollView and WebSocket
   const scrollViewRef = useRef<ScrollView>(null);
   const ws = useRef<WebSocket | null>(null);
 
+  // Effect to fetch messages and initialize WebSocket connection
   useEffect(() => {
-    if (chatId === ""){
+    if (chatId === "") {
       setDisableSendButton(false);
-    };
-    if(token && currentChatId !== ""){
+    }
+    if (token && currentChatId !== "") {
       fetchMessages();
       ws.current = new WebSocket(`${baseSocketUrl}chat?chatId=${currentChatId}`, token);
       ws.current.onopen = () => {
@@ -49,50 +54,38 @@ const ChatDetailScreen = () => {
           ws.current.close();
         }
       };
-    } 
+    }
   }, [currentChatId]);
 
+  // Effect to scroll to the end of messages when a new message is received
   useEffect(() => {
     const timeout = setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100); 
+    }, 100);
     return () => clearTimeout(timeout);
   }, [messages]);
 
+  // Handle message text change
   const handleMessageChange = (text: string) => {
     if (text.length <= 256) {
       setMessageText(text);
     }
   };
-  
 
+  // Format date for message display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = date.getUTCDate();
-    const month = date.getUTCMonth() + 1; 
-    const year = date.getUTCFullYear();
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
-    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
+    const formattedDate = `${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}, ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
     return formattedDate;
   }
 
+  // Get the current formatted date
   const getCurrentFormattedDate = () => {
     const date = new Date();
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); 
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
-    const microseconds = '000'; 
-    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}Z`;
-  
-    return formattedDate;
+    return date.toISOString();
   };
 
+  // Fetch chat messages from the server
   const fetchMessages = async () => {
     setLoading(true);
     try {
@@ -122,10 +115,10 @@ const ChatDetailScreen = () => {
     }
   };
 
+  // Create a new chat
   const createChat = async () => {
-    let response;
     try {
-      response = await fetch(`${baseUrl}chats`, {
+      const response = await fetch(`${baseUrl}chats`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,8 +151,9 @@ const ChatDetailScreen = () => {
     }
   };
 
+  // Send a new message
   const sendMessage = () => {
-    if(messages.length == 0){
+    if (messages.length == 0) {
       createChat();
     } else {
       const newMessage: Message = {
@@ -175,6 +169,7 @@ const ChatDetailScreen = () => {
     }
   };
 
+  // Render loading indicator or error component if needed
   if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
@@ -183,12 +178,15 @@ const ChatDetailScreen = () => {
     );
   } else if (errorText) {
     return <ErrorComp errorText={errorText} />;
-  } else return (
+  }
+
+  // Main render
+  return (
     <View className="flex-1 bg-white">
       <TouchableOpacity className="flex-row items-center bg-white px-4 py-2"
-      onPress={() => {
-        navigate("GeneralProfile", { username: username });
-      }}>
+        onPress={() => {
+          navigate("GeneralProfile", { username: username });
+        }}>
         {pictureUrl !== "" && (<Image
           source={{ uri: pictureUrl || "defaultProfilePicUrl" }}
           className="w-11 h-11 rounded-full"
@@ -208,17 +206,17 @@ const ChatDetailScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           {messages.map((message) => (
+            <View
+              key={`${message.creationDate}`}
+              className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}
+            >
               <View
-                key={`${message.creationDate}`}
-                className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}
+                className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}
               >
-                <View
-                  className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}
-                >
-                  <Text className='text-sm mb-0.5'>{message.content.trim()}</Text>
-                  <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
-                </View>
+                <Text className='text-sm mb-0.5'>{message.content.trim()}</Text>
+                <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
               </View>
+            </View>
           ))}
         </ScrollView>
         <View className="px-4 py-5 bg-white">
@@ -232,11 +230,11 @@ const ChatDetailScreen = () => {
               multiline
             />
             <TouchableOpacity style={{
-          backgroundColor:
-            !disableSendButton && messageText !== ""
-              ? COLORS.primary
-              : COLORS.lightgray,
-        }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === ""}>
+              backgroundColor:
+                !disableSendButton && messageText !== ""
+                  ? COLORS.primary
+                  : COLORS.lightgray,
+            }} className="py-2 px-3 rounded-full" onPress={sendMessage} disabled={disableSendButton || messageText === ""}>
               <Text className="text-white">Send</Text>
             </TouchableOpacity>
           </View>

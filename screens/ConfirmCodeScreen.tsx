@@ -16,6 +16,7 @@ const ConfirmCodeScreen = () => {
   const [serverError, setServerError] = useState("");
   const [hasResent, setHasResent] = useState(false);
 
+  // Function to send a new confirmation code
   const sendNewCode = async () => {
     let response;
     let data;
@@ -47,9 +48,12 @@ const ConfirmCodeScreen = () => {
     }
   };
 
+  // Render error component if there's an error
   if (serverError) {
     return <Error errorText={serverError} />;
-  } else if (isConfirmed) {
+  } 
+  // Render success message if the account is confirmed
+  else if (isConfirmed) {
     return (
       <View className="bg-white px-6 h-full pt-4">
         <Text className="text-base">
@@ -66,7 +70,9 @@ const ConfirmCodeScreen = () => {
         </View>
       </View>
     );
-  } else if (alreadyActivated) {
+  } 
+  // Render message if the account is already activated
+  else if (alreadyActivated) {
     return (
       <View className="bg-white px-6 h-full pt-4">
         <Text className="text-base">
@@ -83,7 +89,9 @@ const ConfirmCodeScreen = () => {
         </View>
       </View>
     );
-  } else {
+  } 
+  // Main render
+  else {
     return (
       <View className="bg-white px-8 h-full pt-4">
         {hasResent ? (
@@ -107,8 +115,7 @@ const ConfirmCodeScreen = () => {
         <TouchableOpacity
           className="mx-16 p-2 items-center rounded-md mt-12"
           style={{
-            backgroundColor:
-              value.length < 6 ? COLORS.lightgray : COLORS.primary,
+            backgroundColor: value.length < 6 ? COLORS.lightgray : COLORS.primary,
           }}
           onPress={() =>
             activateUser(
@@ -128,7 +135,7 @@ const ConfirmCodeScreen = () => {
         <Text className="text-sm">Didn't receive a code?</Text>
         <View className="flex-row">
           <Text className="text-sm">Click</Text>
-          <TouchableOpacity onPress={() => sendNewCode()}>
+          <TouchableOpacity onPress={sendNewCode}>
             <Text className="text-primary text-sm underline font-semibold">
               {" "}
               here{" "}

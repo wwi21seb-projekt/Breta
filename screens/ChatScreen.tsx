@@ -8,7 +8,6 @@ import ErrorComp from "../components/ErrorComp";
 import { loadChats } from '../components/functions/LoadChats';
 import { useFocusEffect } from "@react-navigation/native";
 
-
 const ChatScreen = () => {
   const { token } = useAuth();
   const [chats, setChats] = useState<Chat[]>([]);
@@ -16,14 +15,16 @@ const ChatScreen = () => {
   const [areNoChats, setAreNoChats] = useState(false);
   const [errorText, setErrorText] = useState('');
 
+  // Load chats when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
       setErrorText("");
       setAreNoChats(false);
       loadChats(setChats, setErrorText, setAreNoChats, token);
-    }, [])
+    }, [token])
   );
 
+  // Refresh the chat list
   const onRefresh = async () => {
     setRefreshing(true);
     setErrorText("");
@@ -33,6 +34,7 @@ const ChatScreen = () => {
     }, 1000);
   };
 
+  // Handle chat press
   const handleChatPress = (chatId: string, username: string, pictureUrl: string) => {
     if(pictureUrl === undefined) {
       pictureUrl = "";
@@ -40,11 +42,13 @@ const ChatScreen = () => {
     navigate("ChatDetail", { chatId, username, pictureUrl });
   };
 
+  // Render error component if there's an error
   if (errorText) {
     return (
       <ErrorComp errorText={errorText} />
     );
   } else {
+    // Main render
     return (
       <ScrollView
         alwaysBounceVertical={false}
@@ -66,7 +70,7 @@ const ChatScreen = () => {
               source={{ uri: chat.user?.picture?.url || "defaultProfilePicUrl" }}
               className="w-11 h-11 rounded-full"
             />
-              <Text className="flex-1 ml-3 font-bold">{chat.user.username}</Text>
+            <Text className="flex-1 ml-3 font-bold">{chat.user.username}</Text>
           </TouchableOpacity>
         ))}
         <View className="mt-8"></View>

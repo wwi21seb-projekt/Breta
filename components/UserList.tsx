@@ -16,10 +16,13 @@ interface RouteParams {
 }
 
 const UserList: React.FC<Props> = ({ type }) => {
+  // Authentication context and route parameters
   const { token } = useAuth();
   const route = useRoute();
   const params = route.params as RouteParams;
   const username = params.username ? params.username : "";
+
+  // State variables for user records, error messages, loading status, etc.
   const [records, setRecords] = useState<AboRecords[]>([]);
   const [errorText, setErrorText] = useState("");
   const [offset, setOffset] = useState(0);
@@ -27,6 +30,7 @@ const UserList: React.FC<Props> = ({ type }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
 
+  // Function to fetch users from the server
   const fetchUsers = async (loadMore: boolean) => {
     setLoading(true);
     let data!: UserRecords;
@@ -66,6 +70,7 @@ const UserList: React.FC<Props> = ({ type }) => {
     }
   };
 
+  // Function to load more users when scrolling
   const loadMoreUsers = () => {
     if (!loadingMore && hasMoreData) {
       setLoadingMore(true);
@@ -73,21 +78,27 @@ const UserList: React.FC<Props> = ({ type }) => {
     }
   };
 
+  // Fetch users when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
       fetchUsers(false);
     }, []),
   );
 
+  // Render loading indicator while fetching data
   if (loading && !loadingMore) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
-  } else if (errorText) {
+  } 
+  // Render error component if there's an error
+  else if (errorText) {
     return <ErrorComp errorText={errorText} />;
-  } else if (records.length > 0) {
+  } 
+  // Render user list if records are available
+  else if (records.length > 0) {
     return (
       <View className="bg-white h-full">
         <FlatList
@@ -111,7 +122,9 @@ const UserList: React.FC<Props> = ({ type }) => {
         />
       </View>
     );
-  } else {
+  } 
+  // Render error component if no records found
+  else {
     return (
       <ErrorComp errorText="Something went wrong, please try again later." />
     );

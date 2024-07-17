@@ -18,6 +18,7 @@ type Props = React.ComponentProps<typeof TextInput> & {
 };
 
 const FloatingLabelInput: React.FC<Props> = (props) => {
+  // Destructure props
   const {
     label,
     errorText,
@@ -28,11 +29,15 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
     onFocus,
     ...restOfProps
   } = props;
+
+  // State to manage input focus
   const [isFocused, setIsFocused] = useState(false);
 
+  // Refs for input and animation
   const inputRef = useRef<TextInput>(null);
   const focusAnim = useRef(new Animated.Value(0)).current;
 
+  // Effect to handle label animation on focus and value change
   useEffect(() => {
     Animated.timing(focusAnim, {
       toValue: isFocused || !!value ? 1 : 0,
@@ -42,6 +47,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
+  // Determine border and label color based on focus and error state
   let color = isFocused ? COLORS.primary : COLORS.lightgray;
   if (errorText) {
     color = COLORS.red;
@@ -49,6 +55,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
 
   return (
     <View className="my-2">
+      {/* TextInput component with dynamic styling */}
       <TextInput
         className="border pb-4 pt-2 px-4 rounded-xl text-base"
         style={[
@@ -69,6 +76,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
           onFocus?.(event);
         }}
       />
+      {/* Animated label */}
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
         <Animated.View
           className="absolute bg-white px-2"
@@ -110,6 +118,7 @@ const FloatingLabelInput: React.FC<Props> = (props) => {
           </Text>
         </Animated.View>
       </TouchableWithoutFeedback>
+      {/* Error text */}
       {!!errorText && !noErrorText && (
         <Text className="text-sm text-red my-1 mx-2">{errorText}</Text>
       )}

@@ -22,11 +22,15 @@ import NotificationScreen from "../screens/NotificationScreen";
 import ChatDetailScreen from "../screens/ChatDetailScreen";
 import ChatScreen from "../screens/ChatScreen";
 
+// Create a stack navigator
 const Stack = createStackNavigator();
 
 const AppNavigator: React.FC = () => {
+  // Check if the user is authenticated
   const isAuthenticated = useCheckAuthentication();
   const { loading } = useAuth();
+
+  // Display a loading spinner while the authentication check is in progress
   if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
@@ -42,6 +46,7 @@ const AppNavigator: React.FC = () => {
             header: () => <AppTopBar />,
           })}
         >
+          {/* Define the different screens for the app */}
           <Stack.Screen name="TabBottomBar" component={TabBottomBar} />
           <Stack.Screen name="Imprint" component={Imprint} />
           <Stack.Screen name="Authentification" component={Authentification} />

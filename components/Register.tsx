@@ -6,15 +6,16 @@ import { useAuth } from "../authentification/AuthContext";
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-
 interface Props {
   setServerError: Dispatch<SetStateAction<string>>;
 }
 
 const Register: React.FC<Props> = ({ setServerError }) => {
+  // Extract the register function from the authentication context
   const { register } = useAuth();
-  const [isFormValid, setIsFormValid] = useState(false);
 
+  // State variables to manage form input and validation
+  const [isFormValid, setIsFormValid] = useState(false);
   const [emailErrorText, setEmailErrorText] = useState("");
   const [usernameErrorText, setUsernameErrorText] = useState("");
   const [nicknameErrorText, setNicknameErrorText] = useState("");
@@ -26,16 +27,15 @@ const Register: React.FC<Props> = ({ setServerError }) => {
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [image, setImage] = useState('');
 
+  // Function to update the overall form validity
   const updateFormValidity = () => {
-    const isValid =
-      checkEmail() &&
-      checkUsername() &&
-      checkPassword() &&
-      checkRepeatPassword();
+    const isValid = checkEmail() && checkUsername() && checkPassword() && checkRepeatPassword();
     setIsFormValid(isValid);
   };
 
+  // Function to validate email input
   const checkEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email.length === 0) {
@@ -50,6 +50,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Handler for email input change
   const handleEmailChange = (text: string) => {
     setEmailErrorText("");
     if (text.length <= 128) {
@@ -57,6 +58,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Function to validate username input
   const checkUsername = () => {
     if (username.length === 0) {
       setEmailErrorText("");
@@ -65,13 +67,12 @@ const Register: React.FC<Props> = ({ setServerError }) => {
       setUsernameErrorText("");
       return true;
     } else {
-      setUsernameErrorText(
-        "The username cannot contain any special characters or emojis.",
-      );
+      setUsernameErrorText("The username cannot contain any special characters or emojis.");
       return false;
     }
   };
 
+  // Handler for username input change
   const handleUsernameChange = (text: string) => {
     setUsernameErrorText("");
     if (text.length <= 20) {
@@ -79,6 +80,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Handler for nickname input change
   const handleNicknameChange = (text: string) => {
     setNicknameErrorText("");
     if (text.length <= 25) {
@@ -86,23 +88,17 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Function to validate password input
   const checkPassword = () => {
     if (password.length === 0) {
       setPasswordErrorText("");
       return false;
     } else if (password.length >= 8) {
-      if (
-        /[A-Z]/.test(password) &&
-        /[a-z]/.test(password) &&
-        /\d/.test(password) &&
-        /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(password)
-      ) {
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password) && /[`!@#$%^&*()_\-+=[\]{};':"\\|,.<>/?~ ]/.test(password)) {
         setPasswordErrorText("");
         return true;
       } else {
-        setPasswordErrorText(
-          "The password must contain at least one lowercase letter, one uppercase letter, one number and one special character.",
-        );
+        setPasswordErrorText("The password must contain at least one lowercase letter, one uppercase letter, one number and one special character.");
         return false;
       }
     } else {
@@ -111,6 +107,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Handler for password input change
   const handlePasswordChange = (text: string) => {
     setPasswordErrorText("");
     if (text.length <= 20) {
@@ -118,6 +115,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Function to validate repeat password input
   const checkRepeatPassword = () => {
     if (repeatPassword.length === 0) {
       setRepeatPasswordErrorText("");
@@ -131,6 +129,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
+  // Handler for repeat password input change
   const handleRepeatPasswordChange = (text: string) => {
     setRepeatPasswordErrorText("");
     if (text.length <= 20) {
@@ -138,7 +137,7 @@ const Register: React.FC<Props> = ({ setServerError }) => {
     }
   };
 
-  const [image, setImage] = useState('');
+  // Function to pick an image from the library
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -147,15 +146,15 @@ const Register: React.FC<Props> = ({ setServerError }) => {
       quality: 1,
     });
 
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
+  // Function to remove the selected image
   const removeImage = () => {
     setImage('');
-  }
+  };
 
   return (
     <ScrollView
@@ -176,12 +175,8 @@ const Register: React.FC<Props> = ({ setServerError }) => {
             onPress={removeImage}
             style={{ transform: [{ translateX: 1 }, { translateY: -0 }] }}
           >
-            <Ionicons
-              name="trash-outline"
-              size={20}
-              color={COLORS.red}
-            />  
-        </TouchableOpacity>
+            <Ionicons name="trash-outline" size={20} color={COLORS.red} />  
+          </TouchableOpacity>
         </View>
       </View>
 

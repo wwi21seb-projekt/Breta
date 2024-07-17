@@ -17,6 +17,7 @@ const Tabs = createBottomTabNavigator();
 const TabBottomBar: React.FC = () => {
   const isAuthenticated = useCheckAuthentication();
 
+  // Determine which component to render based on authentication status
   const getScreenComponent = (Component: any) => {
     return isAuthenticated ? Component : LoginPopup;
   };
