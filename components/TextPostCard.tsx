@@ -712,7 +712,7 @@ const TextPostCard: React.FC<Props> = (props) => {
         )}
       </Modal>
       {isLoginPopupVisible && (
-        <LoginPopup setIsLoginPopupVisible={setIsLoginPopupVisible} type={""}/>
+        <LoginPopup setIsLoginPopupVisible={setIsLoginPopupVisible}/>
       )}
     </View>
     

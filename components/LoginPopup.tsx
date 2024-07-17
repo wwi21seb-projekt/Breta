@@ -1,135 +1,64 @@
-import UserListItem from "../components/UserListItem";
-import React, { useState } from "react";
-import { View, FlatList, ActivityIndicator } from "react-native";
-import { baseUrl } from "../env";
-import { AboRecords, UserRecords } from "../components/types/UserListTypes";
-import { useAuth } from "../authentification/AuthContext";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
-import ErrorComp from "../components/ErrorComp";
+import React, { useState, Dispatch, SetStateAction } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { COLORS, SHADOWS } from "../theme";
+import { useFocusEffect } from "@react-navigation/native";
+import { navigate } from "../navigation/NavigationService";
 
 type Props = {
-  type: string;
-  setIsLoginPopupVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoginPopupVisible?: Dispatch<SetStateAction<boolean>>
 };
 
-interface RouteParams {
-  username: string;
-}
+const LoginPopup: React.FC<Props> = (props) => {
+    const {
+      setIsLoginPopupVisible
+    } = props;
+ 
+  const [modalVisible, setModalVisible] = useState(true);
 
-const UserList: React.FC<Props> = ({ type }) => {
-  // Authentication context and route parameters
-  const { token } = useAuth();
-  const route = useRoute();
-  const params = route.params as RouteParams;
-  const username = params.username ? params.username : "";
-
-  // State variables for user records, error messages, loading status, etc.
-  const [records, setRecords] = useState<AboRecords[]>([]);
-  const [errorText, setErrorText] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMoreData, setHasMoreData] = useState(true);
-
-  // Function to fetch users from the server
-  const fetchUsers = async (loadMore: boolean) => {
-    setLoading(true);
-    let data!: UserRecords;
-    let response;
-    let newOffset = loadMore ? offset + 10 : 0;
-    const urlWithParams = `${baseUrl}subscriptions/${username}?type=${type}&offset=${newOffset}&limit=10`;
-
-    try {
-      response = await fetch(urlWithParams, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      data = await response.json();
-      switch (response.status) {
-        case 200:
-          setRecords(loadMore ? [...records, ...data.records] : data.records);
-          setOffset(newOffset);
-          setHasMoreData(data.pagination.records - data.pagination.offset > 10);
-          break;
-        case 401:
-        case 404:
-          setErrorText(data.error.message);
-          break;
-        default:
-          setErrorText("Something went wrong, please try again later.");
-      }
-    } catch (error) {
-      setErrorText(
-        "There are issues communicating with the server, please try again later.",
-      );
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
-
-  // Function to load more users when scrolling
-  const loadMoreUsers = () => {
-    if (!loadingMore && hasMoreData) {
-      setLoadingMore(true);
-      fetchUsers(true);
-    }
-  };
-
-  // Fetch users when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
-      fetchUsers(false);
+      setModalVisible(true);
+
+      return () => {
+        setModalVisible(false);
+      };
     }, []),
   );
 
-  // Render loading indicator while fetching data
-  if (loading && !loadingMore) {
-    return (
-      <View className="bg-white flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
+  const closeModel = () => {
+    setModalVisible(false); 
+    navigate("Feed"); 
+    if (setIsLoginPopupVisible !== undefined) {
+      setIsLoginPopupVisible(false);
+    }
+  };
+
+  return (
+    <Modal transparent={true} visible={modalVisible} animationType="none">
+      <View
+        className="flex-1 items-center justify-center"
+        style={{ backgroundColor: "rgba(200, 200, 200, 0.8)" }}
+      >
+        <View className="bg-white rounded-xl p-4" style={{ ...SHADOWS.small }}>
+        <TouchableOpacity onPress={() => {closeModel()}}>
+            <Ionicons name="arrow-back" size={26} color={COLORS.black} />
+          </TouchableOpacity>
+          <View className="items-center py-2">
+            <Text className="text-base mt-4 mb-6">
+              To use this function, you have to be logged in.
+            </Text>
+            <TouchableOpacity
+              className="bg-primary py-2 px-8 rounded-full"
+              onPress={() => navigate("Authentification")}
+            >
+              <Text className="text-base">Login</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    );
-  } 
-  // Render error component if there's an error
-  else if (errorText) {
-    return <ErrorComp errorText={errorText} />;
-  } 
-  // Render user list if records are available
-  else if (records.length > 0) {
-    return (
-      <View className="bg-white h-full">
-        <FlatList
-          className="my-6"
-          data={records}
-          keyExtractor={(item) => item.username}
-          renderItem={({ item }) => (
-            <UserListItem
-              username={item.username}
-              profilePictureUrl={item.picture?.url}
-              followingId={item.followingId}
-              setErrorText={setErrorText}
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          onEndReached={loadMoreUsers}
-          onEndReachedThreshold={0.2}
-          ListFooterComponent={
-            loadingMore ? <ActivityIndicator size={"small"} /> : null
-          }
-        />
-      </View>
-    );
-  } 
-  // Render error component if no records found
-  else {
-    return (
-      <ErrorComp errorText="Something went wrong, please try again later." />
-    );
-  }
+    </Modal>
+  );
 };
 
-export default UserList;
+export default LoginPopup;
