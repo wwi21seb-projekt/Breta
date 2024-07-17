@@ -10,12 +10,10 @@ const AuthScreen = () => {
   const [showRegistration, setShowRegistration] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  // Toggle between login and registration screens
   const handleButtonPress = () => {
     setShowRegistration(!showRegistration);
   };
 
-  // Reset state when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
       setShowRegistration(false);
@@ -23,14 +21,11 @@ const AuthScreen = () => {
     }, []),
   );
 
-  // Render error component if there's a server error
   if (serverError !== "") {
     return <Error errorText={serverError} />;
-  } 
-  // Main render
-  else {
+  } else {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-white ">
         <View className="flex-row my-6 mx-10 rounded-xl">
           <TouchableOpacity
             style={{

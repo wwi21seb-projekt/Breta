@@ -11,7 +11,7 @@ import { useIsFocused } from "@react-navigation/native";
 import ErrorComp from "../components/ErrorComp";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 
-// Set notification handler
+// The Notification Handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -20,13 +20,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Handle registration error
+// Function to handle the Register Notifications + Push Notification
 function handleRegistrationError(errorMessage: string) {
   alert(errorMessage);
   throw new Error(errorMessage);
 }
 
-// Register for push notifications
 export async function registerForPushNotificationsAsync() {
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {
@@ -78,28 +77,31 @@ const NotificationScreen = () =>  {
   const [notification, setNotification] = useState<
    Notifications.Notification | undefined
   >(undefined);
-  const [notificationUser, setNotificationUser] = useState<Notification[]>([]);
-  const [errorText, setErrorText] = useState("");
+  const [notificationUser, setNotificationUser] = useState<Notification[]>([])
+  const [errorText, setErrorText] = useState("")
   const [refreshing, setRefreshing] = useState(false);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
   const isFocused = useIsFocused();
 
-  // Fetch notifications when the screen is focused
   useEffect(() => {
     if (isFocused) {
       fetchNotifications();
     }
 
+    // Add notification received listener
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
       });
+
+      // Add notification response received listener
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
       });
 
+      // Clean up subscriptions when component unmounts or `isFocused` changes
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(
@@ -110,17 +112,19 @@ const NotificationScreen = () =>  {
     };
   }, [isFocused]);
 
-  // Refresh the notification list
+  // Function to handle refresh actio
   const onRefresh = () => {
+
     setRefreshing(true);
-    fetchNotifications();
+    fetchNotifications()
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   };
 
-  // Fetch notifications from the server
+  // Async function to fetch notifications
   const fetchNotifications = async () => {
+
     let response;
 
     try {
@@ -131,71 +135,62 @@ const NotificationScreen = () =>  {
           Authorization: `Bearer ${token}`,
         },
       });
-      let data = await response.json();
-      let userNotification;
+      let data = await response.json()
+      let userNotification
       switch (response.status) {
         case 200:
-          userNotification = await data.records;
-          setNotificationUser(userNotification);
+          userNotification = await data.records 
+          setNotificationUser(userNotification)
           break;
         case 401:
-          setErrorText(data.error.message);
+          setErrorText(data.error.message)
           break;
         default:
-          setErrorText("Something went wrong, please try again later.");
+          setErrorText("Something went wrong, please try again later.")
       }
     } catch (error) {
       setErrorText(
         "There are issues communicating with the server, please try again later.",
       );
     }
-  };
-
-  // Render error component if there's an error
+    
+  }
   if (errorText !== "") {
     return <ErrorComp errorText={errorText} />;
   }
-  // Main render
-  else {
-    return (
-      <View className="flex-1 bg-white">
-        {notificationUser.length > 0 ? (
-          <FlatList
-            data={notificationUser}
-            keyExtractor={(item) => item.notificationId}
-            renderItem={({ item }) => (
-              <NotificationTab
-                notificationId={item.notificationId}
-                timestamp={item.timestamp}
-                notificationType={item.notificationType}
-                username={item.user.username}
-                profilePictureUrl={item.user.picture.url}
-                onRefresh={onRefresh}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-            onEndReachedThreshold={0.2}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            className="bg-white"
-          ></FlatList>
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            <View className="items-center justify-center">
-              <Text className="text-lg text-lightgray">
-                You have no new notifications!
-              </Text>
-            </View>
-          </ScrollView>
+  else{
+  return (
+    <View className="flex-1 bg-white">
+      {notificationUser.length > 0 ? (
+        <FlatList
+        data={notificationUser}
+        keyExtractor={(item) => item.notificationId}
+        renderItem={({ item }) => (
+          <NotificationTab
+            notificationId={item.notificationId}
+            timestamp={item.timestamp}
+            notificationType={item.notificationType}
+            username={item.user.username}
+            profilePictureUrl={item.user.picture.url}
+            onRefresh={onRefresh}
+          />
         )}
-      </View>
-    );
-  }
+        showsVerticalScrollIndicator={false}
+        onEndReachedThreshold={0.2}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}></RefreshControl>}
+        className="bg-white"
+      ></FlatList>
+      ) : (
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}></RefreshControl>}>
+        <View className="items-center justify-center">
+           <Text className="text-lg text-lightgray">You have no new notifications!</Text>      
+        </View>
+        </ScrollView>
+        )}
+        
+    </View>
+      );
+}
 }
 
 export default NotificationScreen;

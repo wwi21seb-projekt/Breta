@@ -8,7 +8,7 @@ const ImprintScreen = () => {
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch imprint text from the server
+  // Fetch Imprint
   useEffect(() => {
     (async () => {
       let data;
@@ -35,17 +35,14 @@ const ImprintScreen = () => {
       setLoading(false);
     });
   }, []);
-
-  // Render loading indicator
+// Render loading indicator
   if (loading) {
     return (
       <View className="bg-white flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
-  } 
-  // Render imprint text if available
-  else if (imprintText !== "") {
+  } else if (imprintText !== "") {
     return (
       <View className="pb-10 px-5 bg-white h-full">
         <ScrollView
@@ -56,9 +53,7 @@ const ImprintScreen = () => {
         </ScrollView>
       </View>
     );
-  } 
-  // Render error component if there's an error
-  else {
+  } else {
     return <ErrorComp errorText={errorText} />;
   }
 };

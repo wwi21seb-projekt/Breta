@@ -35,7 +35,7 @@ const ChatDetailScreen = () => {
   useEffect(() => {
     if (chatId === "") {
       setDisableSendButton(false);
-    }
+    };
     if (token && currentChatId !== "") {
       fetchMessages();
       ws.current = new WebSocket(`${baseSocketUrl}chat?chatId=${currentChatId}`, token);
@@ -75,14 +75,42 @@ const ChatDetailScreen = () => {
   // Format date for message display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const formattedDate = `${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}, ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
+    const day = date.getUTCDate();
+
+    const month = date.getUTCMonth() + 1; 
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
+
     return formattedDate;
   }
 
   // Get the current formatted date
   const getCurrentFormattedDate = () => {
     const date = new Date();
-    return date.toISOString();
+    const year = date.getUTCFullYear();
+
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); 
+
+    const day = String(date.getUTCDate()).padStart(2, '0');
+
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+
+    const microseconds = '000'; 
+
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}Z`;
+
+  
+
+    return formattedDate;
   };
 
   // Fetch chat messages from the server
@@ -178,10 +206,7 @@ const ChatDetailScreen = () => {
     );
   } else if (errorText) {
     return <ErrorComp errorText={errorText} />;
-  }
-
-  // Main render
-  return (
+  } else return ( 
     <View className="flex-1 bg-white">
       <TouchableOpacity className="flex-row items-center bg-white px-4 py-2"
         onPress={() => {
@@ -206,17 +231,16 @@ const ChatDetailScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           {messages.map((message) => (
-            <View
-              key={`${message.creationDate}`}
-              className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}
-            >
-              <View
-                className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}
-              >
-                <Text className='text-sm mb-0.5'>{message.content.trim()}</Text>
-                <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
-              </View>
-            </View>
+             <View
+             key={`${message.creationDate}`}
+             className={`mb-4 ${message.username === user ? 'items-end self-end' : 'items-start self-start'} max-w-[60%]`}>
+             <View
+               className={`rounded-lg px-3 py-2 ${message.username === user ? 'bg-secondary' : 'bg-lightgray'} `}>
+               <Text className='text-sm mb-0.5'>{message.content.trim()}</Text>
+               <Text className="text-darkgray text-[10px]">{formatDate(message.creationDate)}</Text>
+             </View>
+           </View>
+
           ))}
         </ScrollView>
         <View className="px-4 py-5 bg-white">

@@ -6,7 +6,9 @@ import { baseUrl } from "../env";
 import { navigate } from "../navigation/NavigationService";
 import ErrorComp from "../components/ErrorComp";
 
+// Component for requesting password reset
 const RequestResetPasswordScreen = () => {
+  // State variables for handling username input and errors
   const [username, setUsername] = useState("");
   const [isUsernameFilled, setIsUsernameFilled] = useState(false);
   const [errorTextUsername, setErrorTextUsername] = useState("");
@@ -17,6 +19,7 @@ const RequestResetPasswordScreen = () => {
     let response;
     let data;
     try {
+      // Make POST request to reset password endpoint
       response = await fetch(`${baseUrl}users/${username}/reset-password`, {
         method: "POST",
         headers: {
@@ -25,16 +28,20 @@ const RequestResetPasswordScreen = () => {
       });
       switch (response.status) {
         case 200:
+          // Navigate to SetReset screen on success
           navigate("SetReset");
           break;
         case 404:
+          // Handle case when user is not found
           data = await response.json();
           setErrorTextUsername(data.error.message);
           break;
         default:
+          // Handle other errors
           setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
+      // Handle network or server errors
       setErrorText(
         "There are issues communicating with the server, please try again later.",
       );

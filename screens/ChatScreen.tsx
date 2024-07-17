@@ -21,7 +21,7 @@ const ChatScreen = () => {
       setErrorText("");
       setAreNoChats(false);
       loadChats(setChats, setErrorText, setAreNoChats, token);
-    }, [token])
+    }, [])
   );
 
   // Refresh the chat list

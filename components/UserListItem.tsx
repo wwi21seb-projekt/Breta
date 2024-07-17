@@ -42,15 +42,17 @@ const UserListItem: React.FC<Props> = ({
         }}
         className="flex-1 flex-row items-center"
       >
+        {/* Display user profile picture */}
         <Image
           source={{ uri: profilePictureUrl || "defaultProfilePic" }}
           className="aspect-square rounded-full w-10"
           alt="Picture"
         />
-
+        {/* Display username */}
         <Text className="text-base ml-3">{username}</Text>
       </TouchableOpacity>
 
+      {/* Follow/Unfollow button */}
       {user !== username && followingId !== "searchResult" && (
         <TouchableOpacity
           className="py-1 px-2 rounded-3xl border"
@@ -68,6 +70,7 @@ const UserListItem: React.FC<Props> = ({
             )
           }
         >
+          {/* Toggle button text based on follow status */}
           <Text className="text-xs">{isFollowed ? "Unfollow" : "Follow"}</Text>
         </TouchableOpacity>
       )}

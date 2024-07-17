@@ -23,6 +23,8 @@ import { updateFormValidity } from "../components/functions/FormValidity";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
+
+
 type RouteParams = {
   user: User;
 };
@@ -44,16 +46,20 @@ const EditProfileScreen = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [newPasswordErrorText, setNewPasswordErrorText] = useState("");
   const [oldPasswordErrorText, setOldPasswordErrorText] = useState("");
-  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] = useState("");
+  const [confirmNewPasswordErrorText, setConfirmNewPasswordErrorText] =
+    useState("");
   const [isPasswordFieldVisible, setIsPasswordFieldVisible] = useState(false);
-  const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] = useState(false);
+  const [isPasswordChangeSuccessful, setIsPasswordChangeSuccessful] =
+    useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isImagePicked, setIsImagePicked] = useState(false)
   const [image, setImage] = useState('');
+  
 
   const maxCharactersNickname = 25;
   const maxCharactersStatus = 256;
-  const hasPictureSet = user.picture ? { uri: user.picture.url } : require("../assets/images/image_placeholder.jpeg");
+
+  const hasPictureSet =  user.picture ? { uri: user.picture.url } : require("../assets/images/image_placeholder.jpeg")
 
   useEffect(() => {
     if (isImagePicked) {
@@ -61,16 +67,16 @@ const EditProfileScreen = () => {
       setIsImagePicked(false);
     }
   }, [isImagePicked]);
-
-  // Handle updating trivial user info (nickname, status, picture)
+// Function to handle updating user's trivial information (nickname, status, and optionally picture)
   const handleTrivialInfoChange = async () => {
     let response;
     let data;
     let base64;
-    if (image !== '') {
-      base64 = await FileSystem.readAsStringAsync(image, {
+    if(image !== ''){
+          base64 = await FileSystem.readAsStringAsync(image, {
         encoding: FileSystem.EncodingType.Base64,
       });
+      
     }
 
     try {
@@ -104,31 +110,36 @@ const EditProfileScreen = () => {
           setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("There are issues communicating with the server, please try again later.");
+      setErrorText(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
+  // Function to handle resizing of the nickname input field
   const onNicknameContentSizeChange = (event: any) => {
     setNicknameHeight(event.nativeEvent.contentSize.height + 10);
   };
 
+// Function to handle resizing of the status input field
   const onStatusContentSizeChange = (event: any) => {
     setStatusHeight(event.nativeEvent.contentSize.height + 10);
   };
 
+// Function to handle changes in nickname input
   const handleNicknameChange = (text: string) => {
     if (text.length <= maxCharactersNickname) {
       setNickname(text);
     }
   };
-
+// Function to handle status change
   const handleStatusChange = (text: string) => {
     if (text.length <= maxCharactersStatus) {
       setStatus(text);
     }
   };
 
-  // Handle password change
+  // Handle Password Change
   const handlePasswordChange = async () => {
     let response;
     let data;
@@ -151,6 +162,7 @@ const EditProfileScreen = () => {
           setTimeout(() => {
             setIsPasswordChangeSuccessful(false);
           }, 3000);
+          user.picture.url = image
           break;
         case 400:
         case 401:
@@ -166,11 +178,12 @@ const EditProfileScreen = () => {
           setErrorText("Something went wrong, please try again later.");
       }
     } catch (error) {
-      setErrorText("There are issues communicating with the server, please try again later.");
+      setErrorText(
+        "There are issues communicating with the server, please try again later.",
+      );
     }
   };
 
-  // Reset states when the screen is focused
   useFocusEffect(
     React.useCallback(() => {
       setIsInfoChangeSuccessful(false);
@@ -180,7 +193,9 @@ const EditProfileScreen = () => {
     }, []),
   );
 
-  // Pick an image for profile picture
+  
+// Image Picker
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -189,18 +204,17 @@ const EditProfileScreen = () => {
       quality: 1,
     });
 
+
     if (!result.canceled) {
       await setImage(result.assets[0].uri);
       setIsImagePicked(true);
     }
+    
   };
 
-  // Render error component if there's an error
   if (errorText !== "") {
     return <ErrorComp errorText={errorText} />;
-  } 
-  // Render user profile editing screen
-  else if (user !== undefined) {
+  } else if (user !== undefined) {
     return (
       <ScrollView
         className="bg-white"
@@ -210,13 +224,13 @@ const EditProfileScreen = () => {
       >
         <TouchableOpacity 
           className="items-center"
-          onPress={pickImage}
-        >
+          onPress={pickImage}>
           <Image
             source={image === '' ? hasPictureSet : { uri: image }}
             className="w-3/5 h-36 rounded-full mt-8 mb-3"
-            alt="Profile Picture"
+            alt="Profilbild"
           />
+          
         </TouchableOpacity>
         <Text className="italic text-lg text-darkgray self-center mb-4">
           @{user?.username}
@@ -262,7 +276,7 @@ const EditProfileScreen = () => {
         </View>
         {isInfoChangeSuccessful && (
           <Text className="self-center mx-10 mt-1 text-xs text-green">
-            Your picture, nickname, and status have been updated successfully!
+            Your picture, nickname and status have been updated successfully!
           </Text>
         )}
         <View className="bg-white">
@@ -296,8 +310,8 @@ const EditProfileScreen = () => {
             <Text className="ml-1 text-darkgray text-base">
               Change your password
             </Text>
-          </TouchableOpacity>
-          {isPasswordChangeSuccessful && (
+            </TouchableOpacity>
+            {isPasswordChangeSuccessful && (
             <Text className="mt-1 mx-8 text-xs text-green">
               Your password has been updated successfully!
             </Text>
@@ -348,7 +362,9 @@ const EditProfileScreen = () => {
             <TouchableOpacity
               className="items-center mt-6 mb-20 py-3 mx-16 rounded-xl"
               style={{
-                backgroundColor: isFormValid ? COLORS.primary : COLORS.lightgray,
+                backgroundColor: isFormValid
+                  ? COLORS.primary
+                  : COLORS.lightgray,
               }}
               onPress={handlePasswordChange}
               disabled={!isFormValid}
@@ -367,3 +383,5 @@ const EditProfileScreen = () => {
 };
 
 export default EditProfileScreen;
+
+

@@ -19,16 +19,20 @@ import TextPostCard from "../components/TextPostCard";
 import { useAuth } from "../authentification/AuthContext";
 import ErrorComp from "../components/ErrorComp";
 
+// Define the SearchScreen component
 const SearchScreen = () => {
+  // Use the useAuth hook to get the authentication token
   const { token } = useAuth();
+
+  // State variables
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput] = useDebounce(searchInput, 500);
-  const [users, setUsers] = useState<ListUser[]>([]);
-  const layout = useWindowDimensions();
+  const [debouncedSearchInput] = useDebounce(searchInput, 500); // Debounced search input
+  const [users, setUsers] = useState<ListUser[]>([]); // List of users
+  const layout = useWindowDimensions(); // Get the window dimensions
   const [userSearchError, setUserSearchError] = useState("");
   const [postSearchError, setPostSearchError] = useState("");
 
-  // Custom TabBar component for styling the TabView
+  // Custom tab bar component for TabView
   const customTabBar: React.FC<any> = (props) => (
     <TabBar
       {...props}
@@ -39,7 +43,7 @@ const SearchScreen = () => {
     />
   );
 
-  // Render user list
+  // Component to render the list of users
   const userList = () => {
     if (userSearchError !== "") {
       return <ErrorComp errorText={userSearchError}></ErrorComp>;
@@ -69,7 +73,7 @@ const SearchScreen = () => {
     }
   };
 
-  // Render post list
+  // Component to render the list of posts
   const postList = () => {
     if (postSearchError !== "") {
       return <ErrorComp errorText={postSearchError}></ErrorComp>;
@@ -111,7 +115,7 @@ const SearchScreen = () => {
     }
   };
 
-  // Index and routes for TabView
+  // State variables for TabView
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "first", title: "Users" },
@@ -124,13 +128,13 @@ const SearchScreen = () => {
     second: postList,
   });
 
-  // State variables for user search
+  // User fetching state variables
   const [userOffset, setUserOffset] = useState(0);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
   const [hasMoreUsers, setHasMoreUsers] = useState(true);
   let userLimit = 10;
 
-  // Fetch users from the server
+  // Function to fetch users from the server
   const fetchUsers = async (loadingMore: boolean) => {
     if (!hasMoreUsers || !searchInput.trim()) {
       return;
@@ -174,7 +178,7 @@ const SearchScreen = () => {
     }
   };
 
-  // Load more users when scrolling
+  // Function to load more users when the end is reached
   const loadMoreUsers = () => {
     if (!loadingMoreUsers && hasMoreUsers) {
       setLoadingMoreUsers(true);
@@ -182,14 +186,14 @@ const SearchScreen = () => {
     }
   };
 
-  // State variables for post search
+  // Post fetching state variables
   const [lastPostId, setLastPostId] = useState("");
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   let postLimit = 10;
   const [posts, setPosts] = useState<Post[]>([]);
 
-  // Fetch posts from the server
+  // Function to fetch posts from the server
   const fetchPosts = async () => {
     if (!hasMorePosts || !searchInput.trim()) {
       return;
@@ -233,7 +237,7 @@ const SearchScreen = () => {
     }
   };
 
-  // Load more posts when scrolling
+  // Function to load more posts when the end is reached
   const loadMorePosts = () => {
     if (!loadingMorePosts && hasMorePosts) {
       setLoadingMorePosts(true);
@@ -241,16 +245,16 @@ const SearchScreen = () => {
     }
   };
 
-  // Effect to handle debounced search input changes
+  // useEffect hook to handle debounced search input changes
   useEffect(() => {
     if (debouncedSearchInput === "") {
-      // Reset user search
+      //user reset
       setUserOffset(0);
       setLoadingMoreUsers(false);
       setHasMoreUsers(true);
       setUsers([]);
 
-      // Reset post search
+      //post reset
       setLastPostId("");
       setLoadingMorePosts(false);
       setHasMorePosts(true);
@@ -260,13 +264,13 @@ const SearchScreen = () => {
     fetchPosts();
   }, [debouncedSearchInput]);
 
-  // Handle search input change
+  // Function to handle search input changes
   const handleSearchInputChange = (searchInput: string) => {
     setLastPostId("");
     setSearchInput(searchInput);
   };
 
-  // Render the main view
+  // Return the main view
   return (
     <View className="flex flex-col h-full bg-white pb-4">
       <View className="flex flex-row  bg-lightgray rounded-full m-4">

@@ -28,6 +28,7 @@ import { push } from "../navigation/NavigationService";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
+
 interface Props {
   username: string;
   profilePic: string;
@@ -67,8 +68,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     repostPostPicture,
     repostPostContent
     } = props;
-
-  // State variables
+    // State variables
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
@@ -84,7 +84,7 @@ const TextPostCard: React.FC<Props> = (props) => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [offset, setOffset] = useState(0);
   
-  // Reset error and popup states when the component is focused
+
   useFocusEffect(
     React.useCallback(() => {
       setIsLoginPopupVisible(false);
@@ -94,28 +94,28 @@ const TextPostCard: React.FC<Props> = (props) => {
   );
 
   // Helper function to highlight hashtags in a text
-  const checkForHashtag = (text: string) => {
-    if(!text){
-      return
-    }
-    const hashtagRegex = /#(\w+)/g;
-    const segments = text.split(hashtagRegex);
+const checkForHashtag = (text: string) => {
+  if(!text){
+    return
+  }
+  const hashtagRegex = /#(\w+)/g;
+  const segments = text.split(hashtagRegex);
 
-    const coloredText = segments.map((segment, index) => {
-      if (index % 2 === 1) {
-        return (
-          <Text key={index} className="text-brigtBlue">
-            #{segment}
-          </Text>
-        );
-      } else {
-        return segment;
-      }
-    });
-    return <>{coloredText}</>;
-  };
+  const coloredText = segments.map((segment, index) => {
+    if (index % 2 === 1) {
+      return (
+        <Text key={index} className="text-brigtBlue">
+          #{segment}
+        </Text>
+      );
+    } else {
+      return segment;
+    }
+  });
+  return <>{coloredText}</>;
+};
   
-  // Handler for infinite scroll to load more comments
+// Handler for infinite scroll to load more comments
   const handleCommentScroll = ({
     nativeEvent,
   }: {
@@ -129,7 +129,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     }
   };
 
-  // Fetch comments from the server
+// Fetch comments from the server
   const fetchComments = async (loadMore: boolean) => {
     setLoadingComments(true);
     let newOffset = loadMore ? offset + 8 : 0;
@@ -172,8 +172,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       setLoadingComments(false);
     }
   };
-
-  // Add a new comment
+ // Add a new comment
   const addComment = async () => {
     if (!isAuthenticated) {
       setIsLoginPopupVisible(true);
@@ -268,8 +267,7 @@ const TextPostCard: React.FC<Props> = (props) => {
       );
     }
   };
-
-  // Unlike the post
+ // Unlike the post
   const unlikePost = async () => {
     if (!isAuthenticated) {
       setIsLoginPopupVisible(true);
@@ -309,6 +307,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     }
   };
   
+
   // Format the like count for display
   const formatLikes = (count: number): string => {
     const roundToTenths = (num: number) => Math.floor(num * 10) / 10;
@@ -322,7 +321,6 @@ const TextPostCard: React.FC<Props> = (props) => {
     return count.toString();
   };
 
-  // Handle like button press
   const handleLikePress = () => {
     if (isLiked) {
       unlikePost();
@@ -331,7 +329,6 @@ const TextPostCard: React.FC<Props> = (props) => {
     }
   }
 
-  // Open the comment modal
   const openCommentModal = () => {
     if (!isAuthenticated) {
       setIsLoginPopupVisible(true);
@@ -341,7 +338,6 @@ const TextPostCard: React.FC<Props> = (props) => {
     setCommentModalVisible(true);
   };
 
-  // Close the comment modal
   const closeCommentModal = () => {
     setCommentModalVisible(false);
   };
@@ -395,7 +391,6 @@ const TextPostCard: React.FC<Props> = (props) => {
     setConfirmationVisible(false)
   }
 
-  // Show confirmation before reposting
   const repostConfirm = async () => {
 
     if (!isAuthenticated) {
@@ -404,8 +399,7 @@ const TextPostCard: React.FC<Props> = (props) => {
     }
     setConfirmationVisible(true);
   }    
-
-  // Pick an image from the gallery
+// Pick an image from the gallery
   const [image, setImage] = useState('');
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -415,17 +409,16 @@ const TextPostCard: React.FC<Props> = (props) => {
       quality: 1,
     });
 
+
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
-  // Remove the selected image
   const removeImage = () => {
     setImage('');
   }
-
-  // Render the component
+// Render the component
   if(repostError !== ""){
       return <ErrorComp errorText={repostError}></ErrorComp>;
   }  else{
@@ -719,5 +712,6 @@ const TextPostCard: React.FC<Props> = (props) => {
   );
   }
 };
+
 
 export default TextPostCard;

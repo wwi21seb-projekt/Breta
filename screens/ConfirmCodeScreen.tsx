@@ -135,7 +135,7 @@ const ConfirmCodeScreen = () => {
         <Text className="text-sm">Didn't receive a code?</Text>
         <View className="flex-row">
           <Text className="text-sm">Click</Text>
-          <TouchableOpacity onPress={sendNewCode}>
+          <TouchableOpacity onPress={() => sendNewCode()}>
             <Text className="text-primary text-sm underline font-semibold">
               {" "}
               here{" "}

@@ -27,7 +27,6 @@ const FeedScreen = () => {
   const [loading, setLoading] = useState(false);
   const globalLimit = 5;
 
-  // Fetch posts on component mount and token change
   useEffect(() => {    
     setErrorText("");
     if (token) {
@@ -36,14 +35,13 @@ const FeedScreen = () => {
     fetchPosts("global");
   }, [token]);
 
-  // Clear error text when screen is focused
   useFocusEffect(
     React.useCallback(() => {
       setErrorText("");
     }, []),
+    
   );
-
-  // Fetch posts from the server
+  // Fetch Posts and separate in global and personal Feed
   const fetchPosts = async (type: string) => {
     if (loading && type === "global") return;
     setLoading(true);
@@ -93,8 +91,7 @@ const FeedScreen = () => {
       setLoading(false);
     }
   };
-
-  // Refresh the feed
+// On Refresh function
   const onRefresh = () => {
     setRefreshing(true);
     setErrorText("");
@@ -107,7 +104,7 @@ const FeedScreen = () => {
     }, 1000);
   };
 
-  // Handle scroll event for infinite scrolling
+// Refresh on Scroll
   const handleScroll = ({
     nativeEvent,
   }: {
@@ -122,7 +119,7 @@ const FeedScreen = () => {
     }
   };
 
-  // Get city name from coordinates
+  // Get Location for Posts
   const getCityFromCoordinates = async (latitude: any, longitude: any) => {
     try {
       const response = await fetch(
@@ -140,7 +137,7 @@ const FeedScreen = () => {
     }
   };
 
-  // Load city names for posts
+  // Load the Locations for Posts
   const loadCitiesForPosts = async (posts: Post[]) => {
     const updatedPosts = [];
     for (const post of posts) {
@@ -165,11 +162,9 @@ const FeedScreen = () => {
     return updatedPosts;
   };
   
-  // Render error component if there's an error
   if (errorText) {
     return <ErrorComp errorText={errorText}></ErrorComp>;
   } else {
-  // Main render
   return (
     <ScrollView
       className="bg-white"
@@ -237,6 +232,8 @@ const FeedScreen = () => {
             repostPostPicture={post.repost?.picture?.url || ""}
             picture={post.picture?.url  || ""}
             repostPostContent={post.repost?.content}
+            
+
           />
         ))}
         {hasMoreGlobalPosts && (

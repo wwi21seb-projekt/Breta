@@ -15,7 +15,7 @@ const LoginPopup: React.FC<Props> = (props) => {
     } = props;
  
   const [modalVisible, setModalVisible] = useState(true);
-
+// Set Modal Visibility
   useFocusEffect(
     React.useCallback(() => {
       setModalVisible(true);
@@ -25,7 +25,7 @@ const LoginPopup: React.FC<Props> = (props) => {
       };
     }, []),
   );
-
+// Function to close the model
   const closeModel = () => {
     setModalVisible(false); 
     navigate("Feed"); 
