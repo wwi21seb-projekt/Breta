@@ -6,7 +6,6 @@ Um das Projekt lokal auf dem Handy via der Expo App zu testen, kann der Expo Dev
 
 ```console
 foo@bar:~$ npx expo start
-foo
 ```
 
 Anschließend kann der QR-Code gescanned werden, wodurch sich die App mit dem Server verbindet. Vorraussetzung ist, dass sich der Rechner und das mobile Gerät in einem Netzwerk befinden!
@@ -25,5 +24,4 @@ Läuft der Mockserver lokal auf dem PC, dann darf nicht die Localhost IP Adresse
 
 ```console
 foo@bar:~$ ipconfig getifaddr en0
-foo
 ```
